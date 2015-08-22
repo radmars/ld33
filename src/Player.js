@@ -30,9 +30,13 @@ var Player = me.ObjectEntity.extend({
 
         this.animationSuffix = "";
 
-        this.setVelocity( 5, 16 );
-        this.setFriction( 0.4, 0 );
+        this.maxVel = 4;
+
+        this.setVelocity( this.maxVel, this.maxVel );
+        this.setFriction( 1, 1 );
         this.direction = 1;
+
+        this.gravity = 0;
 
         this.centerOffsetX = 75;
         this.centerOffsetY = 0;
@@ -62,9 +66,10 @@ var Player = me.ObjectEntity.extend({
 
         me.input.bindKey(me.input.KEY.LEFT,  "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
-        me.input.bindKey(me.input.KEY.UP,   "up", true);
-        me.input.bindKey(me.input.KEY.W,    "up", true);
-
+        me.input.bindKey(me.input.KEY.UP,   "up");
+        me.input.bindKey(me.input.KEY.DOWN, "down");
+        me.input.bindKey(me.input.KEY.W,    "up");
+        me.input.bindKey(me.input.KEY.S,    "down");
         me.input.bindKey(me.input.KEY.A,    "left");
         me.input.bindKey(me.input.KEY.D,    "right");
     },
@@ -139,13 +144,10 @@ var Player = me.ObjectEntity.extend({
 
         if(this.disableInputTimer > 0){
             this.disableInputTimer-=dt;
-            this.gravity = 0;
             this.vel.x = 0;
             this.vel.y = 0;
             this.updateMovement();
             return true;
-        }else{
-            this.gravity = 1;
         }
 
 
@@ -163,7 +165,7 @@ var Player = me.ObjectEntity.extend({
 
         // TODO acceleration
         if (me.input.isKeyPressed('left'))  {
-            this.vel.x = -25.5;
+            this.vel.x = -this.maxVel;
             this.flipX(true);
             this.direction = -1;
             if( ! this.renderable.isCurrentAnimation("walk" + this.animationSuffix) ){
@@ -172,7 +174,7 @@ var Player = me.ObjectEntity.extend({
                 })
             }
         } else if (me.input.isKeyPressed('right')) {
-            this.vel.x = 25.5;
+            this.vel.x = this.maxVel;
             this.flipX(false);
             this.direction = 1;
             if( ! this.renderable.isCurrentAnimation("walk" + this.animationSuffix) ){
@@ -182,32 +184,21 @@ var Player = me.ObjectEntity.extend({
             }
         }
 
-        if(this.falling && this.vel.y > 0){
-            if( ! this.renderable.isCurrentAnimation("shoot_jump" + this.animationSuffix) ){
-                this.renderable.setCurrentAnimation("fall" + this.animationSuffix);
+        if (me.input.isKeyPressed('up'))  {
+            this.vel.y = -this.maxVel;
+            this.direction = -1;
+            if( !this.renderable.isCurrentAnimation("walk" + this.animationSuffix) ){
+                this.renderable.setCurrentAnimation("walk" + this.animationSuffix, function() {
+                    self.renderable.setCurrentAnimation("idle" + self.animationSuffix);
+                })
             }
-        }
-
-        if(!this.falling && !this.jumping && this.vel.y == 0){
-            // console.log("doblejump reset");
-            this.doubleJumped = false;
-            if(!me.input.isKeyPressed('right') && !me.input.isKeyPressed('left') && ! this.renderable.isCurrentAnimation("idle" + this.animationSuffix)&& ! this.renderable.isCurrentAnimation("shoot" + this.animationSuffix)){
-                this.renderable.setCurrentAnimation("idle" + this.animationSuffix);
-            }
-        }
-
-        if( me.input.isKeyPressed('up')) {
-            if(!this.jumping && !this.falling){
-                this.vel.y = -40;
-                this.jumping = true;
-                self.renderable.setCurrentAnimation("jump" + this.animationSuffix);
-                me.audio.play( "jump", false, null, 0.6 );
-            }
-            else if((this.jumping || this.falling) && !this.doubleJumped){
-                this.doubleJumped = true;
-                this.vel.y = -40;
-                self.renderable.setCurrentAnimation("double_jump" + this.animationSuffix);
-                me.audio.play( "doublejump", false, null, 0.6 );
+        } else if (me.input.isKeyPressed('down')) {
+            this.vel.y = this.maxVel;
+            this.direction = 1;
+            if( !this.renderable.isCurrentAnimation("walk" + this.animationSuffix) ){
+                this.renderable.setCurrentAnimation("walk" + this.animationSuffix, function() {
+                    self.renderable.setCurrentAnimation("idle" + self.animationSuffix);
+                })
             }
         }
 
