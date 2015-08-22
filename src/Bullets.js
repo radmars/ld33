@@ -7,15 +7,12 @@ var Bullet = me.ObjectEntity.extend({
         settings.spriteheight = 42;
         settings.width = 111;
         settings.height = 42;
-        direction = settings.direction;
         this.parent( x, y, settings );
         this.bullet = true;
         this.alwaysUpdate = true;
         this.collidable = true;
         this.z = 300;
         this.gravity = 0;
-        this.vel.x = direction * 15.0;
-        this.flipX( direction < 0 );
 
         this.renderable.animationspeed = 10;
 
@@ -53,26 +50,26 @@ var Bullet = me.ObjectEntity.extend({
 
 });
 
-var WaspBullet = me.ObjectEntity.extend({
+var MusketBullet = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {};
-        settings.image = "waspBullet";
-        settings.spritewidth =  78;
-        settings.spriteheight = 78;
+        settings.image = "baddieBullet";
+        settings.spritewidth = 64;
+        settings.spriteheight = 60;
         settings.height = 30;
         settings.width = 30;
-        direction = settings.direction;
 
         this.parent( x, y, settings );
         this.baddie = true;
-        this.overworld = false;
         this.collidable = true;
         this.z = 300;
         this.gravity = 0;
-        this.vel.x = direction * 5.0;
-        this.vel.y = 5.0;
-        this.flipX( direction > 0 );
+    },
 
+    setDir: function(x, y) {
+        this.vel.x = x;
+        this.vel.y = y;
+        // flip x/y based on direction maybe????
     },
 
     die: function(){
@@ -88,7 +85,7 @@ var WaspBullet = me.ObjectEntity.extend({
             // if yes reset the game
             this.die();
         }
-        if( this.vel.x == 0 || this.vel.y ==0 ) {
+        if( this.vel.x == 0 && this.vel.y ==0 ) {
             // we hit a wall?
             this.die();
         }
@@ -97,4 +94,3 @@ var WaspBullet = me.ObjectEntity.extend({
     }
 
 });
-

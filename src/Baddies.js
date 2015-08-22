@@ -8,28 +8,26 @@ var Baddie = me.ObjectEntity.extend({
         settings.spriteheight = settings.spriteheight || 32;
 
         this.type = settings.type;
-        this.skel = settings.skel;
-        if( settings.skel ) {
-            settings.image = settings.image + '_skel';
-        }
 
         this.parent( x, y, settings );
         this.alwaysUpdate = false;
         this.baddie = true;
 
+        this.gravity = 0;
+
         this.setVelocity( 1, 1 );
         this.setFriction( 0.05, 0.05 );
         this.targetAccel = 0.15;
-        this.gravity = 0;
 
         this.maxTargetingDist = 150;
         this.giveUpDist = 225;
         this.findTargetTimerMax = 100;
         this.findTargetTimer = 40;
 
-        this.attackRange = settings.spritewidth;
-        this.attackCooldown = 0;
         this.attackCooldownMax = 30;
+        this.attackRange = settings.spritewidth;
+
+        this.attackCooldown = 0;
 
         this.renderable.addAnimation( "idle", [ 0 ] );
         this.renderable.addAnimation( "walk", [ 0 ] );
@@ -80,7 +78,7 @@ var Baddie = me.ObjectEntity.extend({
             }
 
             if (distance < this.attackRange) {
-                this.attack();
+                this.tryAttack(this.curTarget);
             }
 
             distVec.normalize();
@@ -89,15 +87,24 @@ var Baddie = me.ObjectEntity.extend({
         }
     },
 
-    attack: function() {
-        console.log("attack!!!");
+    tryAttack: function(target) {
         if (this.attackCooldown <= 0) {
-            var self = this;
-            this.renderable.setCurrentAnimation("attacking", function() {
-                self.renderable.setCurrentAnimation("idle");
-            });
-            this.attackCooldown = this.attackCooldownMax;
+            var success = this.attack(target);
+            // only reset cooldown if we actually attacked
+            if (success) {
+                this.attackCooldown = this.attackCooldownMax;
+            }
         }
+    },
+
+    attack: function(target) {
+        console.log("attack!!!");
+        var self = this;
+        this.renderable.setCurrentAnimation("attacking", function() {
+            self.renderable.setCurrentAnimation("idle");
+        });
+
+        return true;
     },
 
     isMeleeAttacking: function() {
@@ -151,6 +158,61 @@ var Baddie = me.ObjectEntity.extend({
         this.updateMovement();
         //this.checkBulletCollision();
         return true;
+    }
+});
+
+var Musketeer = Baddie.extend({
+    init: function(x, y, settings) {
+        settings.image = 'knight_zombie';
+        settings.spritewidth = 32;
+        settings.spriteheight = 32;
+
+        this.parent(x, y, settings);
+
+        this.bulletVel = 12;
+        // musketeer only shoots in cardinal dirs. width of targeting arc = target width
+        this.targetWidth = settings.spritewidth + 10;
+
+        this.setVelocity( 0.3, 0.3 );
+
+        this.maxTargetingDist = 350;
+        this.giveUpDist = 400;
+        this.findTargetTimerMax = 100;
+        this.findTargetTimer = 40;
+
+        this.attackCooldownMax = 2500;
+        this.attackRange = 300;
+    },
+
+    isMeleeAttacking: function() {
+        return false;
+    },
+
+    attack: function(target) {
+        var targetVec = new me.Vector2d(target.pos.x, target.pos.y);
+        targetVec.sub(this.pos);
+        var success = false;
+
+        if (Math.abs(targetVec.x) < this.targetWidth) {
+            this.shoot(0, this.bulletVel * ((target.pos.y > this.pos.y) ? 1 : -1));
+            success = true;
+        }
+        else if (Math.abs(targetVec.y) < this.targetWidth) {
+            this.shoot(this.bulletVel * ((target.pos.x > this.pos.x) ? 1 : -1), 0);
+            success = true;
+        }
+
+        return success;
+    },
+
+    shoot: function(x, y) {
+        var settings = {};
+        var pos = new me.Vector2d(this.pos.x, this.pos.y);
+        var bullet = new MusketBullet(pos.x, pos.y, settings);
+        bullet.setDir(x, y);
+
+        me.game.world.addChild(bullet);
+        me.game.world.sort();
     }
 });
 

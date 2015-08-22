@@ -256,7 +256,7 @@ var Player = me.ObjectEntity.extend({
         if(col.obj.corpse) {
             col.obj.convertToZombie(this);
         }
-        else if( this.hitTimer <= 0 && this.collisionTimer <= 0 && col.obj.baddie && col.obj.isMeleeAttacking() ) {
+        else if( this.hitTimer <= 0 && this.collisionTimer <= 0 && col.obj.baddie ) {
             // die here?
 
             me.game.viewport.shake(5, 250);
