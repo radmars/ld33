@@ -2,7 +2,7 @@ var screenHeight = 560;
 var screenWidth = 960;
 var goodEnd = true;
 
-var LD30 = function() {
+var LD33 = function() {
 
     /**
      * Start stuff when the page loads.
@@ -65,11 +65,11 @@ var LD30 = function() {
 };
 
 
-LD30.data = {souls:1, collectedSouls:0, collectedSoulsMax:15, beatGame:false};
+LD33.data = {souls:1, collectedSouls:0, collectedSoulsMax:15, beatGame:false};
 
-LD30.HUD = LD30.HUD || {};
+LD33.HUD = LD33.HUD || {};
 
-LD30.HUD.Container = me.ObjectContainer.extend({
+LD33.HUD.Container = me.ObjectContainer.extend({
     init: function() {
         // call the constructor
         this.parent();
@@ -77,7 +77,7 @@ LD30.HUD.Container = me.ObjectContainer.extend({
         this.isPersistent = true;
         this.collidable = false;
 
-        this.boxDisplay = new LD30.HUD.BoxDisplay(0, 0);
+        this.boxDisplay = new LD33.HUD.BoxDisplay(0, 0);
         this.addChild(this.boxDisplay);
 
         // make sure our object is always draw first
@@ -94,7 +94,7 @@ LD30.HUD.Container = me.ObjectContainer.extend({
     }
 });
 
-LD30.HUD.BoxDisplay = me.Renderable.extend( {
+LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
     init: function(x, y) {
 
@@ -230,8 +230,8 @@ var GameEnder = me.ObjectEntity.extend({
 
         me.game.world.collide(this, true).forEach(function(col) {
             if(col && col.obj == me.state.current().player  ) {
-                LD30.data.collectedSouls += LD30.data.souls;
-                LD30.data.souls = 0;
+                LD33.data.collectedSouls += LD33.data.souls;
+                LD33.data.souls = 0;
                 me.state.current().endGame();
             }
         }, this);
@@ -283,14 +283,14 @@ var PlayScreen = me.ScreenObject.extend({
         this.pickups = [];
         this.subscription = me.event.subscribe(me.event.KEYDOWN, this.keyDown.bind(this));
 
-        this.HUD = new LD30.HUD.Container();
+        this.HUD = new LD33.HUD.Container();
         me.game.world.addChild(this.HUD);
-        LD30.data.beatGame = false;
+        LD33.data.beatGame = false;
 
     },
 
     endGame: function(){
-        LD30.data.beatGame = true;
+        LD33.data.beatGame = true;
         me.state.change( me.state.GAMEOVER );
     },
 
@@ -337,9 +337,9 @@ var PlayScreen = me.ScreenObject.extend({
         this.baddies = [];
         this.pickups = [];
         this.overworld = true;
-        LD30.data.beatGame = false;
-        LD30.data.collectedSouls = 0;
-        LD30.data.souls = 1;
+        LD33.data.beatGame = false;
+        LD33.data.collectedSouls = 0;
+        LD33.data.souls = 1;
         var level =  location.hash.substr(1) || "level1" ;
         me.levelDirector.loadLevel( level );
 
@@ -370,6 +370,6 @@ var PlayScreen = me.ScreenObject.extend({
 
 
 window.onReady(function() {
-    window.app = new LD30();
+    window.app = new LD33();
     window.app.onload();
 });
