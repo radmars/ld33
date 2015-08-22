@@ -1,4 +1,4 @@
-var Zombie = me.ObjectEntity.extend({
+var Zombie = Unit.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.image = 'knight_zombie';
@@ -13,6 +13,13 @@ var Zombie = me.ObjectEntity.extend({
         this.zombie = true;
         this.player = settings.player;
         this.collidable = true;
+
+        // Check Unit for what these mean...
+        this.giveUpDist = 225;
+        this.findTargetTimerMax = 100;
+        this.maxTargetingDist = 150;
+        this.attackRange = settings.spritewidth;
+        this.targetAccel = 0.15;
 
         this.hp = this.hpMax = 5;
         this.selected = false;
@@ -33,14 +40,15 @@ var Zombie = me.ObjectEntity.extend({
         this.moveTo.y = y;
     },
 
-    setPosition: function( number, outOf ){
-        this.number = number;
-        this.outOf = outOf;
+    getTargetList: function() {
+        return me.state.current().baddies;
     },
 
     update: function(dt) {
-        if(false) {
-            // TODO: Chase enemies
+        this.recheckTarget(dt);
+
+        if(this.curTarget) {
+            this.moveTowardTargetAndAttack(dt);
         }
         else {
             var toTarget = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
@@ -102,7 +110,6 @@ var Corpse = me.ObjectEntity.extend({
         var z = new Zombie(this.pos.x, this.pos.y, {
             player: player,
         });
-        player.addZombie(z);
         me.game.world.addChild(z);
     },
 });
@@ -175,22 +182,6 @@ var Player = me.ObjectEntity.extend({
 
     moveToPos: function (x,y){
 
-    },
-
-    recalculateZombiePositions: function() {
-        // TODO: Hacks. Player is in the player army list...
-        var army =  me.state.current().playerArmy;
-        var length = army.length - 1;
-        army.forEach(function(e, i) {
-            if(e.zombie) {
-                e.setPosition(i, length);
-            }
-        });
-    },
-
-
-    addZombie: function(z) {
-        me.state.current().playerArmy.push(z);
     },
 
     shoot: function(){

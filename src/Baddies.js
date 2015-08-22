@@ -1,49 +1,39 @@
-
-
-var Baddie = me.ObjectEntity.extend({
+var Unit = me.ObjectEntity.extend({
     init: function(x, y, settings) {
-        settings = settings || {}
-        settings.image = settings.image || 'knight';
-        settings.spritewidth = settings.spritewidth || 32;
-        settings.spriteheight = settings.spriteheight || 32;
-
-        this.type = settings.type;
-
         this.parent( x, y, settings );
-        this.alwaysUpdate = false;
-        this.baddie = true;
+        this.curTarget = null;
 
-        this.gravity = 0;
-
-        this.setVelocity( 1, 1 );
-        this.setFriction( 0.05, 0.05 );
-        this.targetAccel = 0.15;
-
-        this.maxTargetingDist = 150;
-        this.giveUpDist = 225;
+        // some defautls. pick better ones please.
         this.findTargetTimerMax = 100;
+        this.giveUpDist = 225;
         this.findTargetTimer = 40;
-
-        this.attackCooldownMax = 30;
-        this.attackRange = settings.spritewidth;
-
+        this.maxTargetingDist = 150;
         this.attackCooldown = 0;
-
-        this.renderable.addAnimation( "idle", [ 0 ] );
-        this.renderable.addAnimation( "walk", [ 0 ] );
-        this.renderable.addAnimation( "attacking", [ 0 ] );
-
-        this.direction = 1;
-        this.collidable = true;
-
-        this.hp = this.hpMax = 5;
-        // Hack...
-        me.state.current().baddies.push(this);
-
-        this.renderable.animationspeed = 70;
+        this.attackRange = settings.spritewidth;
+        this.targetAccel = 0.15;
     },
 
-    moveTowardTargetAndAttack: function() {
+    recheckTarget: function(dt) {
+        this.findTargetTimer--;
+        if (this.findTargetTimer <= 0) {
+            this.curTarget = radmars.findTarget(this.pos, this.getTargetList(), this.maxTargetingDist);
+            this.findTargetTimer = this.findTargetTimerMax;
+        }
+    },
+
+    getTargetList: function() {
+        throw "You need to overload this function!";
+    },
+
+    attack: function() {
+        throw "You need to overload this function!";
+    }
+
+    moveTowardTargetAndAttack: function(dt) {
+        if (this.attackCooldown >= 0) {
+            this.attackCooldown -= dt;
+        }
+
         if (this.curTarget) {
             var distVec = new me.Vector2d(this.curTarget.pos.x, this.curTarget.pos.y);
             distVec.sub(this.pos);
@@ -51,7 +41,6 @@ var Baddie = me.ObjectEntity.extend({
 
             // give up if too far away
             if (distance > this.giveUpDist) {
-                console.log('giving up');
                 this.curTarget = null;
                 return;
             }
@@ -74,6 +63,53 @@ var Baddie = me.ObjectEntity.extend({
                 this.attackCooldown = this.attackCooldownMax;
             }
         }
+    },
+});
+
+var Baddie = Unit.extend({
+    init: function(x, y, settings) {
+        settings = settings || {}
+        settings.image = settings.image || 'knight';
+        settings.spritewidth = settings.spritewidth || 32;
+        settings.spriteheight = settings.spriteheight || 32;
+
+        this.type = settings.type;
+
+        this.parent( x, y, settings );
+        this.alwaysUpdate = false;
+        this.baddie = true;
+
+        this.gravity = 0;
+
+        this.setVelocity( 1, 1 );
+        this.setFriction( 0.05, 0.05 );
+        this.targetAccel = 0.15;
+
+        this.maxTargetingDist = 150;
+        this.giveUpDist = 225;
+        this.findTargetTimerMax = 100;
+
+        this.attackCooldownMax = 30;
+        this.attackRange = settings.spritewidth;
+
+        this.attackCooldown = 0;
+
+        this.renderable.addAnimation( "idle", [ 0 ] );
+        this.renderable.addAnimation( "walk", [ 0 ] );
+        this.renderable.addAnimation( "attacking", [ 0 ] );
+
+        this.direction = 1;
+        this.collidable = true;
+
+        this.hp = this.hpMax = 5;
+        // Hack...
+        me.state.current().baddies.push(this);
+
+        this.renderable.animationspeed = 70;
+    },
+
+    getTargetList: function() {
+        return me.state.current().playerArmy;
     },
 
     attack: function(target) {
@@ -119,20 +155,12 @@ var Baddie = me.ObjectEntity.extend({
             }
         }, this);
     },
+
     update: function(dt) {
         this.parent(dt);
 
-        this.findTargetTimer--;
-        if (this.findTargetTimer <= 0) {
-            this.curTarget = radmars.findTarget(this.pos, me.state.current().playerArmy, this.maxTargetingDist);
-            this.findTargetTimer = this.findTargetTimerMax;
-        }
-
-        this.moveTowardTargetAndAttack();
-
-        if (this.attackCooldown >= 0) {
-            this.attackCooldown -= dt;
-        }
+        this.recheckTarget(dt);
+        this.moveTowardTargetAndAttack(dt);
 
         this.updateMovement();
         //this.checkBulletCollision();
