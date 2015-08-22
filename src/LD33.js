@@ -108,6 +108,9 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         //this.font.set("right");
 
         this.box = me.loader.getImage("selectBox");
+        this.hpBacking = me.loader.getImage("hp_bar_backing");
+        this.hpAlly = me.loader.getImage("hp_bar_ally");
+        this.hpBaddie = me.loader.getImage("hp_bar_baddie");
 
         this.render = false;
 
@@ -171,19 +174,19 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
        // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
 
+        me.state.current().baddies.forEach(function(target) {
+            var x = target.pos.x - me.game.viewport.pos.x;
+            var y = target.pos.y - me.game.viewport.pos.y- 5;
+            context.drawImage( this.hpBacking, x, y );
+            context.drawImage( this.hpBaddie, x, y, 16, 4 );
+        }.bind(this));
 
-        var baddies = me.state.current().baddies;
-
-        console.log("baddie! " + baddies);
-
-        for( var baddie in baddies){
-            if(baddie.pos != null ){
-                var x = baddie.pos.x - me.game.viewport.pos.x;
-                var y = baddie.pos.y - me.game.viewport.pos.y;
-                console.log("baddie! " + x + " , " + y);
-                context.drawImage( this.box, x, y );
-            }
-        }
+        me.state.current().playerArmy.forEach(function(target) {
+            var x = target.pos.x - me.game.viewport.pos.x;
+            var y = target.pos.y - me.game.viewport.pos.y- 5;
+            context.drawImage( this.hpBacking, x, y );
+            context.drawImage( this.hpAlly, x, y, 16, 4 );
+        }.bind(this));
 
         if(this.mouseDown){
             //this.mousePosLocal  = me.input.globalToLocal(me.input.mouse.pos.x, me.input.mouse.pos.y );

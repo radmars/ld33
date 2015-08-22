@@ -33,6 +33,7 @@ var GameResources = [
     _Image("hp_bar_ally"),
     _Image("hp_bar_backing"),
     _Image("hp_bar_baddie"),
+    _Image("unit_selected"),
 
     //splash
     _Image("splash"),
