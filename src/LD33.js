@@ -111,6 +111,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         this.hpBacking = me.loader.getImage("hp_bar_backing");
         this.hpAlly = me.loader.getImage("hp_bar_ally");
         this.hpBaddie = me.loader.getImage("hp_bar_baddie");
+        this.unitSelected = me.loader.getImage("unit_selected");
 
         this.render = false;
 
@@ -156,6 +157,39 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         }else{
             if( this.mouseDown ){
                 this.mouseDown = false;
+
+                //start of box
+                var sx = this.mouseDownPos.x;
+                var sy = this.mouseDownPos.y;
+
+                // width and height
+                var w = me.input.mouse.pos.x - this.mouseDownPos.x;
+                var h = me.input.mouse.pos.y - this.mouseDownPos.y;
+
+                //make inverse work
+                if( w < 0){
+                    sx += w;
+                    w = Math.abs(w);
+                }
+                if( h < 0){
+                    sy += h;
+                    h = Math.abs(h);
+                }
+
+                console.log("box! " + sx + " , " + sy + " / " + w + ", " + h);
+
+                me.state.current().playerArmy.forEach(function(target) {
+                    var x = target.pos.x - me.game.viewport.pos.x;
+                    var y = target.pos.y - me.game.viewport.pos.y;
+
+                    if( x > sx && x < sx + w && y > sy && y < sy + h ){
+                        target.selected = true;
+                    }else{
+                        target.selected = false;
+                    }
+
+
+                }.bind(this));
             }
         }
 
@@ -177,15 +211,24 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         me.state.current().baddies.forEach(function(target) {
             var x = target.pos.x - me.game.viewport.pos.x;
             var y = target.pos.y - me.game.viewport.pos.y- 5;
-            context.drawImage( this.hpBacking, x, y );
-            context.drawImage( this.hpBaddie, x, y, 16, 4 );
+            if(target.hp < target.hpMax){
+                context.drawImage( this.hpBacking, x, y );
+                if(target.hp  > 0) context.drawImage( this.hpBaddie, x, y, 32 * (target.hp / target.hpMax), 4 );
+            }
         }.bind(this));
 
         me.state.current().playerArmy.forEach(function(target) {
             var x = target.pos.x - me.game.viewport.pos.x;
             var y = target.pos.y - me.game.viewport.pos.y- 5;
-            context.drawImage( this.hpBacking, x, y );
-            context.drawImage( this.hpAlly, x, y, 16, 4 );
+            if(target.hp < target.hpMax){
+                context.drawImage( this.hpBacking, x, y );
+                if(target.hp  > 0)  context.drawImage( this.hpAlly, x, y, 32 * (target.hp / target.hpMax), 4 );
+            }
+
+            if(target.selected){
+                context.drawImage( this.unitSelected, x, y+5 );
+            }
+
         }.bind(this));
 
         if(this.mouseDown){
@@ -193,7 +236,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
             var player = me.state.current().player;
 
-            console.log( "mouse! " + (me.input.mouse.pos.x + me.game.viewport.pos.x)  + " , " +  (me.input.mouse.pos.y + me.game.viewport.pos.y) + " / player: " + player.pos.x + " , " + player.pos.y );
+            //console.log( "mouse! " + (me.input.mouse.pos.x + me.game.viewport.pos.x)  + " , " +  (me.input.mouse.pos.y + me.game.viewport.pos.y) + " / player: " + player.pos.x + " , " + player.pos.y );
             //console.log( "mouse! " +  me.input.mouse.pos.x  + " , " +  me.input.mouse.pos.y );
 
             context.drawImage( this.box, this.mouseDownPos.x, this.mouseDownPos.y, me.input.mouse.pos.x - this.mouseDownPos.x, me.input.mouse.pos.y - this.mouseDownPos.y );

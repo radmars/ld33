@@ -13,6 +13,12 @@ var Zombie = me.ObjectEntity.extend({
         this.zombie = true;
         this.player = settings.player;
         this.collidable = true;
+
+        this.hp = this.hpMax = 5;
+        this.selected = false;
+
+        // Hack...
+        me.state.current().playerArmy.push(this);
     },
 
     setPosition: function( number, outOf ){

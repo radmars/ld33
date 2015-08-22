@@ -38,6 +38,7 @@ var Baddie = me.ObjectEntity.extend({
         this.direction = 1;
         this.collidable = true;
 
+        this.hp = this.hpMax = 5;
         // Hack...
         me.state.current().baddies.push(this);
 
