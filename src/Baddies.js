@@ -16,8 +16,18 @@ var Baddie = me.ObjectEntity.extend({
         this.parent( x, y, settings );
         this.alwaysUpdate = false;
         this.baddie = true;
-        this.setVelocity( 3, 15 );
-        this.setFriction( 0.4, 0 );
+
+        this.setVelocity( 1, 1 );
+        this.setFriction( 0.05, 0.05 );
+        this.targetAccel = 0.15;
+        this.gravity = 0;
+
+        this.maxTargetingDist = 150;
+        this.giveUpDist = 225;
+        this.findTargetTimerMax = 100;
+        this.findTargetTimer = 40;
+        this.attackRange = settings.spritewidth;
+
         this.direction = 1;
         this.collidable = true;
         this.overworld = settings.overworld ? true : false;
@@ -26,6 +36,54 @@ var Baddie = me.ObjectEntity.extend({
         me.state.current().baddies.push(this);
 
         this.renderable.animationspeed = 70;
+    },
+
+    findTarget: function() {
+        console.log("finding target");
+        var closestDist = null;
+        var nextTarget = null;
+        var self = this;
+
+        me.state.current().playerArmy.forEach(function(target) {
+            var dist = target.pos.distance(self.pos);
+            if (dist < self.maxTargetingDist) {
+                if (!closestDist || dist < closestDist) {
+                    closestDist = dist;
+                    nextTarget = target;
+                }
+            }
+        });
+
+        if (closestDist) {
+            console.log("found target");
+            this.curTarget = nextTarget;
+        }
+    },
+
+    moveTowardTargetAndAttack: function() {
+        if (this.curTarget) {
+            var distVec = new me.Vector2d(this.curTarget.pos.x, this.curTarget.pos.y);
+            distVec.sub(this.pos);
+
+            // give up if too far away
+            if (distVec.length() > this.giveUpDist) {
+                console.log('giving up');
+                this.curTarget = null;
+                return;
+            }
+
+            if (distVec.length() < this.attackRange) {
+                this.attack();
+            }
+
+            distVec.normalize();
+            this.vel.x += distVec.x * this.targetAccel;
+            this.vel.y += distVec.y * this.targetAccel;
+        }
+    },
+
+    attack: function() {
+        console.log("attack!!!");
     },
 
     checkBulletCollision: function(){
@@ -60,10 +118,20 @@ var Baddie = me.ObjectEntity.extend({
             }
         }, this);
     },
+
     update: function(dt) {
         this.parent(dt);
+
+        this.findTargetTimer--;
+        if (this.findTargetTimer <= 0) {
+            this.findTarget();
+            this.findTargetTimer = this.findTargetTimerMax;
+        }
+
+        this.moveTowardTargetAndAttack();
+
         this.updateMovement();
-        this.checkBulletCollision();
+        //this.checkBulletCollision();
         return true;
     }
 });

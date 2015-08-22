@@ -229,6 +229,7 @@ var PlayScreen = me.ScreenObject.extend({
     init: function() {
         this.parent( true );
         me.input.bindKey(me.input.KEY.SPACE, "shoot");
+        this.playerArmy = [];
         this.baddies = [];
         this.pickups = [];
         this.subscription = me.event.subscribe(me.event.KEYDOWN, this.keyDown.bind(this));
