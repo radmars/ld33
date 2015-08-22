@@ -48,6 +48,7 @@ var GameResources = [
     _Image("knight_zombie"),
 
     _Image("baddieBullet"),
+    _Image("magicMissile"),
 
     // Levels
     _Image( "collision_tiles"),

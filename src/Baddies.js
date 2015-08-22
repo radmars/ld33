@@ -43,28 +43,6 @@ var Baddie = me.ObjectEntity.extend({
         this.renderable.animationspeed = 70;
     },
 
-    findTarget: function() {
-        console.log("finding target");
-        var closestDist = null;
-        var nextTarget = null;
-        var self = this;
-
-        me.state.current().playerArmy.forEach(function(target) {
-            var dist = target.pos.distance(self.pos);
-            if (dist < self.maxTargetingDist) {
-                if (!closestDist || dist < closestDist) {
-                    closestDist = dist;
-                    nextTarget = target;
-                }
-            }
-        });
-
-        if (closestDist) {
-            console.log("found target");
-            this.curTarget = nextTarget;
-        }
-    },
-
     moveTowardTargetAndAttack: function() {
         if (this.curTarget) {
             var distVec = new me.Vector2d(this.curTarget.pos.x, this.curTarget.pos.y);
@@ -146,7 +124,7 @@ var Baddie = me.ObjectEntity.extend({
 
         this.findTargetTimer--;
         if (this.findTargetTimer <= 0) {
-            this.findTarget();
+            this.curTarget = radmars.findTarget(this.pos, me.state.current().playerArmy, this.maxTargetingDist);
             this.findTargetTimer = this.findTargetTimerMax;
         }
 
@@ -195,26 +173,63 @@ var Musketeer = Baddie.extend({
         var success = false;
 
         if (Math.abs(targetVec.x) < this.targetWidth) {
-            this.shoot(0, this.bulletVel * ((target.pos.y > this.pos.y) ? 1 : -1));
+            this.shoot(0, this.bulletVel * ((target.pos.y > this.pos.y) ? 1 : -1), {});
             success = true;
         }
         else if (Math.abs(targetVec.y) < this.targetWidth) {
-            this.shoot(this.bulletVel * ((target.pos.x > this.pos.x) ? 1 : -1), 0);
+            this.shoot(this.bulletVel * ((target.pos.x > this.pos.x) ? 1 : -1), 0, {});
             success = true;
         }
 
         return success;
     },
 
-    shoot: function(x, y) {
-        var settings = {};
+    shoot: function(velX, velY, settings) {
         var pos = new me.Vector2d(this.pos.x, this.pos.y);
         var bullet = new MusketBullet(pos.x, pos.y, settings);
-        bullet.setDir(x, y);
+        bullet.setDir(velX, velY);
 
         me.game.world.addChild(bullet);
         me.game.world.sort();
     }
+});
+
+
+var Mage = Musketeer.extend({
+    init: function(x, y, settings) {
+        settings.image = 'knight_zombie';
+        settings.spritewidth = 32;
+        settings.spriteheight = 32;
+
+        this.parent(x, y, settings);
+
+        this.bulletVel = 7;
+
+        this.setVelocity( 0.25, 0.25 );
+
+        this.maxTargetingDist = 350;
+        this.giveUpDist = 400;
+        this.findTargetTimerMax = 100;
+        this.findTargetTimer = 40;
+
+        this.attackCooldownMax = 3000;
+        this.attackRange = 300;
+    },
+
+    attack: function(target) {
+        var targetVec = new me.Vector2d(target.pos.x, target.pos.y);
+        targetVec.sub(this.pos);
+
+        targetVec.normalize();
+
+        var settings = {};
+        settings.image = 'magicMissile';
+        var killspot = new me.Vector2d(target.pos.x, target.pos.y);
+        settings.killspot = killspot;
+        this.shoot(targetVec.x * this.bulletVel, targetVec.y * this.bulletVel, settings);
+
+        return true;
+    },
 });
 
 
