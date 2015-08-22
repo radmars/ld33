@@ -238,41 +238,6 @@ var GameEnder = me.ObjectEntity.extend({
     }
 });
 
-var Zombie = me.ObjectEntity.extend({
-    init: function(x, y, settings) {
-        settings = settings || {};
-        settings.image = 'zombie';
-        settings.spritewidth = 16;
-        settings.spriteheight = 16;
-        settings.height = 16;
-        settings.width = 16;
-        this.parent(x, y, settings);
-        this.z = 300;
-        this.zombie = true;
-    },
-});
-
-
-var Corpse = me.ObjectEntity.extend({
-    init: function(x, y, settings) {
-        settings = settings || {};
-        settings.image = 'corpse';
-        settings.spritewidth = 16;
-        settings.spriteheight = 16;
-        settings.height = 16;
-        settings.width = 16;
-        this.parent(x, y, settings);
-        this.z = 300;
-        this.corpse = true;
-    },
-
-    convertToZombie: function() {
-        me.game.world.removeChild(this);
-        var z = new Zombie(this.pos.x, this.pos.y);
-        me.game.world.addChild(z);
-    },
-});
-
 /** The game play state... */
 var PlayScreen = me.ScreenObject.extend({
     init: function() {
