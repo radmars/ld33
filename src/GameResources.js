@@ -23,7 +23,7 @@ var GameResources = [
     _Image( "intro_radmars2" ),
 
     // Corpses
-    _Image( "zombie" ),
+    _Image( "knight_zombie" ),
     _Image( "corpse" ),
 
     // ui

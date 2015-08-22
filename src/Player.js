@@ -1,11 +1,11 @@
 var Zombie = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {};
-        settings.image = 'zombie';
-        settings.spritewidth = 16;
-        settings.spriteheight = 16;
-        settings.height = 16;
-        settings.width = 16;
+        settings.image = 'knight_zombie';
+        settings.spritewidth = 32;
+        settings.spriteheight = 32;
+        settings.height = 32;
+        settings.width = 32;
         this.parent(x, y, settings);
         this.setVelocity( 1, 1 );
         this.z = 300;
@@ -16,6 +16,8 @@ var Zombie = me.ObjectEntity.extend({
 
         this.hp = this.hpMax = 5;
         this.selected = false;
+
+        this.followDist = Math.round(Math.random() * 32 + 32);
 
         // Hack...
         me.state.current().playerArmy.push(this);
@@ -31,31 +33,39 @@ var Zombie = me.ObjectEntity.extend({
             // TODO: Chase enemies
         }
         else {
-            var targetPosition = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
-            var targetAngle = (this.number + 1) / this.outOf * Math.PI * 2;
-            var radius = 30 + this.outOf * 3
+            var toPlayer = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
+            toPlayer.sub(this.pos);
 
-            targetPosition.x += Math.cos(targetAngle) * radius;
-            targetPosition.y += Math.sin(targetAngle) * radius;
-            var distVec = targetPosition;
-            distVec.sub(this.pos);
-            var distance = distVec.length();
-            if(distance > 2) {
-                distVec.normalize();
-                this.vel.x = distVec.x;
-                this.vel.y = distVec.y;
-            }
-            else {
+            if(toPlayer.length() <= this.followDist ){
                 this.vel.x = this.vel.y = 0;
+            }else{
+                toPlayer.normalize();
+                this.vel.x = toPlayer.x;
+                this.vel.y = toPlayer.y;
             }
 
-        // TODO: Follow player
+            me.state.current().playerArmy.forEach(function(target) {
+                if(target != this){
+                    var targetToMe = new me.Vector2d( this.pos.x, this.pos.y );
+                    targetToMe.sub(target.pos);
+
+                    if(targetToMe.length() < 32){
+                        targetToMe.normalize();
+                        targetToMe.x *= 32;
+                        targetToMe.y *= 32;
+                        this.pos.x = target.pos.x + targetToMe.x;
+                        this.pos.y = target.pos.y + targetToMe.y;
+                    }
+                }
+
+            }.bind(this));
+
         }
 
        this.parent(dt);
        this.updateMovement();
        return true;
-    },
+    }
 });
 
 
