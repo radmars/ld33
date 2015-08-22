@@ -24,6 +24,7 @@ var LD33 = function() {
             me.plugin.debug.show();
         }
 
+
         me.input.preventDefault = true;
 
         me.audio.init ("m4a,ogg" );
@@ -35,9 +36,18 @@ var LD33 = function() {
 
         me.state.change( me.state.LOADING );
 
+        document.getElementById("canvas").addEventListener('contextmenu', this.rightClickProxy.bind(this), false);
+
 
         return;
     };
+
+    this.rightClickProxy = function(e){
+        if (e.button === 2) {
+            e.preventDefault();
+            return false;
+        }
+    }
 
     /**
      * Do stuff post-resource-load.
@@ -62,6 +72,8 @@ var LD33 = function() {
         me.pool.register( "pickup", Pickup );
         me.pool.register( "levelchanger", LevelChanger );
         me.pool.register( "gameender", GameEnder );
+
+
     };
 };
 
@@ -119,19 +131,29 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         // make sure we use screen coordinates
         this.floating = true;
 
-        this.mouseDown = false;
+        this.mouseLeftDown = false;
         this.mouseDownPos = new me.Vector2d(0, 0);
 
         // enable the keyboard
-        me.input.bindKey(me.input.KEY.O, "proxy_mouse");
+        me.input.bindKey(me.input.KEY.O, "proxy_mouse_left");
         me.input.bindPointer(me.input.KEY.O);
         me.input.bindPointer(me.input.mouse.LEFT, me.input.KEY.O);
 
+       // me.input.bindKey(me.input.KEY.P, "proxy_mouse_right");
+       // me.input.bindPointer(me.input.KEY.P);
+       // me.input.bindPointer(me.input.mouse.RIGHT, me.input.KEY.P);
 
+        this.rightClickAdded = false;
     },
 
     startGame: function(){
         this.render = true;
+
+        if( !this.rightClickAdded  ){
+            console.log("[LD33.HUD.BoxDisplay](startGame) adding HUD rightclick proxy");
+            this.rightClickAdded = true;
+            document.getElementById("canvas").addEventListener('contextmenu', this.rightClick.bind(this), false);
+        }
 
         /*
         var self = this;
@@ -145,19 +167,46 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
     endGame: function(){
         this.render = false;
+        if( this.rightClickAdded  ){
+            console.log("[LD33.HUD.BoxDisplay](endGame) removing HUD rightclick proxy");
+            this.rightClickAdded = false;
+            document.getElementById("canvas").removeEventListener('contextmenu', this.rightClick.bind(this), false);
+        }
+    },
+
+    rightClick: function(e){
+        if (e.button === 2) {
+            if(this.render){
+                console.log("right click");
+                //me.input.mouse.pos.x - this.mouseDownPos.x, me.input.mouse.pos.y - this.mouseDownPos.y
+                var selected = 0;
+                var x = me.input.mouse.pos.x + me.game.viewport.pos.x;
+                var y = me.input.mouse.pos.y + me.game.viewport.pos.y;
+
+                me.state.current().playerArmy.forEach(function(target) {
+                    if(target.selected){
+                        target.moveToPos(x,y);
+                    }
+
+                }.bind(this));
+
+            }
+        }
     },
 
     update : function () {
-        if (me.input.isKeyPressed('proxy_mouse'))  {
-            if( !this.mouseDown ){
-                this.mouseDown = true;
+        if(!this.render) return;
+
+        if (me.input.isKeyPressed('proxy_mouse_left'))  {
+            if( !this.mouseLeftDown ){
+                this.mouseLeftDown = true;
                 this.mouseDownPos.x = me.input.mouse.pos.x;
                 this.mouseDownPos.y = me.input.mouse.pos.y;
             }
 
         }else{
-            if( this.mouseDown ){
-                this.mouseDown = false;
+            if( this.mouseLeftDown ){
+                this.mouseLeftDown = false;
 
                 //start of box
                 var sx = this.mouseDownPos.x;
@@ -232,7 +281,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
         }.bind(this));
 
-        if(this.mouseDown){
+        if(this.mouseLeftDown){
             //this.mousePosLocal  = me.input.globalToLocal(me.input.mouse.pos.x, me.input.mouse.pos.y );
 
             var player = me.state.current().player;

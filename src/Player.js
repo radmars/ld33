@@ -19,8 +19,17 @@ var Zombie = me.ObjectEntity.extend({
 
         this.followDist = Math.round(Math.random() * 32 + 32);
 
+        this.moveToTargetPos = false;
+        this.moveTo = new me.Vector2d(0,0);
+
         // Hack...
         me.state.current().playerArmy.push(this);
+    },
+
+    moveToPos: function (x,y){
+        this.moveToTargetPos = true;
+        this.moveTo.x = x;
+        this.moveTo.y = y;
     },
 
     setPosition: function( number, outOf ){
@@ -33,15 +42,19 @@ var Zombie = me.ObjectEntity.extend({
             // TODO: Chase enemies
         }
         else {
-            var toPlayer = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
-            toPlayer.sub(this.pos);
+            var toTarget = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
+            if(this.moveToTargetPos){
+                toTarget.x = this.moveTo.x;
+                toTarget.y = this.moveTo.y;
+            }
+            toTarget.sub(this.pos);
 
-            if(toPlayer.length() <= this.followDist ){
+            if(toTarget.length() <= this.followDist ){
                 this.vel.x = this.vel.y = 0;
             }else{
-                toPlayer.normalize();
-                this.vel.x = toPlayer.x;
-                this.vel.y = toPlayer.y;
+                toTarget.normalize();
+                this.vel.x = toTarget.x;
+                this.vel.y = toTarget.y;
             }
 
             me.state.current().playerArmy.forEach(function(target) {
@@ -157,6 +170,10 @@ var Player = me.ObjectEntity.extend({
         me.input.bindKey(me.input.KEY.S,    "down");
         me.input.bindKey(me.input.KEY.A,    "left");
         me.input.bindKey(me.input.KEY.D,    "right");
+    },
+
+    moveToPos: function (x,y){
+
     },
 
     recalculateZombiePositions: function() {
