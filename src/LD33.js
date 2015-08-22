@@ -70,14 +70,17 @@ LD33.data = {souls:1, collectedSouls:0, collectedSoulsMax:15, beatGame:false};
 LD33.HUD = LD33.HUD || {};
 
 LD33.HUD.Container = me.ObjectContainer.extend({
-    init: function() {
+    init: function(baddies, playerArmy) {
         // call the constructor
         this.parent();
+
+        this.baddies = baddies;
+        this.playerArmy = playerArmy;
 
         this.isPersistent = true;
         this.collidable = false;
 
-        this.boxDisplay = new LD33.HUD.BoxDisplay(0, 0);
+        this.boxDisplay = new LD33.HUD.BoxDisplay();
         this.addChild(this.boxDisplay);
 
         // make sure our object is always draw first
@@ -96,11 +99,11 @@ LD33.HUD.Container = me.ObjectContainer.extend({
 
 LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
-    init: function(x, y) {
+    init: function() {
 
         // call the parent constructor
         // (size does not matter here)
-        this.parent(new me.Vector2d(x, y), 0, 0);
+        this.parent(new me.Vector2d(0, 0), 0, 0);
 
         // create a font
         this.font = new me.BitmapFont("32x32_font", 32);
@@ -115,7 +118,6 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
         this.mouseDown = false;
         this.mouseDownPos = new me.Vector2d(0, 0);
-        this.mousePosLocal = new me.Vector2d(0, 0);
 
         // enable the keyboard
         me.input.bindKey(me.input.KEY.O, "proxy_mouse");
@@ -283,7 +285,7 @@ var PlayScreen = me.ScreenObject.extend({
         this.pickups = [];
         this.subscription = me.event.subscribe(me.event.KEYDOWN, this.keyDown.bind(this));
 
-        this.HUD = new LD33.HUD.Container();
+        this.HUD = new LD33.HUD.Container( this.baddies, this.playerArmy );
         me.game.world.addChild(this.HUD);
         LD33.data.beatGame = false;
 

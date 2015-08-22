@@ -30,6 +30,9 @@ var GameResources = [
     _Image("16x16_font"),
     _Image("32x32_font"),
     _Image("selectBox"),
+    _Image("hp_bar_ally"),
+    _Image("hp_bar_backing"),
+    _Image("hp_bar_baddie"),
 
     //splash
     _Image("splash"),
