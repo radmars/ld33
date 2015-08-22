@@ -117,7 +117,7 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
         // enable the keyboard
         me.input.bindKey(me.input.KEY.O, "proxy_mouse");
         me.input.bindPointer(me.input.KEY.O);
-        me.input.bindPointer(me.input.mouse.RIGHT, me.input.KEY.O);
+        me.input.bindPointer(me.input.mouse.LEFT, me.input.KEY.O);
 
 
     },

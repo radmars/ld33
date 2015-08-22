@@ -46,6 +46,7 @@ var GameResources = [
 
     _Image( "world_1_1"),
     _Level( "level1" ),
+    _Level( "level_debug_1" ),
 
     _Audio( "radmarslogo" ),
 ];
