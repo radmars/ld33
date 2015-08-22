@@ -23,11 +23,6 @@ var Zombie = me.ObjectEntity.extend({
         me.state.current().playerArmy.push(this);
     },
 
-    setPosition: function( number, outOf ){
-        this.number = number;
-        this.outOf = outOf;
-    },
-
     update: function(dt) {
         if(false) {
             // TODO: Chase enemies
@@ -159,31 +154,23 @@ var Player = me.ObjectEntity.extend({
         me.input.bindKey(me.input.KEY.D,    "right");
     },
 
-    recalculateZombiePositions: function() {
-        // TODO: Hacks. Player is in the player army list...
-        var army =  me.state.current().playerArmy;
-        var length = army.length - 1;
-        army.forEach(function(e, i) {
-            if(e.zombie) {
-                e.setPosition(i, length);
-            }
-        });
-    },
-
     addZombie: function(z) {
         me.state.current().playerArmy.push(z);
-        this.recalculateZombiePositions();
     },
 
     shoot: function(){
 
     },
 
-    playAnimation: function(a) {
-        var self = this;
-        self.renderable.setCurrentAnimation(a, function() {
-            self.renderable.setCurrentAnimation("idle");
-        });
+    maybeSwitchAnimation: function(a, returnToIdle) {
+        if( ! this.renderable.isCurrentAnimation(a) ){
+            this.playAnimation(a, returnToIdle);
+        }
+    },
+
+    playAnimation: function(a, returnToIdle) {
+        var cb = returnToIdle ? this.renderable.setCurrentAnimation.bind(this.renderable, "idle") : null;
+        this.renderable.setCurrentAnimation(a, cb);
     },
 
 
@@ -197,9 +184,7 @@ var Player = me.ObjectEntity.extend({
 
         if(this.deathTimer > 0){
             this.deathTimer-=dt;
-            if( ! this.renderable.isCurrentAnimation("die") ){
-                this.renderable.setCurrentAnimation("die");
-            }
+            this.maybeSwitchAnimation("die", false);
             this.updateMovement();
             if(this.deathTimer<=0){
                 me.state.change( me.state.GAMEOVER);
@@ -234,31 +219,21 @@ var Player = me.ObjectEntity.extend({
             this.vel.x = -this.maxVel;
             this.flipX(true);
             this.direction = -1;
-            if( ! this.renderable.isCurrentAnimation("walk") ){
-                this.renderable.setCurrentAnimation("walk", function() {
-                    self.renderable.setCurrentAnimation("idle");
-                })
-            }
+            this.maybeSwitchAnimation("walk", true);
         } else if (me.input.isKeyPressed('right')) {
             this.vel.x = this.maxVel;
             this.flipX(false);
             this.direction = 1;
-            if( ! this.renderable.isCurrentAnimation("walk") ){
-                this.playAnimation("walk");
-            }
+            this.maybeSwitchAnimation("walk", true);
         }
         if (me.input.isKeyPressed('up'))  {
             this.vel.y = -this.maxVel;
             this.direction = -1;
-            if( !this.renderable.isCurrentAnimation("walk") ){
-                this.playAnimation("walk");
-            }
+            this.maybeSwitchAnimation("walk", true);
         } else if (me.input.isKeyPressed('down')) {
             this.vel.y = this.maxVel;
             this.direction = 1;
-            if( !this.renderable.isCurrentAnimation("walk") ){
-                this.playAnimation("walk");
-            }
+            this.maybeSwitchAnimation("walk", true);
         }
 
         // Col checker is bound to checkCollisions.
