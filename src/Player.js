@@ -11,24 +11,18 @@ var Player = me.ObjectEntity.extend({
         this.hitTimer = 0;
         this.hitVelX = 0;
         this.image =  me.loader.getImage('tinyman');
-        this.necroMode = true;
-        this.overworld = false;
 
         this.z = 200;
-        this.shootDelay = 0;
         this.disableInputTimer = 0;
 
         var shape = this.getShape();
-        shape.pos.x = 44;
+        shape.pos.x = 0;
         shape.pos.y = 0;
-        shape.resize(70, 110);
+        shape.resize(32, 32);
         me.state.current().player = this;
 
         this.collisionTimer = 0;
         this.deathTimer = 0;
-        this.doubleJumped = false;
-
-        this.animationSuffix = "";
 
         this.maxVel = 4;
 
@@ -38,7 +32,7 @@ var Player = me.ObjectEntity.extend({
 
         this.gravity = 0;
 
-        this.centerOffsetX = 75;
+        this.centerOffsetX = 0;
         this.centerOffsetY = 0;
 
         this.followPos = new me.Vector2d(
@@ -51,77 +45,33 @@ var Player = me.ObjectEntity.extend({
 
         this.renderable.animationspeed = 150;
         this.renderable.addAnimation( "idle", [ 0 ] );
-        this.renderable.addAnimation( "double_jump", [ 0 ] );
-        this.renderable.addAnimation( "jump", [ 0 ] );
-        this.renderable.addAnimation( "jump_extra", [ 0 ] );
-        this.renderable.addAnimation( "fall", [ 0 ] );
         this.renderable.addAnimation( "walk", [ 0 ] );
-        this.renderable.addAnimation( "shoot", [ 0 ] );
-        this.renderable.addAnimation( "shoot_jump", [ 0 ] );
         this.renderable.addAnimation( "hit", [ 0 ] );
-
         this.renderable.addAnimation( "die", [ 0 ] );
 
-        this.renderable.setCurrentAnimation("idle" + this.animationSuffix);
+        this.renderable.setCurrentAnimation("idle");
 
         me.input.bindKey(me.input.KEY.LEFT,  "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.UP,   "up");
         me.input.bindKey(me.input.KEY.DOWN, "down");
+
         me.input.bindKey(me.input.KEY.W,    "up");
         me.input.bindKey(me.input.KEY.S,    "down");
         me.input.bindKey(me.input.KEY.A,    "left");
         me.input.bindKey(me.input.KEY.D,    "right");
-    },
 
-    toUnderworld: function(){
-        if(this.overworld == true) return;
-
-        this.overworld = true;
-        this.necroMode = false;
-        this.setVelocity( 7, 20 );
-        this.setFriction( 0.7, 0 );
-
-        this.disableInputTimer = 1500;
-
-        LD30.data.collectedSouls += LD30.data.souls;
-        this.renderable.animationspeed = 165;
-        if(LD30.data.souls > 0){
-            for( var i=0; i<LD30.data.souls; i++){
-                var b = new EnterPortalParticle(this.pos.x, this.pos.y, {delay:i*50});
-                me.game.world.addChild(b);
-            }
-            me.game.world.sort();
-            LD30.data.souls = 0;
-        }
-        this.animationSuffix = "_normal";
     },
 
     shoot: function(){
-        if(this.necroMode && this.shootDelay <= 0){
-            me.audio.play( "shoot", false, null, 0.6 );
-            var b = new Bullet(this.pos.x + 30*this.direction, this.pos.y+40, { direction: this.direction });
-            me.game.world.addChild(b);
-            me.game.world.sort();
-            this.shootDelay = 200;
-            var self = this;
-            if(this.jumping || this.falling){
-                this.renderable.setCurrentAnimation("shoot_jump" + this.animationSuffix, function() {
-                    self.renderable.setCurrentAnimation("fall" + self.animationSuffix);
-                });
-            }else{
-                this.renderable.setCurrentAnimation("shoot" + this.animationSuffix, function() {
-                    self.renderable.setCurrentAnimation("idle" + self.animationSuffix);
-                })
-            }
 
-
-        }
     },
 
     update: function(dt) {
         var self = this;
         this.parent(dt);
+
+
 
         if(this.shootDelay >0){
             this.shootDelay-=dt;
@@ -150,8 +100,6 @@ var Player = me.ObjectEntity.extend({
             return true;
         }
 
-
-
         if(this.collisionTimer > 0){
             this.collisionTimer-=dt;
         }
@@ -168,64 +116,60 @@ var Player = me.ObjectEntity.extend({
             this.vel.x = -this.maxVel;
             this.flipX(true);
             this.direction = -1;
-            if( ! this.renderable.isCurrentAnimation("walk" + this.animationSuffix) ){
-                this.renderable.setCurrentAnimation("walk" + this.animationSuffix, function() {
-                    self.renderable.setCurrentAnimation("idle" + self.animationSuffix);
+            if( ! this.renderable.isCurrentAnimation("walk") ){
+                this.renderable.setCurrentAnimation("walk", function() {
+                    self.renderable.setCurrentAnimation("idle");
                 })
             }
         } else if (me.input.isKeyPressed('right')) {
             this.vel.x = this.maxVel;
             this.flipX(false);
             this.direction = 1;
-            if( ! this.renderable.isCurrentAnimation("walk" + this.animationSuffix) ){
-                this.renderable.setCurrentAnimation("walk" + this.animationSuffix, function() {
-                    self.renderable.setCurrentAnimation("idle" + self.animationSuffix);
+            if( ! this.renderable.isCurrentAnimation("walk") ){
+                this.renderable.setCurrentAnimation("walk", function() {
+                    self.renderable.setCurrentAnimation("idle");
                 })
             }
         }
-
         if (me.input.isKeyPressed('up'))  {
             this.vel.y = -this.maxVel;
             this.direction = -1;
-            if( !this.renderable.isCurrentAnimation("walk" + this.animationSuffix) ){
-                this.renderable.setCurrentAnimation("walk" + this.animationSuffix, function() {
-                    self.renderable.setCurrentAnimation("idle" + self.animationSuffix);
+            if( !this.renderable.isCurrentAnimation("walk") ){
+                this.renderable.setCurrentAnimation("walk", function() {
+                    self.renderable.setCurrentAnimation("idle");
                 })
             }
         } else if (me.input.isKeyPressed('down')) {
             this.vel.y = this.maxVel;
             this.direction = 1;
-            if( !this.renderable.isCurrentAnimation("walk" + this.animationSuffix) ){
-                this.renderable.setCurrentAnimation("walk" + this.animationSuffix, function() {
-                    self.renderable.setCurrentAnimation("idle" + self.animationSuffix);
+            if( !this.renderable.isCurrentAnimation("walk") ){
+                this.renderable.setCurrentAnimation("walk", function() {
+                    self.renderable.setCurrentAnimation("idle");
                 })
             }
         }
 
         me.game.world.collide(this, true).forEach(function(col) {
-            if(this.hitTimer <= 0 && this.collisionTimer <=0 && col && col.obj.baddie && (this.overworld == col.obj.overworld) ) {
+            if( this.hitTimer <= 0 && this.collisionTimer <=0 && col && col.obj.baddie ) {
 
                 //TODO: change character to normal texture here!
                 //TODO: if pickups <= 0, die!
 
-                if(LD30.data.souls > 0){
+                if( true ){
                     me.game.viewport.shake(5, 250);
                     for( var i=0; i<LD30.data.souls; i++){
                         var b = new OnHitPickup(this.pos.x, this.pos.y, {});
                         me.game.world.addChild(b);
                     }
                     me.game.world.sort();
-                    LD30.data.souls = 0;
-                    //this.necroMode = false;
-                    //this.animationSuffix = "_normal";
-                    me.audio.play( "hit" );
-                    me.audio.play( "lostsouls" );
+                  //  me.audio.play( "hit" );
+                  //  me.audio.play( "lostsouls" );
                 }
                 else {
                     this.deathTimer = 2000;
                     //intensity, duration
                     me.game.viewport.shake(10, 2000);
-                    me.audio.play( "death" );
+                 //   me.audio.play( "death" );
                 }
 
                 this.hitTimer = 250;
@@ -238,8 +182,8 @@ var Player = me.ObjectEntity.extend({
                     this.vel.x = this.hitVelX = -50;
                 }
                 this.vel.y = -20;
-                this.renderable.setCurrentAnimation("hit" + this.animationSuffix, function() {
-                    self.renderable.setCurrentAnimation("idle" + self.animationSuffix);
+                this.renderable.setCurrentAnimation("hit", function() {
+                    self.renderable.setCurrentAnimation("idle");
                 });
             }
         }, this);

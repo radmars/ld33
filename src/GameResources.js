@@ -28,6 +28,7 @@ var GameResources = [
     // ui
     _Image("16x16_font"),
     _Image("32x32_font"),
+    _Image("selectBox"),
 
     //splash
     _Image("splash"),

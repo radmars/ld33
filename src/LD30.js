@@ -12,6 +12,18 @@ var LD30 = function() {
             alert ("Yer browser be not workin");
         }
 
+        // add "#debug" to the URL to enable the debug Panel
+
+        if ( false ) { //document.location.hash === "#debug"
+            window.onReady(function () {
+                me.plugin.register.defer(debugPanel, "debug");
+
+            });
+        }
+
+        me.input.preventDefault = true;
+        me.debug.renderHitBox = true;
+
         me.audio.init ("m4a,ogg" );
 
         // Sync up post loading stuff.
@@ -63,46 +75,60 @@ LD30.HUD.Container = me.ObjectContainer.extend({
         this.isPersistent = true;
         this.collidable = false;
 
+        this.boxDisplay = new LD30.HUD.BoxDisplay(0, 0);
+        this.addChild(this.boxDisplay);
+
         // make sure our object is always draw first
         this.z = Infinity;
         this.name = "HUD";
-        this.soulDisplay = new LD30.HUD.SoulDisplay(25, 25);
-        this.addChild(this.soulDisplay);
     },
 
     startGame:function(){
-        this.soulDisplay.startGame();
+        this.boxDisplay.startGame();
     },
 
     endGame: function(){
-        this.soulDisplay.endGame();
-    },
+        this.boxDisplay.endGame();
+    }
 });
 
-LD30.HUD.SoulDisplay = me.Renderable.extend( {
-    /**
-     * constructor
-     */
+LD30.HUD.BoxDisplay = me.Renderable.extend( {
+
     init: function(x, y) {
 
         // call the parent constructor
         // (size does not matter here)
-        this.parent(new me.Vector2d(x, y), 10, 10);
+        this.parent(new me.Vector2d(x, y), 0, 0);
 
         // create a font
         this.font = new me.BitmapFont("32x32_font", 32);
         //this.font.set("right");
 
+        this.box = me.loader.getImage("selectBox");
+
         this.render = false;
 
         // make sure we use screen coordinates
         this.floating = true;
+
+        this.mouseDown = false;
+        this.mouseDownPos = new me.Vector2d(0, 0);
+
+        // enable the keyboard
+        me.input.bindKey(me.input.KEY.O, "proxy_mouse");
+        me.input.bindPointer(me.input.KEY.O);
+        me.input.bindPointer(me.input.mouse.RIGHT, me.input.KEY.O);
+
+
+
+
     },
 
     startGame: function(){
         this.render = true;
-        var self = this;
+
         /*
+        var self = this;
         new me.Tween(self.findGatePos).to({x:100}, 500).easing(me.Tween.Easing.Quintic.Out).delay(1000).onComplete(function(){
             new me.Tween(self.findGatePos).to({x:1000}, 1000).easing(me.Tween.Easing.Quintic.In).delay(2000).onComplete(function(){
                 self.showFindGate = false;
@@ -116,14 +142,19 @@ LD30.HUD.SoulDisplay = me.Renderable.extend( {
     },
 
     update : function () {
-        this.souls =  LD30.data.souls;
+        if (me.input.isKeyPressed('proxy_mouse'))  {
+            // console.log( "mouse! " +  me.input.mouse.pos.x  + " , " +  me.input.mouse.pos.y );
+        }
+
         return true;
     },
 
     draw : function (context) {
         if(!this.render)return;
-    }
 
+       // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
+        context.drawImage( this.box, this.pos.x + me.input.mouse.pos.x, this.pos.y + me.input.mouse.pos.y );
+    }
 });
 
 

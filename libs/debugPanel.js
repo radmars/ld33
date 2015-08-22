@@ -54,7 +54,7 @@
 		frameDrawTime : 0,
 
 		// minimum melonJS version expected
-		version : "1.0.1",
+		version : "1.0.2",
 
 		/** @private */
 		init : function(showKey, hideKey) {
@@ -91,10 +91,10 @@
 
 			// clickable areas
 			this.area.renderHitBox = new me.Rect(new me.Vector2d(160,5),15,15);
-      this.area.renderVelocity = new me.Rect(new me.Vector2d(165,18),15,15);
+            this.area.renderVelocity = new me.Rect(new me.Vector2d(165,18),15,15);
 
-      this.area.renderDirty = new me.Rect(new me.Vector2d(270,5),15,15);
-      this.area.renderCollisionMap = new me.Rect(new me.Vector2d(270,18),15,15);
+            this.area.renderDirty = new me.Rect(new me.Vector2d(270,5),15,15);
+            this.area.renderCollisionMap = new me.Rect(new me.Vector2d(270,18),15,15);
             // some internal string/length
             this.help_str      = "(s)how/(h)ide";
             this.help_str_len = this.font.measureText(me.video.getSystemContext(), this.help_str).width;
