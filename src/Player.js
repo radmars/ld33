@@ -144,8 +144,9 @@ var Player = me.ObjectEntity.extend({
     },
 
     recalculateZombiePositions: function() {
+        // TODO: Hacks. Player is in the player army list...
         var army =  me.state.current().playerArmy;
-        var length = army.length;
+        var length = army.length - 1;
         army.forEach(function(e, i) {
             if(e.zombie) {
                 e.setPosition(i, length);
