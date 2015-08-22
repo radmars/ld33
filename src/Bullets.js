@@ -53,17 +53,25 @@ var Bullet = me.ObjectEntity.extend({
 var MusketBullet = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {};
-        settings.image = "baddieBullet";
-        settings.spritewidth = 64;
-        settings.spriteheight = 60;
+        settings.image = settings.image || "baddieBullet";
+        settings.spritewidth = settings.spritewidth || 64;
+        settings.spriteheight = settings.spriteheight || 60;
         settings.height = 30;
         settings.width = 30;
 
+        this.killspot = settings.killspot;
+
         this.parent( x, y, settings );
+        this.alwaysUpdate = true;
         this.baddie = true;
         this.collidable = true;
         this.z = 300;
         this.gravity = 0;
+    },
+
+    onCollision: function() {
+        console.log("bihfgihg");
+        this.die();
     },
 
     setDir: function(x, y) {
@@ -88,6 +96,10 @@ var MusketBullet = me.ObjectEntity.extend({
         if( this.vel.x == 0 && this.vel.y ==0 ) {
             // we hit a wall?
             this.die();
+        }
+        if (this.killspot && this.killspot.distance(this.pos) < 5) {
+            this.die();
+            // Add explosion here?
         }
 
         return true;

@@ -54,6 +54,7 @@ var LD33 = function() {
         me.pool.register( "player", Player );
         me.pool.register( "baddie", Baddie );
         me.pool.register( "musketeer", Musketeer );
+        me.pool.register( "mage", Mage );
         me.pool.register( "corpse", Corpse );
 
         me.pool.register( "fish", Fish );

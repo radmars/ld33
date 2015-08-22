@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="4">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="5">
  <properties>
   <property name="background_color" value="#898989"/>
  </properties>
@@ -48,5 +48,6 @@
   <object id="1" name="player" x="308" y="383" width="32" height="32"/>
   <object id="2" name="baddie" x="122" y="90" width="32" height="32"/>
   <object id="3" name="musketeer" x="793" y="179" width="32" height="32"/>
+  <object id="4" name="mage" x="832" y="586" width="32" height="32"/>
  </objectgroup>
 </map>
