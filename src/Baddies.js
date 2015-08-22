@@ -27,7 +27,7 @@ var Unit = me.ObjectEntity.extend({
 
     attack: function() {
         throw "You need to overload this function!";
-    }
+    },
 
     moveTowardTargetAndAttack: function(dt) {
         if (this.attackCooldown >= 0) {
