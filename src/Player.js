@@ -1,3 +1,67 @@
+var Zombie = me.ObjectEntity.extend({
+    init: function(x, y, settings) {
+        settings = settings || {};
+        settings.image = 'zombie';
+        settings.spritewidth = 16;
+        settings.spriteheight = 16;
+        settings.height = 16;
+        settings.width = 16;
+        this.parent(x, y, settings);
+        this.setVelocity( 1, 1 );
+        this.z = 300;
+        this.gravity = 0;
+        this.zombie = true;
+        this.player = settings.player;
+        this.followDistance = 40;
+    },
+
+    update: function(dt) {
+        if(false) {
+            // TODO: Chase enemies
+        }
+        else {
+            var distVec = new me.Vector2d(this.player.pos.x, this.player.pos.y);
+            distVec.sub(this.pos);
+            var distance = distVec.length();
+            if(distance > this.followDistance) {
+                distVec.normalize();
+                this.vel.x += distVec.x;
+                this.vel.y += distVec.y;
+            }
+
+        // TODO: Follow player
+        }
+
+       this.parent(dt);
+       this.updateMovement();
+       return true;
+    },
+});
+
+
+var Corpse = me.ObjectEntity.extend({
+    init: function(x, y, settings) {
+        settings = settings || {};
+        settings.image = 'corpse';
+        settings.spritewidth = 16;
+        settings.spriteheight = 16;
+        settings.height = 16;
+        settings.width = 16;
+        this.parent(x, y, settings);
+        this.z = 300;
+        this.corpse = true;
+        this.gravity = 0;
+    },
+
+    convertToZombie: function(player) {
+        me.game.world.removeChild(this);
+        var z = new Zombie(this.pos.x, this.pos.y, {
+            player: player,
+        });
+        me.game.world.addChild(z);
+    },
+});
+
 var Player = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings.image        = settings.image        || 'tinyman';
@@ -5,6 +69,7 @@ var Player = me.ObjectEntity.extend({
         settings.spriteheight = 16*2;
         settings.height = 16*2;
         settings.width = 16*2;
+        this.colChecker = this.checkCollisions.bind(this);
         this.parent( x, y, settings );
         this.alwaysUpdate = true;
         this.player = true;
@@ -67,6 +132,14 @@ var Player = me.ObjectEntity.extend({
 
     },
 
+    playAnimation: function(a) {
+        var self = this;
+        self.renderable.setCurrentAnimation(a, function() {
+            self.renderable.setCurrentAnimation("idle");
+        });
+    },
+
+
     update: function(dt) {
         var self = this;
         this.parent(dt);
@@ -124,36 +197,55 @@ var Player = me.ObjectEntity.extend({
             this.flipX(false);
             this.direction = 1;
             if( ! this.renderable.isCurrentAnimation("walk") ){
-                this.renderable.setCurrentAnimation("walk", function() {
-                    self.renderable.setCurrentAnimation("idle");
-                })
+                this.playAnimation("walk");
             }
         }
         if (me.input.isKeyPressed('up'))  {
             this.vel.y = -this.maxVel;
             this.direction = -1;
             if( !this.renderable.isCurrentAnimation("walk") ){
-                this.renderable.setCurrentAnimation("walk", function() {
-                    self.renderable.setCurrentAnimation("idle");
-                })
+                this.playAnimation("walk");
             }
         } else if (me.input.isKeyPressed('down')) {
             this.vel.y = this.maxVel;
             this.direction = 1;
             if( !this.renderable.isCurrentAnimation("walk") ){
-                this.renderable.setCurrentAnimation("walk", function() {
-                    self.renderable.setCurrentAnimation("idle");
-                })
+                this.playAnimation("walk");
             }
         }
 
-        me.game.world.collide(this, true).forEach(function(col) {
-            if(col.obj.corpse) {
-                col.obj.convertToZombie();
-            }
-        }, this);
+        // Col checker is bound to checkCollisions.
+        me.game.world.collide(this, true).forEach(this.colChecker);
 
         this.updateMovement();
         return true;
-    }
+    },
+
+    checkCollisions: function( col ) {
+        if(col.obj.corpse) {
+            col.obj.convertToZombie(this);
+        }
+        else if( this.hitTimer <= 0 && this.collisionTimer <= 0 && col.obj.baddie && col.obj.isMeleeAttacking() ) {
+            // die here?
+
+            me.game.viewport.shake(5, 250);
+
+            this.hitTimer = 250;
+            this.collisionTimer = 1000;
+            this.renderable.flicker(1000);
+
+            if (this.pos.x - col.obj.pos.x > 0){
+                this.vel.x = this.hitVelX = 5;
+            } else {
+                this.vel.x = this.hitVelX = -5;
+            }
+            if (this.pos.y - col.obj.pos.y > 0){
+                this.vel.y = this.hitVelY = 5;
+            } else{
+                this.vel.y = this.hitVelY = -5;
+            }
+
+            this.playAnimation("hit");
+        }
+    },
 });

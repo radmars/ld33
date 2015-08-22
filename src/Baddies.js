@@ -3,9 +3,9 @@
 var Baddie = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {}
-        settings.image = settings.image || 'robut';
-        settings.spritewidth = settings.spritewidth || 141;
-        settings.spriteheight = settings.spriteheight || 139;
+        settings.image = settings.image || 'knight';
+        settings.spritewidth = settings.spritewidth || 32;
+        settings.spriteheight = settings.spriteheight || 32;
 
         this.type = settings.type;
         this.skel = settings.skel;
@@ -26,11 +26,17 @@ var Baddie = me.ObjectEntity.extend({
         this.giveUpDist = 225;
         this.findTargetTimerMax = 100;
         this.findTargetTimer = 40;
+
         this.attackRange = settings.spritewidth;
+        this.attackCooldown = 0;
+        this.attackCooldownMax = 30;
+
+        this.renderable.addAnimation( "idle", [ 0 ] );
+        this.renderable.addAnimation( "walk", [ 0 ] );
+        this.renderable.addAnimation( "attacking", [ 0 ] );
 
         this.direction = 1;
         this.collidable = true;
-        this.overworld = settings.overworld ? true : false;
 
         // Hack...
         me.state.current().baddies.push(this);
@@ -64,15 +70,16 @@ var Baddie = me.ObjectEntity.extend({
         if (this.curTarget) {
             var distVec = new me.Vector2d(this.curTarget.pos.x, this.curTarget.pos.y);
             distVec.sub(this.pos);
+            var distance = distVec.length();
 
             // give up if too far away
-            if (distVec.length() > this.giveUpDist) {
+            if (distance > this.giveUpDist) {
                 console.log('giving up');
                 this.curTarget = null;
                 return;
             }
 
-            if (distVec.length() < this.attackRange) {
+            if (distance < this.attackRange) {
                 this.attack();
             }
 
@@ -84,11 +91,22 @@ var Baddie = me.ObjectEntity.extend({
 
     attack: function() {
         console.log("attack!!!");
+        if (this.attackCooldown <= 0) {
+            var self = this;
+            this.renderable.setCurrentAnimation("attacking", function() {
+                self.renderable.setCurrentAnimation("idle");
+            });
+            this.attackCooldown = this.attackCooldownMax;
+        }
+    },
+
+    isMeleeAttacking: function() {
+        return this.renderable.isCurrentAnimation("attacking");
     },
 
     checkBulletCollision: function(){
         me.game.world.collide(this, true).forEach(function(col) {
-            if(col && col.obj.bullet && !this.overworld ) {
+            if(col && col.obj.bullet) {
                 col.obj.die();
                 me.state.current().baddies.remove(this);
                 me.game.viewport.shake(2, 250);
@@ -104,7 +122,6 @@ var Baddie = me.ObjectEntity.extend({
                     skel: 1,
                     x: this.pos.x,
                     y: this.pos.y,
-                    overworld:1,
                     width: 80, // TODO This controls patrol???
                     height: 80
                 });
@@ -113,12 +130,9 @@ var Baddie = me.ObjectEntity.extend({
                 me.game.world.sort();
 
                 me.audio.play( "enemydeath" + Math.round(1+Math.random()*3) );
-
-                me.state.current().updateLayerVisibility(me.state.current().overworld);
             }
         }, this);
     },
-
     update: function(dt) {
         this.parent(dt);
 
@@ -129,6 +143,10 @@ var Baddie = me.ObjectEntity.extend({
         }
 
         this.moveTowardTargetAndAttack();
+
+        if (this.attackCooldown >= 0) {
+            this.attackCooldown -= dt;
+        }
 
         this.updateMovement();
         //this.checkBulletCollision();
@@ -233,7 +251,7 @@ var Wasp = Baddie.extend({
 
         if(this.shootCooldown > 0) this.shootCooldown-=dt;
 
-        if(this.shootCooldown <= 0 && !me.state.current().player.overworld && !this.overworld){
+        if(this.shootCooldown <= 0){
             var d = me.state.current().player.pos.x - this.pos.x;
             if( (Math.abs(d) < 350 && Math.abs(d) > 150) && ((d > 0 && this.direction > 0)||(d < 0 && this.direction < 0))){
                 this.pausePatrol = 500;

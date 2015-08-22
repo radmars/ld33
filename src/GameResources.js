@@ -43,7 +43,7 @@ var GameResources = [
 
     //game
     _Image("tinyman"),
-    _Image("robut"),
+    _Image("knight"),
 
     // Levels
     _Image( "collision_tiles"),
