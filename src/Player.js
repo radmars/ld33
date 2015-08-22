@@ -12,7 +12,12 @@ var Zombie = me.ObjectEntity.extend({
         this.gravity = 0;
         this.zombie = true;
         this.player = settings.player;
-        this.followDistance = 40;
+        this.collidable = true;
+    },
+
+    setPosition: function( number, outOf ){
+        this.number = number;
+        this.outOf = outOf;
     },
 
     update: function(dt) {
@@ -20,13 +25,22 @@ var Zombie = me.ObjectEntity.extend({
             // TODO: Chase enemies
         }
         else {
-            var distVec = new me.Vector2d(this.player.pos.x, this.player.pos.y);
+            var targetPosition = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
+            var targetAngle = (this.number + 1) / this.outOf * Math.PI * 2;
+            var radius = 30 + this.outOf;
+
+            targetPosition.x += Math.cos(targetAngle) * radius;
+            targetPosition.y += Math.sin(targetAngle) * radius;
+            var distVec = targetPosition;
             distVec.sub(this.pos);
             var distance = distVec.length();
-            if(distance > this.followDistance) {
+            if(distance > 2) {
                 distVec.normalize();
-                this.vel.x += distVec.x;
-                this.vel.y += distVec.y;
+                this.vel.x = distVec.x;
+                this.vel.y = distVec.y;
+            }
+            else {
+                this.vel.x = this.vel.y = 0;
             }
 
         // TODO: Follow player
@@ -58,6 +72,7 @@ var Corpse = me.ObjectEntity.extend({
         var z = new Zombie(this.pos.x, this.pos.y, {
             player: player,
         });
+        player.addZombie(z);
         me.game.world.addChild(z);
     },
 });
@@ -76,6 +91,7 @@ var Player = me.ObjectEntity.extend({
         this.hitTimer = 0;
         this.hitVelX = 0;
         this.image =  me.loader.getImage('tinyman');
+        this.zombies = [];
 
         this.z = 200;
         this.disableInputTimer = 0;
@@ -126,6 +142,18 @@ var Player = me.ObjectEntity.extend({
         me.input.bindKey(me.input.KEY.S,    "down");
         me.input.bindKey(me.input.KEY.A,    "left");
         me.input.bindKey(me.input.KEY.D,    "right");
+    },
+
+    recalculateZombiePositions: function() {
+        var l = this.zombies.length;
+        this.zombies.forEach(function(e, i) {
+            e.setPosition(i, l);
+        });
+    },
+
+    addZombie: function(z) {
+        this.zombies.push(z);
+        this.recalculateZombiePositions();
     },
 
     shoot: function(){
