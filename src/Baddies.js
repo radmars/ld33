@@ -43,28 +43,6 @@ var Baddie = me.ObjectEntity.extend({
         this.renderable.animationspeed = 70;
     },
 
-    findTarget: function() {
-        console.log("finding target");
-        var closestDist = null;
-        var nextTarget = null;
-        var self = this;
-
-        me.state.current().playerArmy.forEach(function(target) {
-            var dist = target.pos.distance(self.pos);
-            if (dist < self.maxTargetingDist) {
-                if (!closestDist || dist < closestDist) {
-                    closestDist = dist;
-                    nextTarget = target;
-                }
-            }
-        });
-
-        if (closestDist) {
-            console.log("found target");
-            this.curTarget = nextTarget;
-        }
-    },
-
     moveTowardTargetAndAttack: function() {
         if (this.curTarget) {
             var distVec = new me.Vector2d(this.curTarget.pos.x, this.curTarget.pos.y);
@@ -146,7 +124,7 @@ var Baddie = me.ObjectEntity.extend({
 
         this.findTargetTimer--;
         if (this.findTargetTimer <= 0) {
-            this.findTarget();
+            this.curTarget = radmars.findTarget(this.pos, me.state.current().playerArmy, this.maxTargetingDist);
             this.findTargetTimer = this.findTargetTimerMax;
         }
 
