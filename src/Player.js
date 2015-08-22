@@ -61,29 +61,9 @@ var Player = me.ObjectEntity.extend({
         me.input.bindKey(me.input.KEY.A,    "left");
         me.input.bindKey(me.input.KEY.D,    "right");
 
-       // me.input.bindPointer( me.input.mouse.LEFT )
-
-        me.input.registerPointerEvent('pointerdown', this, this.click.bind(this));
-
-        // enable the keyboard
-        me.input.bindKey(me.input.KEY.O, "proxy_mouse");
-        me.input.bindPointer(me.input.KEY.O);
-        me.input.bindPointer(me.input.mouse.RIGHT, me.input.KEY.O);
-
-
-       // me.input.registerMouseEvent('mousedown', me.game.viewport, this.click);
-       // me.input.registerMouseEvent('mousemove', me.game.viewport, this.hover);
     },
 
     shoot: function(){
-
-    },
-
-    click: function(){
-        console.log( "mouse! " +  me.input.mouse.pos.x  + " , " +  me.input.mouse.pos.y );
-    },
-
-    hover: function(){
 
     },
 
@@ -91,9 +71,6 @@ var Player = me.ObjectEntity.extend({
         var self = this;
         this.parent(dt);
 
-        if (me.input.isKeyPressed('proxy_mouse'))  {
-            this.click();
-        }
 
 
         if(this.shootDelay >0){

@@ -51,12 +51,12 @@ var LD30 = function() {
 
         me.pool.register( "player", Player );
         me.pool.register( "baddie", Baddie );
+        me.pool.register( "corpse", Corpse );
 
         me.pool.register( "fish", Fish );
         me.pool.register( "wasp", Wasp );
 
         me.pool.register( "pickup", Pickup );
-        me.pool.register( "underworld", Underworld );
         me.pool.register( "levelchanger", LevelChanger );
         me.pool.register( "gameender", GameEnder );
     };
@@ -89,17 +89,11 @@ LD30.HUD.Container = me.ObjectContainer.extend({
 
     endGame: function(){
         this.boxDisplay.endGame();
-    },
-
-    toUnderworld: function() {
-        this.boxDisplay.toUnderworld();
     }
 });
 
 LD30.HUD.BoxDisplay = me.Renderable.extend( {
-    /**
-     * constructor
-     */
+
     init: function(x, y) {
 
         // call the parent constructor
@@ -116,6 +110,18 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
 
         // make sure we use screen coordinates
         this.floating = true;
+
+        this.mouseDown = false;
+        this.mouseDownPos = new me.Vector2d(0, 0);
+
+        // enable the keyboard
+        me.input.bindKey(me.input.KEY.O, "proxy_mouse");
+        me.input.bindPointer(me.input.KEY.O);
+        me.input.bindPointer(me.input.mouse.RIGHT, me.input.KEY.O);
+
+
+
+
     },
 
     startGame: function(){
@@ -136,6 +142,10 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
     },
 
     update : function () {
+        if (me.input.isKeyPressed('proxy_mouse'))  {
+            // console.log( "mouse! " +  me.input.mouse.pos.x  + " , " +  me.input.mouse.pos.y );
+        }
+
         return true;
     },
 
@@ -143,13 +153,9 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
         if(!this.render)return;
 
        // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
-
         context.drawImage( this.box, this.pos.x + me.input.mouse.pos.x, this.pos.y + me.input.mouse.pos.y );
     }
 });
-
-
-
 
 
 var LevelChanger = me.ObjectEntity.extend({
@@ -204,29 +210,19 @@ var GameEnder = me.ObjectEntity.extend({
     }
 });
 
-
-var Underworld = me.ObjectEntity.extend({
+var Corpse = me.ObjectEntity.extend({
     init: function(x, y, settings) {
-        settings.image = "gateway";
-        settings.spritewidth = 144; //3
-        settings.spriteheight = 192; //4
-        this.parent( x, y, settings );
-        this.gravity = 0;
-        this.collidable = true;
+        settings = settings || {};
+        settings.image = 'corpse';
+        settings.spritewidth = 16;
+        settings.spriteheight = 16;
+        settings.height = 16;
+        settings.width = 16;
+        this.parent(x, y, settings);
+        this.z = 300;
     },
-    update: function(dt) {
-        this.parent(dt);
-        this.updateMovement();
-        me.game.world.collide(this, true).forEach(function(col) {
-            if(col && col.obj == me.state.current().player ) {
-                me.state.current().toUnderworld();
-                me.state.current().player.toUnderworld();
-            }
-        }, true);
-    }
+
 });
-
-
 
 /** The game play state... */
 var PlayScreen = me.ScreenObject.extend({
@@ -235,7 +231,6 @@ var PlayScreen = me.ScreenObject.extend({
         me.input.bindKey(me.input.KEY.SPACE, "shoot");
         this.baddies = [];
         this.pickups = [];
-        this.overworld = true;
         this.subscription = me.event.subscribe(me.event.KEYDOWN, this.keyDown.bind(this));
 
         this.HUD = new LD30.HUD.Container();
@@ -244,73 +239,18 @@ var PlayScreen = me.ScreenObject.extend({
 
     },
 
-    toUnderworld: function() {
-        if( this.overworld ) {
-            me.audio.mute( "ld30-real" );
-			me.audio.unmute( "ld30-spirit" );
-
-            me.audio.play( "portal" );
-            me.audio.play( "lostsouls" );
-
-            this.overworld = false;
-            this.updateLayerVisibility(this.overworld);
-            this.HUD.toUnderworld();
-            me.game.viewport.shake(5, 1000);
-        }
-    },
-
     endGame: function(){
         LD30.data.beatGame = true;
         me.state.change( me.state.GAMEOVER );
     },
 
     goToLevel: function( level ) {
-        if( !this.overworld ) {
-            this.baddies = [];
-            this.pickups = [];
-            this.overworld = true;
-            me.levelDirector.loadLevel( level );
-            me.state.current().changeLevel( level );
-            this.HUD.startGame();
-        }
-    },
+        this.baddies = [];
+        this.pickups = [];
+        me.levelDirector.loadLevel( level );
+        me.state.current().changeLevel( level );
+        this.HUD.startGame();
 
-    updateLayerVisibility: function(overworld) {
-        var level = me.game.currentLevel;
-        level.getLayers().forEach(function(layer){
-            if( layer.name.match( /overworld/ ) ) {
-                layer.alpha = overworld ? 1 : 0;
-            }
-            else if( layer.name.match( /underworld/ ) ) {
-                layer.alpha = overworld ? 0 : 1;
-            }
-        }, this);
-
-        this.baddies.forEach(function(baddie) {
-            var m = baddie.overworld && overworld || (!baddie.overworld && !overworld);
-            if(m) {
-                baddie.renderable.alpha = .5;
-               // baddie.collidable = false;
-            }
-            else {
-                baddie.renderable.alpha = 1;
-                //baddie.collidable = true;
-            }
-        });
-
-        this.pickups.forEach(function(pickup) {
-            var m = pickup.overworld && overworld || (!pickup.overworld && !overworld);
-            if(m) {
-                pickup.renderable.alpha = .5;
-                //pickup.collidable = false;
-            }
-            else {
-                pickup.renderable.alpha = 1;
-                //pickup.collidable = true;
-            }
-        });
-
-        me.game.repaint();
     },
 
     keyDown: function( action ) {
@@ -335,7 +275,6 @@ var PlayScreen = me.ScreenObject.extend({
         me.audio.unmute( "ld30-real" );
 
         // TODO: Makethis track the real variable...
-        this.updateLayerVisibility(this.overworld);
         // this only gets called on start?
         me.game.world.sort();
 
@@ -361,17 +300,24 @@ var PlayScreen = me.ScreenObject.extend({
 
         this.changeLevel( level );
         this.HUD.startGame();
+        this.corpses = [];
+
+        for(var i = 0; i < 30; i++) {
+            var x = Math.random() * 500;
+            var y = Math.random() * 500;
+            var c = new Corpse(x, y);
+            this.corpses.push(c);
+            me.game.world.addChild(c);
+        }
+
     },
 
     onDestroyEvent: function() {
         this.HUD.endGame();
-		me.audio.stop("ld30-real");
-		me.audio.stop("ld30-spirit");
+        me.audio.stop("ld30-real");
+        me.audio.stop("ld30-spirit");
     },
 
-    update: function() {
-        me.game.frameCounter++;
-    }
 });
 
 
