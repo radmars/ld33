@@ -20,6 +20,7 @@ var Player = me.ObjectEntity.extend({
         shape.pos.y = 0;
         shape.resize(32, 32);
         me.state.current().player = this;
+        me.state.current().playerArmy.push(this);
 
         this.collisionTimer = 0;
         this.deathTimer = 0;
@@ -151,15 +152,14 @@ var Player = me.ObjectEntity.extend({
 
         me.game.world.collide(this, true).forEach(function(col) {
             if( this.hitTimer <= 0 && this.collisionTimer <=0 && col && col.obj.baddie ) {
-
                 //TODO: change character to normal texture here!
                 //TODO: if pickups <= 0, die!
 
                 if( true ){
                     me.game.viewport.shake(5, 250);
                     for( var i=0; i<LD30.data.souls; i++){
-                        var b = new OnHitPickup(this.pos.x, this.pos.y, {});
-                        me.game.world.addChild(b);
+                        //var b = new OnHitPickup(this.pos.x, this.pos.y, {});
+                        //me.game.world.addChild(b);
                     }
                     me.game.world.sort();
                   //  me.audio.play( "hit" );
