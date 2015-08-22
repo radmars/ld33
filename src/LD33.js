@@ -70,12 +70,9 @@ LD33.data = {souls:1, collectedSouls:0, collectedSoulsMax:15, beatGame:false};
 LD33.HUD = LD33.HUD || {};
 
 LD33.HUD.Container = me.ObjectContainer.extend({
-    init: function(baddies, playerArmy) {
+    init: function() {
         // call the constructor
         this.parent();
-
-        this.baddies = baddies;
-        this.playerArmy = playerArmy;
 
         this.isPersistent = true;
         this.collidable = false;
@@ -104,6 +101,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         // call the parent constructor
         // (size does not matter here)
         this.parent(new me.Vector2d(0, 0), 0, 0);
+
 
         // create a font
         this.font = new me.BitmapFont("32x32_font", 32);
@@ -165,13 +163,27 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         if(!this.render)return;
 
         //void ctx.drawImage(image, dx, dy, dWidth, dHeight);
-        //this.pos.x +
+        // this.pos.x +
         // this.pos.y +
 
         // this.mouseDownPos.x = me.input.mouse.pos.x;
         // this.mouseDownPos.y = me.input.mouse.pos.y;
 
        // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
+
+
+        var baddies = me.state.current().baddies;
+
+        console.log("baddie! " + baddies);
+
+        for( var baddie in baddies){
+            if(baddie.pos != null ){
+                var x = baddie.pos.x - me.game.viewport.pos.x;
+                var y = baddie.pos.y - me.game.viewport.pos.y;
+                console.log("baddie! " + x + " , " + y);
+                context.drawImage( this.box, x, y );
+            }
+        }
 
         if(this.mouseDown){
             //this.mousePosLocal  = me.input.globalToLocal(me.input.mouse.pos.x, me.input.mouse.pos.y );
@@ -285,7 +297,7 @@ var PlayScreen = me.ScreenObject.extend({
         this.pickups = [];
         this.subscription = me.event.subscribe(me.event.KEYDOWN, this.keyDown.bind(this));
 
-        this.HUD = new LD33.HUD.Container( this.baddies, this.playerArmy );
+        this.HUD = new LD33.HUD.Container( );
         me.game.world.addChild(this.HUD);
         LD33.data.beatGame = false;
 
