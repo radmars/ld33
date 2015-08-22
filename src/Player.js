@@ -27,7 +27,7 @@ var Zombie = me.ObjectEntity.extend({
         else {
             var targetPosition = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
             var targetAngle = (this.number + 1) / this.outOf * Math.PI * 2;
-            var radius = 30 + this.outOf;
+            var radius = 30 + this.outOf * 3
 
             targetPosition.x += Math.cos(targetAngle) * radius;
             targetPosition.y += Math.sin(targetAngle) * radius;
@@ -91,7 +91,6 @@ var Player = me.ObjectEntity.extend({
         this.hitTimer = 0;
         this.hitVelX = 0;
         this.image =  me.loader.getImage('tinyman');
-        this.zombies = [];
 
         this.z = 200;
         this.disableInputTimer = 0;
@@ -114,8 +113,8 @@ var Player = me.ObjectEntity.extend({
 
         this.gravity = 0;
 
-        this.centerOffsetX = 0;
-        this.centerOffsetY = 0;
+        this.centerOffsetX = 8;
+        this.centerOffsetY = 8;
 
         this.followPos = new me.Vector2d(
             this.pos.x + this.centerOffsetX,
@@ -145,14 +144,17 @@ var Player = me.ObjectEntity.extend({
     },
 
     recalculateZombiePositions: function() {
-        var l = this.zombies.length;
-        this.zombies.forEach(function(e, i) {
-            e.setPosition(i, l);
+        var army =  me.state.current().playerArmy;
+        var length = army.length;
+        army.forEach(function(e, i) {
+            if(e.zombie) {
+                e.setPosition(i, length);
+            }
         });
     },
 
     addZombie: function(z) {
-        this.zombies.push(z);
+        me.state.current().playerArmy.push(z);
         this.recalculateZombiePositions();
     },
 
