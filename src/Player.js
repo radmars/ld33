@@ -61,7 +61,6 @@ var Player = me.ObjectEntity.extend({
         me.input.bindKey(me.input.KEY.S,    "down");
         me.input.bindKey(me.input.KEY.A,    "left");
         me.input.bindKey(me.input.KEY.D,    "right");
-
     },
 
     shoot: function(){
@@ -71,8 +70,6 @@ var Player = me.ObjectEntity.extend({
     update: function(dt) {
         var self = this;
         this.parent(dt);
-
-
 
         if(this.shootDelay >0){
             this.shootDelay-=dt;
@@ -151,40 +148,8 @@ var Player = me.ObjectEntity.extend({
         }
 
         me.game.world.collide(this, true).forEach(function(col) {
-            if( this.hitTimer <= 0 && this.collisionTimer <=0 && col && col.obj.baddie ) {
-                //TODO: change character to normal texture here!
-                //TODO: if pickups <= 0, die!
-
-                if( true ){
-                    me.game.viewport.shake(5, 250);
-                    for( var i=0; i<LD30.data.souls; i++){
-                        //var b = new OnHitPickup(this.pos.x, this.pos.y, {});
-                        //me.game.world.addChild(b);
-                    }
-                    me.game.world.sort();
-                  //  me.audio.play( "hit" );
-                  //  me.audio.play( "lostsouls" );
-                }
-                else {
-                    this.deathTimer = 2000;
-                    //intensity, duration
-                    me.game.viewport.shake(10, 2000);
-                 //   me.audio.play( "death" );
-                }
-
-                this.hitTimer = 250;
-                this.collisionTimer = 1000;
-                this.renderable.flicker(1000);
-
-                if(this.pos.x - col.obj.pos.x > 0){
-                    this.vel.x = this.hitVelX = 50;
-                }else{
-                    this.vel.x = this.hitVelX = -50;
-                }
-                this.vel.y = -20;
-                this.renderable.setCurrentAnimation("hit", function() {
-                    self.renderable.setCurrentAnimation("idle");
-                });
+            if(col.obj.corpse) {
+                col.obj.convertToZombie();
             }
         }, this);
 

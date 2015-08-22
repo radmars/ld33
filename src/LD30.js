@@ -12,17 +12,19 @@ var LD30 = function() {
             alert ("Yer browser be not workin");
         }
 
+        this.options = {};
+
+        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            this.options[key] = value;
+        }.bind(this));
+
         // add "#debug" to the URL to enable the debug Panel
-
-        if ( false ) { //document.location.hash === "#debug"
-            window.onReady(function () {
-                me.plugin.register.defer(debugPanel, "debug");
-
-            });
+        if (this.options.debug) {
+            me.plugin.register(debugPanel, "debug");
+            me.plugin.debug.show();
         }
 
         me.input.preventDefault = true;
-        me.debug.renderHitBox = true;
 
         me.audio.init ("m4a,ogg" );
 
@@ -228,6 +230,21 @@ var GameEnder = me.ObjectEntity.extend({
     }
 });
 
+var Zombie = me.ObjectEntity.extend({
+    init: function(x, y, settings) {
+        settings = settings || {};
+        settings.image = 'zombie';
+        settings.spritewidth = 16;
+        settings.spriteheight = 16;
+        settings.height = 16;
+        settings.width = 16;
+        this.parent(x, y, settings);
+        this.z = 300;
+        this.zombie = true;
+    },
+});
+
+
 var Corpse = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {};
@@ -238,8 +255,14 @@ var Corpse = me.ObjectEntity.extend({
         settings.width = 16;
         this.parent(x, y, settings);
         this.z = 300;
+        this.corpse = true;
     },
 
+    convertToZombie: function() {
+        me.game.world.removeChild(this);
+        var z = new Zombie(this.pos.x, this.pos.y);
+        me.game.world.addChild(z);
+    },
 });
 
 /** The game play state... */
@@ -319,13 +342,11 @@ var PlayScreen = me.ScreenObject.extend({
 
         this.changeLevel( level );
         this.HUD.startGame();
-        this.corpses = [];
 
         for(var i = 0; i < 30; i++) {
             var x = Math.random() * 500;
             var y = Math.random() * 500;
             var c = new Corpse(x, y);
-            this.corpses.push(c);
             me.game.world.addChild(c);
         }
 
