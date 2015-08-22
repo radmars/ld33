@@ -49,7 +49,7 @@ var LD33 = function() {
         me.state.set( me.state.PLAY, new PlayScreen() );
         me.state.set( me.state.GAMEOVER, new GameOverScreen() );
 
-        me.state.change( me.state.INTRO);
+        me.state.change(this.options.skipIntro ? me.state.PLAY : me.state.INTRO);
 
         me.pool.register( "player", Player );
         me.pool.register( "baddie", Baddie );
