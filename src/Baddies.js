@@ -68,6 +68,7 @@ var Baddie = me.ObjectEntity.extend({
     }
 });
 
+
 var Fish = Baddie.extend({
     init: function(x, y, settings) {
         settings.image = 'fish';

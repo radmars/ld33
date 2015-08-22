@@ -22,6 +22,9 @@ var GameResources = [
     _Image( "intro_radmars1" ),
     _Image( "intro_radmars2" ),
 
+    // Corpses
+    _Image( "corpse" ),
+
     // ui
     _Image("16x16_font"),
     _Image("32x32_font"),
