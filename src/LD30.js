@@ -115,6 +115,7 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
 
         this.mouseDown = false;
         this.mouseDownPos = new me.Vector2d(0, 0);
+        this.mousePosLocal = new me.Vector2d(0, 0);
 
         // enable the keyboard
         me.input.bindKey(me.input.KEY.O, "proxy_mouse");
@@ -148,7 +149,7 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
                 this.mouseDownPos.x = me.input.mouse.pos.x;
                 this.mouseDownPos.y = me.input.mouse.pos.y;
             }
-            // console.log( "mouse! " +  me.input.mouse.pos.x  + " , " +  me.input.mouse.pos.y );
+
         }else{
             if( this.mouseDown ){
                 this.mouseDown = false;
@@ -171,6 +172,13 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
        // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
 
         if(this.mouseDown){
+            //this.mousePosLocal  = me.input.globalToLocal(me.input.mouse.pos.x, me.input.mouse.pos.y );
+
+            var player = me.state.current().player;
+
+            console.log( "mouse! " + (me.input.mouse.pos.x + me.game.viewport.pos.x)  + " , " +  (me.input.mouse.pos.y + me.game.viewport.pos.y) + " / player: " + player.pos.x + " , " + player.pos.y );
+            //console.log( "mouse! " +  me.input.mouse.pos.x  + " , " +  me.input.mouse.pos.y );
+
             context.drawImage( this.box, this.mouseDownPos.x, this.mouseDownPos.y, me.input.mouse.pos.x - this.mouseDownPos.x, me.input.mouse.pos.y - this.mouseDownPos.y );
         }
 
