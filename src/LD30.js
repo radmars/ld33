@@ -120,8 +120,6 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
         me.input.bindPointer(me.input.mouse.RIGHT, me.input.KEY.O);
 
 
-
-
     },
 
     startGame: function(){
@@ -143,7 +141,16 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
 
     update : function () {
         if (me.input.isKeyPressed('proxy_mouse'))  {
+            if( !this.mouseDown ){
+                this.mouseDown = true;
+                this.mouseDownPos.x = me.input.mouse.pos.x;
+                this.mouseDownPos.y = me.input.mouse.pos.y;
+            }
             // console.log( "mouse! " +  me.input.mouse.pos.x  + " , " +  me.input.mouse.pos.y );
+        }else{
+            if( this.mouseDown ){
+                this.mouseDown = false;
+            }
         }
 
         return true;
@@ -152,8 +159,19 @@ LD30.HUD.BoxDisplay = me.Renderable.extend( {
     draw : function (context) {
         if(!this.render)return;
 
+        //void ctx.drawImage(image, dx, dy, dWidth, dHeight);
+        //this.pos.x +
+        // this.pos.y +
+
+        // this.mouseDownPos.x = me.input.mouse.pos.x;
+        // this.mouseDownPos.y = me.input.mouse.pos.y;
+
        // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
-        context.drawImage( this.box, this.pos.x + me.input.mouse.pos.x, this.pos.y + me.input.mouse.pos.y );
+
+        if(this.mouseDown){
+            context.drawImage( this.box, this.mouseDownPos.x, this.mouseDownPos.y, me.input.mouse.pos.x - this.mouseDownPos.x, me.input.mouse.pos.y - this.mouseDownPos.y );
+        }
+
     }
 });
 
