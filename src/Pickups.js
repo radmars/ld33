@@ -37,7 +37,6 @@ var Pickup = me.ObjectEntity.extend({
             me.game.world.collide(this, true).forEach(function(col) {
                 if(col && col.obj.player && col.obj.collisionTimer <= 0 && this.collidable) {
                     me.state.current().pickups.remove(this);
-                    LD30.data.souls++;
                     this.collidable = false;
                     me.game.world.removeChild(this);
                     me.audio.play( "pickup" );

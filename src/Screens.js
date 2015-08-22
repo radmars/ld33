@@ -29,12 +29,10 @@ var GameOverScreen = me.ScreenObject.extend({
 
     onResetEvent: function()
     {
-        var gotAllSouls = LD30.data.collectedSouls>=LD30.data.collectedSoulsMax;
-
         //ending_good //ending_bad
-        this.gameover = new me.ImageLayer("gameover", screenWidth, screenHeight, LD30.data.beatGame ? "game_win" : "game_over", 0);
+        this.gameover = new me.ImageLayer("gameover", screenWidth, screenHeight, LD33.data.beatGame ? "game_win" : "game_over", 0);
 
-        this.hitenter = new HitEnter( 350, LD30.data.beatGame ? 450 : 450 );
+        this.hitenter = new HitEnter( 350, LD33.data.beatGame ? 450 : 450 );
         me.game.world.addChild( this.hitenter );
 
         me.game.world.addChild( this.gameover );
