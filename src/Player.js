@@ -23,6 +23,8 @@ var Zombie = me.ObjectEntity.extend({
         me.state.current().playerArmy.push(this);
     },
 
+    
+
     update: function(dt) {
         if(false) {
             // TODO: Chase enemies
@@ -162,18 +164,6 @@ var Player = me.ObjectEntity.extend({
 
     },
 
-    maybeSwitchAnimation: function(a, returnToIdle) {
-        if( ! this.renderable.isCurrentAnimation(a) ){
-            this.playAnimation(a, returnToIdle);
-        }
-    },
-
-    playAnimation: function(a, returnToIdle) {
-        var cb = returnToIdle ? this.renderable.setCurrentAnimation.bind(this.renderable, "idle") : null;
-        this.renderable.setCurrentAnimation(a, cb);
-    },
-
-
     update: function(dt) {
         var self = this;
         this.parent(dt);
@@ -184,7 +174,7 @@ var Player = me.ObjectEntity.extend({
 
         if(this.deathTimer > 0){
             this.deathTimer-=dt;
-            this.maybeSwitchAnimation("die", false);
+            radmars.maybeSwitchAnimation(this.renderable, "die", false);
             this.updateMovement();
             if(this.deathTimer<=0){
                 me.state.change( me.state.GAMEOVER);
@@ -219,21 +209,21 @@ var Player = me.ObjectEntity.extend({
             this.vel.x = -this.maxVel;
             this.flipX(true);
             this.direction = -1;
-            this.maybeSwitchAnimation("walk", true);
+            radmars.maybeSwitchAnimation(this.renderable, "walk", true);
         } else if (me.input.isKeyPressed('right')) {
             this.vel.x = this.maxVel;
             this.flipX(false);
             this.direction = 1;
-            this.maybeSwitchAnimation("walk", true);
+            radmars.maybeSwitchAnimation(this.renderable, "walk", true);
         }
         if (me.input.isKeyPressed('up'))  {
             this.vel.y = -this.maxVel;
             this.direction = -1;
-            this.maybeSwitchAnimation("walk", true);
+            radmars.maybeSwitchAnimation(this.renderable, "walk", true);
         } else if (me.input.isKeyPressed('down')) {
             this.vel.y = this.maxVel;
             this.direction = 1;
-            this.maybeSwitchAnimation("walk", true);
+            radmars.maybeSwitchAnimation(this.renderable, "walk", true);
         }
 
         // Col checker is bound to checkCollisions.
@@ -267,7 +257,7 @@ var Player = me.ObjectEntity.extend({
                 this.vel.y = this.hitVelY = -5;
             }
 
-            this.playAnimation("hit");
+            radmars.playAnimation(this.renderable, "hit");
         }
     },
 });
