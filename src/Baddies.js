@@ -3,9 +3,9 @@
 var Baddie = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {}
-        settings.image = settings.image || 'robut';
-        settings.spritewidth = settings.spritewidth || 141;
-        settings.spriteheight = settings.spriteheight || 139;
+        settings.image = settings.image || 'knight';
+        settings.spritewidth = settings.spritewidth || 32;
+        settings.spriteheight = settings.spriteheight || 32;
 
         this.type = settings.type;
         this.skel = settings.skel;
@@ -26,7 +26,14 @@ var Baddie = me.ObjectEntity.extend({
         this.giveUpDist = 225;
         this.findTargetTimerMax = 100;
         this.findTargetTimer = 40;
+
         this.attackRange = settings.spritewidth;
+        this.attackCooldown = 0;
+        this.attackCooldownMax = 30;
+
+        this.renderable.addAnimation( "idle", [ 0 ] );
+        this.renderable.addAnimation( "walk", [ 0 ] );
+        this.renderable.addAnimation( "attacking", [ 0 ] );
 
         this.direction = 1;
         this.collidable = true;
@@ -84,6 +91,17 @@ var Baddie = me.ObjectEntity.extend({
 
     attack: function() {
         console.log("attack!!!");
+        if (this.attackCooldown <= 0) {
+            var self = this;
+            this.renderable.setCurrentAnimation("attacking", function() {
+                self.renderable.setCurrentAnimation("idle");
+            });
+            this.attackCooldown = this.attackCooldownMax;
+        }
+    },
+
+    isMeleeAttacking: function() {
+        return this.renderable.isCurrentAnimation("attacking");
     },
 
     checkBulletCollision: function(){
@@ -129,6 +147,10 @@ var Baddie = me.ObjectEntity.extend({
         }
 
         this.moveTowardTargetAndAttack();
+
+        if (this.attackCooldown >= 0) {
+            this.attackCooldown -= dt;
+        }
 
         this.updateMovement();
         //this.checkBulletCollision();

@@ -151,6 +151,30 @@ var Player = me.ObjectEntity.extend({
             if(col.obj.corpse) {
                 col.obj.convertToZombie();
             }
+            else if( this.hitTimer <= 0 && this.collisionTimer <=0 && col && col.obj.baddie && col.obj.isMeleeAttacking() ) {
+                // die here?
+
+                me.game.viewport.shake(5, 250);
+
+                this.hitTimer = 250;
+                this.collisionTimer = 1000;
+                this.renderable.flicker(1000);
+
+                if (this.pos.x - col.obj.pos.x > 0){
+                    this.vel.x = this.hitVelX = 5;
+                } else {
+                    this.vel.x = this.hitVelX = -5;
+                }
+                if (this.pos.y - col.obj.pos.y > 0){
+                    this.vel.y = this.hitVelY = 5;
+                } else{
+                    this.vel.y = this.hitVelY = -5;
+                }
+
+                this.renderable.setCurrentAnimation("hit", function() {
+                    self.renderable.setCurrentAnimation("idle");
+                });
+            }
         }, this);
 
         this.updateMovement();
