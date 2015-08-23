@@ -111,6 +111,8 @@ var Unit = me.ObjectEntity.extend({
             this.moveToPlayer(dt);
         }
 
+        this.fixDirection();
+
         if(this.baddie){
 
             this.checkUnitCollision( me.state.current().playerArmy, true );
@@ -121,7 +123,6 @@ var Unit = me.ObjectEntity.extend({
             this.checkUnitCollision( me.state.current().baddies, true );
         }
 
-        this.fixDirection();
 
         this.parent(dt);
         this.updateMovement();
