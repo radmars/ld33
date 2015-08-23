@@ -102,7 +102,6 @@ LD33.HUD.Container = me.ObjectContainer.extend({
         this.collidable = false;
 
         this.boxDisplay = new LD33.HUD.BoxDisplay();
-        this.addChild(this.boxDisplay);
 
         // make sure our object is always draw first
         this.z = Infinity;
@@ -111,8 +110,11 @@ LD33.HUD.Container = me.ObjectContainer.extend({
 
     startGame:function(){
         me.game.world.removeChild(this);
+        this.removeChild(this.boxDisplay);
         this.boxDisplay.startGame();
         me.game.world.addChild(this);
+        this.addChild(this.boxDisplay);
+        me.game.world.sort(true);
     },
 
     endGame: function(){
@@ -127,7 +129,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         // call the parent constructor
         // (size does not matter here)
         this.parent(new me.Vector2d(0, 0), 0, 0);
-
+        this.alwaysUpdate = true;
 
         // create a font
         this.font = new me.BitmapFont("32x32_font", 32);
@@ -174,7 +176,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         }
 
         /*
-        var self = this;
+        var self = this
         new me.Tween(self.findGatePos).to({x:100}, 500).easing(me.Tween.Easing.Quintic.Out).delay(1000).onComplete(function(){
             new me.Tween(self.findGatePos).to({x:1000}, 1000).easing(me.Tween.Easing.Quintic.In).delay(2000).onComplete(function(){
                 self.showFindGate = false;
@@ -441,11 +443,16 @@ var PlayScreen = me.ScreenObject.extend({
     },
 
     goToLevel: function( level ) {
+        var self = this;
         this.baddies = [];
-        this.pickups = [];
-        me.state.current().changeLevel( level );
-        this.HUD.startGame();
-
+        this.playerArmy = [];
+        me.game.reset();
+        me.game.onLevelLoaded = function(l) {
+            self.HUD.startGame();
+            me.game.viewport.fadeOut( '#000000', 1000, function() { 
+            });
+        };
+        me.levelDirector.loadLevel( level );
     },
 
     keyDown: function( action ) {
@@ -464,35 +471,23 @@ var PlayScreen = me.ScreenObject.extend({
         return results[1];
     },
 
-    /** Update the level display & music. Called on all level changes. */
-    changeLevel: function( level ) {
-        this.currentLevel = level;
-        me.audio.mute( "ld30-spirit" );
-        me.audio.unmute( "ld30-real" );
-
-        // TODO: Makethis track the real variable...
-        // this only gets called on start?
-        me.game.world.sort();
-
-        me.game.viewport.fadeOut( '#000000', 1000, function() {
-        });
+    reloadLevel: function() {
+        this.baddies = [];
+        this.pickups = [];
+        me.levelDirector.loadLevel( me.levelDirector.getCurrentLevelId() );
     },
 
     // this will be called on state change -> this
     onResetEvent: function(newLevel) {
-        this.baddies = [];
-        this.pickups = [];
-        this.overworld = true;
+        var self = this;
         LD33.data.beatGame = false;
-        var level =  newLevel || this.currentLevel || location.hash.substr(1) || "level1" ;
-        me.levelDirector.loadLevel( level );
+        var level =  newLevel || me.levelDirector.getCurrentLevelId() || location.hash.substr(1) || "level1" ;
+        this.goToLevel(level);
         me.audio.stopTrack();
         me.audio.play( "ld30-real", true );
         me.audio.play( "ld30-spirit", true );
         me.audio.play( "portalrev" );
 
-        this.changeLevel( level );
-        this.HUD.startGame();
     },
 
     onDestroyEvent: function() {
@@ -500,7 +495,6 @@ var PlayScreen = me.ScreenObject.extend({
         me.audio.stop("ld30-real");
         me.audio.stop("ld30-spirit");
     },
-
 });
 
 

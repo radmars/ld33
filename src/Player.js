@@ -146,7 +146,9 @@ var Player = me.ObjectEntity.extend({
     damage: function(dmg) {
         this.hp -= dmg;
         if(!this.dead && this.hp <= 0) {
-            me.state.change(me.state.PLAY);
+            (function(e) {
+                me.state.change(me.state.PLAY);
+            }).defer();
         }
     },
 
