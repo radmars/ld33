@@ -34,6 +34,7 @@ var GameResources = [
     _Image("hp_bar_backing"),
     _Image("hp_bar_baddie"),
     _Image("unit_selected"),
+    _Image("move_target"),
 
     //splash
     _Image("splash"),

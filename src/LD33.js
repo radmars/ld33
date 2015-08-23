@@ -126,14 +126,19 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         this.hpAlly = me.loader.getImage("hp_bar_ally");
         this.hpBaddie = me.loader.getImage("hp_bar_baddie");
         this.unitSelected = me.loader.getImage("unit_selected");
+        this.moveTarget = me.loader.getImage("move_target");
 
-        this.render = false;
+            this.render = false;
 
         // make sure we use screen coordinates
         this.floating = true;
 
+        this.moveTargetTimer = 0;
+        this.moveTargetSin = 0;
+
         this.mouseLeftDown = false;
         this.mouseDownPos = new me.Vector2d(0, 0);
+        this.moveTargetPos = new me.Vector2d(0, 0);
 
         // enable the keyboard
         me.input.bindKey(me.input.KEY.O, "proxy_mouse_left");
@@ -184,6 +189,11 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
                 var x = me.input.mouse.pos.x + me.game.viewport.pos.x;
                 var y = me.input.mouse.pos.y + me.game.viewport.pos.y;
 
+                this.moveTargetPos.x = me.input.mouse.pos.x;
+                this.moveTargetPos.y = me.input.mouse.pos.y;
+                this.moveTargetSin = 0;
+                this.moveTargetTimer = 2.0;
+
                 me.state.current().playerArmy.forEach(function(target) {
                     if(target.selected){
                         target.moveToPos(x,y);
@@ -191,12 +201,22 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
                 }.bind(this));
 
+
             }
         }
     },
 
     update : function () {
         if(!this.render) return;
+
+        if(this.moveTargetTimer > 0){
+            this.moveTargetTimer -= 0.03;
+            this.moveTargetSin += 0.1;
+            if(this.moveTargetSin >= Math.PI*2){
+                this.moveTargetSin -= Math.PI*2;
+            }
+        }
+
 
         if (me.input.isKeyPressed('proxy_mouse_left'))  {
             if( !this.mouseLeftDown ){
@@ -258,6 +278,10 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         // this.mouseDownPos.y = me.input.mouse.pos.y;
 
        // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
+
+        if(this.moveTargetTimer > 0){
+            context.drawImage( this.moveTarget, this.moveTargetPos.x - 16, this.moveTargetPos.y - 16 - Math.sin(this.moveTargetSin) * 8 );
+        }
 
         me.state.current().baddies.forEach(function(target) {
             var x = target.pos.x - me.game.viewport.pos.x;
