@@ -46,7 +46,9 @@
  </layer>
  <objectgroup name="entities">
   <object id="1" name="player" x="214" y="621" width="32" height="32"/>
-  <object id="3" name="musketeer" x="154" y="431" width="32" height="32"/>
+  <object id="2" name="baddie" x="464" y="109" width="32" height="32"/>
+  <object id="3" name="musketeer" x="174" y="116" width="32" height="32"/>
+  <object id="4" name="mage" x="728" y="95" width="32" height="32"/>
   <object id="5" name="grave" x="132" y="767" width="32" height="32"/>
   <object id="6" name="grave" x="190" y="767" width="31" height="32"/>
   <object id="7" name="grave" x="248" y="766" width="32" height="32"/>
