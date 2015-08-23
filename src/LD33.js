@@ -197,11 +197,15 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
                 me.state.current().playerArmy.forEach(function(target) {
                     if(target.selected){
                         target.moveToPos(x,y);
+                        selected++;
                     }
 
                 }.bind(this));
 
 
+                if(selected == 0){
+                    me.state.current().player.moveToPos(x,y);
+                }
             }
         }
     },
@@ -280,7 +284,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
        // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
 
         if(this.moveTargetTimer > 0){
-            context.drawImage( this.moveTarget, this.moveTargetPos.x - 16, this.moveTargetPos.y - 16 - Math.sin(this.moveTargetSin) * 8 );
+          //  context.drawImage( this.moveTarget, this.moveTargetPos.x - 16, this.moveTargetPos.y - 16 - Math.sin(this.moveTargetSin) * 8 );
         }
 
         me.state.current().baddies.forEach(function(target) {

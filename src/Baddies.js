@@ -91,6 +91,10 @@ var Baddie = Unit.extend({
         this.fixDirection();
 
         this.updateMovement();
+
+        this.checkUnitCollision( me.state.current().playerArmy, true );
+        this.checkUnitCollision( me.state.current().baddies, false );
+
         //this.checkBulletCollision();
         return true;
     }

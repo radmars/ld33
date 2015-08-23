@@ -33,6 +33,10 @@ var Zombie = Unit.extend({
         this.moveToTargetPos = false;
         this.moveTo = new me.Vector2d(0,0);
 
+        this.clumpDist = 40;
+
+        this.speed = 3;
+
         // Hack...
         me.state.current().playerArmy.push(this);
     },
@@ -70,27 +74,13 @@ var Zombie = Unit.extend({
                 this.vel.x = this.vel.y = 0;
             }else{
                 toTarget.normalize();
-                this.vel.x = toTarget.x;
-                this.vel.y = toTarget.y;
+                this.vel.x = toTarget.x * this.speed;
+                this.vel.y = toTarget.y * this.speed;
             }
-
-            me.state.current().playerArmy.forEach(function(target) {
-                if(target != this){
-                    var targetToMe = new me.Vector2d( this.pos.x, this.pos.y );
-                    targetToMe.sub(target.pos);
-
-                    if(targetToMe.length() < 32){
-                        targetToMe.normalize();
-                        targetToMe.x *= 32;
-                        targetToMe.y *= 32;
-                        this.pos.x = target.pos.x + targetToMe.x;
-                        this.pos.y = target.pos.y + targetToMe.y;
-                    }
-                }
-
-            }.bind(this));
-
         }
+
+       this.checkUnitCollision( me.state.current().playerArmy, false );
+       this.checkUnitCollision( me.state.current().baddies, true );
 
        this.parent(dt);
        this.fixDirection();
@@ -167,6 +157,11 @@ var Player = me.ObjectEntity.extend({
             this.pos.y + this.centerOffsetY
         );
 
+        this.moveToTargetPos = false;
+        this.moveTo = new me.Vector2d( 0, 0 );
+        this.moveTo.x = 0;
+        this.moveTo.y = 0;
+
         me.game.viewport.follow( this.followPos, me.game.viewport.AXIS.BOTH );
         me.game.viewport.setDeadzone( me.game.viewport.width / 10, 1 );
 
@@ -178,6 +173,7 @@ var Player = me.ObjectEntity.extend({
 
         this.renderable.setCurrentAnimation("idle");
 
+        /*
         me.input.bindKey(me.input.KEY.LEFT,  "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.UP,   "up");
@@ -187,10 +183,13 @@ var Player = me.ObjectEntity.extend({
         me.input.bindKey(me.input.KEY.S,    "down");
         me.input.bindKey(me.input.KEY.A,    "left");
         me.input.bindKey(me.input.KEY.D,    "right");
+        */
     },
 
     moveToPos: function (x,y){
-
+        this.moveToTargetPos = true;
+        this.moveTo.x = x;
+        this.moveTo.y = y;
     },
 
     shoot: function(){
@@ -207,6 +206,7 @@ var Player = me.ObjectEntity.extend({
 
         if(this.deathTimer > 0){
             this.deathTimer-=dt;
+            this.moveToTargetPos = false;
             radmars.maybeSwitchAnimation(this.renderable, "die", false);
             this.updateMovement();
             if(this.deathTimer<=0){
@@ -233,10 +233,35 @@ var Player = me.ObjectEntity.extend({
         if(this.hitTimer > 0){
             this.hitTimer-=dt;
             this.vel.x = this.hitVelX;
+            this.moveToTargetPos = false;
             this.updateMovement();
             return true;
         }
 
+        if( this.moveToTargetPos ){
+            var toTarget = new me.Vector2d( this.moveTo.x, this.moveTo.y );
+            toTarget.sub(this.pos);
+
+            if(toTarget.length() <= 8 ){
+                this.vel.x = this.vel.y = 0;
+                radmars.maybeSwitchAnimation(this.renderable, "idle", true);
+            }else{
+                radmars.maybeSwitchAnimation(this.renderable, "walk", true);
+                toTarget.normalize();
+                this.vel.x = toTarget.x * this.maxVel;
+                this.vel.y = toTarget.y * this.maxVel;
+
+                if(this.vel.x > 0){
+                    this.flipX(false);
+                    this.direction = 1;
+                }else{
+                    this.flipX(true);
+                    this.direction = -1;
+                }
+            }
+        }
+
+        /*
         // TODO acceleration
         if (me.input.isKeyPressed('left'))  {
             this.vel.x = -this.maxVel;
@@ -258,6 +283,7 @@ var Player = me.ObjectEntity.extend({
             this.direction = 1;
             radmars.maybeSwitchAnimation(this.renderable, "walk", true);
         }
+        */
 
         // Col checker is bound to checkCollisions.
         me.game.world.collide(this, true).forEach(this.colChecker);
