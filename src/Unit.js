@@ -72,7 +72,7 @@ var Unit = me.ObjectEntity.extend({
     },
 
     damage: function(dmg) {
-        console.log("damage! " + dmg + " / hp " + this.hp  +" / " + this.maxHP);
+        //console.log("damage! " + dmg + " / hp " + this.hp  +" / " + this.maxHP);
 
         this.hp -= dmg;
         if(this.hp <= 0 && !this.dead) {

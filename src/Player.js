@@ -78,7 +78,7 @@ var Player = me.ObjectEntity.extend({
         this.hitVelX = 0;
         this.image =  me.loader.getImage('tinyman');
 
-        this.z = 200;
+        this.z = 300;
         this.disableInputTimer = 0;
 
         var shape = this.getShape();
