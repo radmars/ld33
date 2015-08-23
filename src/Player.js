@@ -6,6 +6,16 @@ var Zombie = Unit.extend({
         settings.spriteheight = 32;
         settings.height = 32;
         settings.width = 32;
+
+        // Check Unit for what these mean...
+        settings.attackRange = settings.spritewidth;
+        settings.attackCooldownMax = 700;
+        settings.findTargetTimerMax = 100;
+        settings.giveUpDist = 225;
+        settings.maxHP = 2;
+        settings.maxTargetingDist = 150;
+        settings.targetAccel = 0.15;
+
         this.parent(x, y, settings);
         this.setVelocity( 1, 1 );
         this.z = 300;
@@ -13,19 +23,12 @@ var Zombie = Unit.extend({
         this.zombie = true;
         this.player = settings.player;
         this.collidable = true;
+        this.attackDamage = 1;
 
         this.renderable.addAnimation( "idle", [ 0 ] );
         this.renderable.addAnimation( "walk", [ 0 ] );
         this.renderable.addAnimation( "attacking", [ 0 ] );
 
-        // Check Unit for what these mean...
-        this.giveUpDist = 225;
-        this.findTargetTimerMax = 100;
-        this.maxTargetingDist = 150;
-        this.attackRange = settings.spritewidth;
-        this.targetAccel = 0.15;
-
-        this.hp = this.hpMax = 5;
         this.selected = false;
 
         this.followDist = Math.round(Math.random() * 32 + 32);
@@ -39,7 +42,12 @@ var Zombie = Unit.extend({
 
     attack: function(target) {
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
+        target.damage(this.attackDamage);
         return true;
+    },
+
+    die: function() {
+        me.state.current().playerArmy.remove(this);
     },
 
     moveToPos: function (x,y){
@@ -150,6 +158,7 @@ var Player = me.ObjectEntity.extend({
 
         this.collisionTimer = 0;
         this.deathTimer = 0;
+        this.hp = 5;
 
         this.maxVel = 4;
 
@@ -191,6 +200,10 @@ var Player = me.ObjectEntity.extend({
 
     moveToPos: function (x,y){
 
+    },
+
+    damage: function(dmg) {
+        this.hp -= dmg;
     },
 
     shoot: function(){
