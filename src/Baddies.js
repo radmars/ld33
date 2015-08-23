@@ -3,8 +3,7 @@ var Knight = Unit.extend({
         settings = settings || {};
         settings.unitType = 'knight';
         this.parent(x, y, settings);
-
-        console.log("new knight");
+        this.setAttackRange(42);
     },
 
     attack: function(target) {
@@ -37,7 +36,7 @@ var Musketeer = Unit.extend({
         this.findTargetTimer = 40;
 
         this.attackCooldownMax = 2500;
-        this.attackRange = 300;
+        this.setAttackRange(300);
     },
 
     attack: function(target) {
@@ -87,7 +86,7 @@ var Mage = Musketeer.extend({
         this.findTargetTimer = 40;
 
         this.attackCooldownMax = 3000;
-        this.attackRange = 300;
+        this.setAttackRange(300);
     },
 
     attack: function(target) {

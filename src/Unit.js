@@ -17,16 +17,21 @@ var Unit = me.ObjectEntity.extend({
         settings.maxTargetingDist = 150;
         settings.giveUpDist = 225;
         settings.findTargetTimerMax = 100;
+
         settings.attackCooldownMax = 500;
         settings.attackRange = 32 + 16;
+
         settings.maxHP = 5;
 
+        this.alwaysUpdate       = false;
         // some defautls. pick better ones please.
-        this.alwaysUpdate = false;
+        this.setAttackRange(42);
         this.attackCooldown     = 0;
         this.attackDamage       = 1;
+
         this.attackCooldownMax  = settings.attackCooldownMax || 500;
         this.attackRange        = settings.attackRange || settings.spritewidth;
+
         this.clumpDist          = 32;
         this.collidable         = true;
         this.curTarget          = null;
@@ -329,8 +334,14 @@ var Unit = me.ObjectEntity.extend({
                 }
             }
         }
+    },
 
-        //
+    setAttackRange: function(r) {
+        this.attackRange = r;
+    },
+
+    getAttackRange: function() {
+        return this.attackRange;
     }
 });
 
