@@ -1,9 +1,11 @@
 var Unit = me.ObjectEntity.extend({
     init: function(x, y, settings) {
+        function fatal(str) { throw str; }
         this.parent( x, y, settings );
         this.curTarget = null;
 
         // some defautls. pick better ones please.
+
         this.findTargetTimerMax = 100;
         this.giveUpDist = 225;
         this.findTargetTimer = 40;
@@ -11,10 +13,32 @@ var Unit = me.ObjectEntity.extend({
         this.attackCooldown = 0;
         this.attackRange = settings.spritewidth;
         this.targetAccel = 0.15;
-
         this.speed = 2;
-
         this.clumpDist = 32;
+
+        this.findTargetTimerMax = settings.findTargetTimerMax || 100;
+        this.giveUpDist         = settings.giveUpDistance || 225;
+        this.maxHP              = settings.maxHP || fatal("Must specifiy maxHP");
+        this.hp                 = settings.hp || this.maxHP;
+        this.maxTargetingDist   = settings.maxTargettingDistance || 150;
+        this.attackRange        = settings.attackRange || settings.spritewidth;
+        this.targetAccel        = settings.targetAccel || 0.15;
+        this.attackCooldownMax  = settings.attackCooldownMax || 30;
+        this.attackCooldown     = 0;
+        this.findTargetTimer    = 40;
+        this.dead = false;
+    },
+
+    damage: function(dmg) {
+        this.hp -= dmg;
+        if(this.hp <= 0) {
+            this.dead = true;
+            this.die();
+            var corpse = new Corpse(this.pos.x, this.pos.y);
+            me.game.world.addChild(corpse);
+            me.game.world.removeChild(this);
+        }
+
     },
 
     fixDirection: function() {
@@ -33,9 +57,10 @@ var Unit = me.ObjectEntity.extend({
         throw "You need to overload this function!";
     },
 
-    attack: function() {
+    attack: function(other) {
         throw "You need to overload this function!";
     },
+
 
     checkUnitCollision: function( array, stopOnCollide ){
         // me.state.current().playerArmy
@@ -57,6 +82,10 @@ var Unit = me.ObjectEntity.extend({
                 }
             }
         }.bind(this));
+    },
+
+    die: function() {
+        throw "So sad!";
     },
 
     moveTowardTargetAndAttack: function(dt) {
@@ -93,7 +122,7 @@ var Unit = me.ObjectEntity.extend({
                 this.attackCooldown = this.attackCooldownMax;
             }
         }
-    },
+    }
 });
 
 

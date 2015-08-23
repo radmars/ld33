@@ -5,6 +5,13 @@ var Baddie = Unit.extend({
         settings.spritewidth = settings.spritewidth || 32;
         settings.spriteheight = settings.spriteheight || 32;
 
+        settings.maxTargetingDist = 150;
+        settings.giveUpDist = 225;
+        settings.findTargetTimerMax = 100;
+        settings.attackCooldownMax = 30;
+        settings.attackRange = settings.spritewidth;
+        settings.maxHP = 5;
+
         this.type = settings.type;
 
         this.parent( x, y, settings );
@@ -17,13 +24,6 @@ var Baddie = Unit.extend({
         this.setFriction( 0.05, 0.05 );
         this.targetAccel = 0.15;
 
-        this.maxTargetingDist = 150;
-        this.giveUpDist = 225;
-        this.findTargetTimerMax = 100;
-
-        this.attackCooldownMax = 30;
-        this.attackRange = settings.spritewidth;
-
         this.attackCooldown = 0;
 
         this.renderable.addAnimation( "idle", [ 0 ] );
@@ -32,12 +32,16 @@ var Baddie = Unit.extend({
 
         this.direction = 1;
         this.collidable = true;
+        this.attackDamage = 1;
 
-        this.hp = this.hpMax = 5;
         // Hack...
         me.state.current().baddies.push(this);
 
         this.renderable.animationspeed = 70;
+    },
+
+    die: function(){
+        me.state.current().baddies.remove(this);
     },
 
     getTargetList: function() {
@@ -46,11 +50,8 @@ var Baddie = Unit.extend({
 
     attack: function(target) {
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
+        target.damage(this.attackDamage);
         return true;
-    },
-
-    isMeleeAttacking: function() {
-        return this.renderable.isCurrentAnimation("attacking");
     },
 
     checkBulletCollision: function(){
@@ -121,10 +122,6 @@ var Musketeer = Baddie.extend({
 
         this.attackCooldownMax = 2500;
         this.attackRange = 300;
-    },
-
-    isMeleeAttacking: function() {
-        return false;
     },
 
     attack: function(target) {
