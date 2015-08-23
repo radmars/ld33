@@ -392,7 +392,10 @@ var LevelChanger = me.ObjectEntity.extend({
 
     onCollision: function(dir, obj) {
         if(obj.player && this.opened()) {
-            me.state.current().goToLevel(this.toLevel);
+            var l = this.toLevel;
+            (function(){
+                me.state.current().goToLevel(l);
+            }).defer();
         }
     },
 });
