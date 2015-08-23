@@ -92,7 +92,7 @@ var Player = me.ObjectEntity.extend({
         this.deathTimer = 0;
         this.hp = this.maxHP = 20;
 
-        this.speed = 4;
+        this.speed = 3.5;
 
         this.setFriction( 1.0, 1.0 );
         this.setVelocity( this.speed , this.speed  );

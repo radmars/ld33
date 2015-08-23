@@ -69,7 +69,6 @@ var Unit = me.ObjectEntity.extend({
             this.moveToPlayerPos = true;
             me.state.current().playerArmy.push(this);
         }
-
     },
 
     damage: function(dmg) {
@@ -91,7 +90,7 @@ var Unit = me.ObjectEntity.extend({
     },
 
     playerSummon:function(){
-        console.log("summoned! ");
+        //console.log("summoned! ");
         this.moveToPlayerPos = true;
         this.moveToTargetPos = false;
         this.curTarget = null;
