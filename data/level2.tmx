@@ -46,16 +46,16 @@
  </layer>
  <objectgroup name="entities" width="32" height="28">
   <object name="player" x="609" y="450" width="32" height="32"/>
-  <object name="baddie" x="191" y="351" width="32" height="32"/>
-  <object name="baddie" x="803" y="226" width="32" height="32"/>
-  <object name="baddie" x="286" y="383" width="32" height="32"/>
-  <object name="baddie" x="258" y="291" width="32" height="32"/>
-  <object name="baddie" x="705" y="256" width="32" height="32"/>
-  <object name="baddie" x="767" y="705" width="32" height="32"/>
-  <object name="baddie" x="803" y="317" width="32" height="32"/>
-  <object name="baddie" x="799" y="767" width="32" height="32"/>
-  <object name="baddie" x="96" y="322" width="32" height="32"/>
-  <object name="baddie" x="160" y="256" width="32" height="32"/>
+  <object name="knight" x="191" y="351" width="32" height="32"/>
+  <object name="knight" x="803" y="226" width="32" height="32"/>
+  <object name="knight" x="286" y="383" width="32" height="32"/>
+  <object name="knight" x="258" y="291" width="32" height="32"/>
+  <object name="knight" x="705" y="256" width="32" height="32"/>
+  <object name="knight" x="767" y="705" width="32" height="32"/>
+  <object name="knight" x="803" y="317" width="32" height="32"/>
+  <object name="knight" x="799" y="767" width="32" height="32"/>
+  <object name="knight" x="96" y="322" width="32" height="32"/>
+  <object name="knight" x="160" y="256" width="32" height="32"/>
   <object name="grave" x="98" y="738" width="32" height="32"/>
   <object name="grave" x="162" y="799" width="32" height="32"/>
   <object name="grave" x="192" y="705" width="32" height="32"/>

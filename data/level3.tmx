@@ -47,8 +47,8 @@
  <objectgroup name="entities" width="32" height="18">
   <object name="player" x="194" y="98" width="32" height="32"/>
   <object name="musketeer" x="912" y="80" width="32" height="32"/>
-  <object name="baddie" x="544" y="192" width="32" height="32"/>
-  <object name="baddie" x="543" y="287" width="32" height="32"/>
+  <object name="knight" x="544" y="192" width="32" height="32"/>
+  <object name="knight" x="543" y="287" width="32" height="32"/>
   <object name="grave" x="96" y="386" width="32" height="32"/>
   <object name="grave" x="64" y="319" width="32" height="32"/>
   <object name="grave" x="161" y="320" width="32" height="32"/>

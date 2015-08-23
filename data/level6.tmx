@@ -46,11 +46,11 @@
  </layer>
  <objectgroup name="entities" width="32" height="32">
   <object name="player" x="160" y="864" width="32" height="32"/>
-  <object name="baddie" x="192" y="608" width="32" height="32"/>
-  <object name="baddie" x="98" y="611" width="32" height="32"/>
+  <object name="knight" x="192" y="608" width="32" height="32"/>
+  <object name="knight" x="98" y="611" width="32" height="32"/>
   <object name="mage" x="480" y="605" width="32" height="32"/>
-  <object name="baddie" x="801" y="609" width="32" height="32"/>
-  <object name="baddie" x="897" y="609" width="32" height="32"/>
+  <object name="knight" x="801" y="609" width="32" height="32"/>
+  <object name="knight" x="897" y="609" width="32" height="32"/>
   <object name="grave" x="542" y="834" width="32" height="32"/>
   <object name="grave" x="610" y="895" width="32" height="32"/>
   <object name="grave" x="478" y="897" width="32" height="32"/>

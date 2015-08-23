@@ -46,34 +46,34 @@
  </layer>
  <objectgroup name="entities" width="32" height="48">
   <object name="player" x="480" y="963" width="32" height="32"/>
-  <object name="baddie" x="90" y="836" width="32" height="32"/>
-  <object name="baddie" x="894" y="840" width="32" height="32"/>
-  <object name="baddie" x="806" y="866" width="32" height="32"/>
-  <object name="baddie" x="192" y="866" width="32" height="32"/>
-  <object name="baddie" x="256" y="834" width="32" height="32"/>
-  <object name="baddie" x="734" y="834" width="32" height="32"/>
-  <object name="baddie" x="734" y="1266" width="32" height="32"/>
-  <object name="baddie" x="862" y="1152" width="32" height="32"/>
-  <object name="baddie" x="894" y="1270" width="32" height="32"/>
-  <object name="baddie" x="734" y="1154" width="32" height="32"/>
-  <object name="baddie" x="822" y="1224" width="32" height="32"/>
-  <object name="baddie" x="212" y="1224" width="32" height="32"/>
-  <object name="baddie" x="124" y="1154" width="32" height="32"/>
-  <object name="baddie" x="252" y="1152" width="32" height="32"/>
-  <object name="baddie" x="838" y="287" width="32" height="32"/>
-  <object name="baddie" x="910" y="333" width="32" height="32"/>
-  <object name="baddie" x="750" y="217" width="32" height="32"/>
-  <object name="baddie" x="878" y="215" width="32" height="32"/>
-  <object name="baddie" x="750" y="329" width="32" height="32"/>
-  <object name="baddie" x="94" y="109" width="32" height="32"/>
-  <object name="baddie" x="222" y="317" width="32" height="32"/>
-  <object name="baddie" x="90" y="205" width="32" height="32"/>
-  <object name="baddie" x="218" y="203" width="32" height="32"/>
-  <object name="baddie" x="90" y="317" width="32" height="32"/>
-  <object name="baddie" x="450" y="74" width="32" height="32"/>
-  <object name="baddie" x="556" y="74" width="32" height="32"/>
-  <object name="baddie" x="384" y="556" width="32" height="32"/>
-  <object name="baddie" x="608" y="552" width="32" height="32"/>
+  <object name="knight" x="90" y="836" width="32" height="32"/>
+  <object name="knight" x="894" y="840" width="32" height="32"/>
+  <object name="knight" x="806" y="866" width="32" height="32"/>
+  <object name="knight" x="192" y="866" width="32" height="32"/>
+  <object name="knight" x="256" y="834" width="32" height="32"/>
+  <object name="knight" x="734" y="834" width="32" height="32"/>
+  <object name="knight" x="734" y="1266" width="32" height="32"/>
+  <object name="knight" x="862" y="1152" width="32" height="32"/>
+  <object name="knight" x="894" y="1270" width="32" height="32"/>
+  <object name="knight" x="734" y="1154" width="32" height="32"/>
+  <object name="knight" x="822" y="1224" width="32" height="32"/>
+  <object name="knight" x="212" y="1224" width="32" height="32"/>
+  <object name="knight" x="124" y="1154" width="32" height="32"/>
+  <object name="knight" x="252" y="1152" width="32" height="32"/>
+  <object name="knight" x="838" y="287" width="32" height="32"/>
+  <object name="knight" x="910" y="333" width="32" height="32"/>
+  <object name="knight" x="750" y="217" width="32" height="32"/>
+  <object name="knight" x="878" y="215" width="32" height="32"/>
+  <object name="knight" x="750" y="329" width="32" height="32"/>
+  <object name="knight" x="94" y="109" width="32" height="32"/>
+  <object name="knight" x="222" y="317" width="32" height="32"/>
+  <object name="knight" x="90" y="205" width="32" height="32"/>
+  <object name="knight" x="218" y="203" width="32" height="32"/>
+  <object name="knight" x="90" y="317" width="32" height="32"/>
+  <object name="knight" x="450" y="74" width="32" height="32"/>
+  <object name="knight" x="556" y="74" width="32" height="32"/>
+  <object name="knight" x="384" y="556" width="32" height="32"/>
+  <object name="knight" x="608" y="552" width="32" height="32"/>
   <object name="grave" x="482" y="1125" width="32" height="32"/>
   <object name="grave" x="545" y="1055" width="32" height="32"/>
   <object name="grave" x="423" y="1055" width="32" height="32"/>
