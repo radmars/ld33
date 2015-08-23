@@ -14,6 +14,10 @@ var Zombie = Unit.extend({
         this.player = settings.player;
         this.collidable = true;
 
+        this.renderable.addAnimation( "idle", [ 0 ] );
+        this.renderable.addAnimation( "walk", [ 0 ] );
+        this.renderable.addAnimation( "attacking", [ 0 ] );
+
         // Check Unit for what these mean...
         this.giveUpDist = 225;
         this.findTargetTimerMax = 100;
@@ -33,6 +37,10 @@ var Zombie = Unit.extend({
         me.state.current().playerArmy.push(this);
     },
 
+    attack: function(target) {
+        radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
+        return true;
+    },
 
     moveToPos: function (x,y){
         this.moveToTargetPos = true;
@@ -85,6 +93,7 @@ var Zombie = Unit.extend({
         }
 
        this.parent(dt);
+       this.fixDirection();
        this.updateMovement();
        return true;
     }
