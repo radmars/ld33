@@ -31,7 +31,7 @@ var Unit = me.ObjectEntity.extend({
 
     damage: function(dmg) {
         this.hp -= dmg;
-        if(this.hp <= 0) {
+        if(this.hp <= 0 && !this.dead) {
             this.dead = true;
             this.die();
             var corpse = new Corpse(this.pos.x, this.pos.y);
