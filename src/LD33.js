@@ -24,6 +24,16 @@ var LD33 = function() {
             me.plugin.debug.show();
         }
 
+        me.pool.register( "player", Player );
+        me.pool.register( "baddie", Mage);
+        me.pool.register( "musketeer", Musketeer );
+        me.pool.register( "mage", Mage );
+        me.pool.register( "corpse", Corpse );
+        me.pool.register( "grave", Grave );
+        me.pool.register( "knight", Knight );
+        me.pool.register( "pickup", Pickup );
+        me.pool.register( "levelchanger", LevelChanger );
+        me.pool.register( "gameender", GameEnder );
 
         me.input.preventDefault = true;
 
@@ -60,18 +70,6 @@ var LD33 = function() {
         me.state.set( me.state.GAMEOVER, new GameOverScreen() );
 
         me.state.change(this.options.skipIntro ? me.state.PLAY : me.state.INTRO);
-
-        me.pool.register( "player", Player );
-        me.pool.register( "baddie", Mage);
-        me.pool.register( "musketeer", Musketeer );
-        me.pool.register( "mage", Mage );
-        me.pool.register( "corpse", Corpse );
-        me.pool.register( "grave", Grave );
-        me.pool.register( "knight", Knight );
-
-        me.pool.register( "pickup", Pickup );
-        me.pool.register( "levelchanger", LevelChanger );
-        me.pool.register( "gameender", GameEnder );
 
 
     };
@@ -112,7 +110,9 @@ LD33.HUD.Container = me.ObjectContainer.extend({
     },
 
     startGame:function(){
+        me.game.world.removeChild(this);
         this.boxDisplay.startGame();
+        me.game.world.addChild(this);
     },
 
     endGame: function(){
@@ -140,7 +140,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         this.unitSelected = me.loader.getImage("unit_selected");
         this.moveTarget = me.loader.getImage("move_target");
 
-            this.render = false;
+        this.render = false;
 
         // make sure we use screen coordinates
         this.floating = true;
@@ -391,12 +391,6 @@ var LevelChanger = me.ObjectEntity.extend({
             me.state.current().goToLevel(this.toLevel);
         }
     },
-
-    update: function(dt) {
-        // TODO: Just bake image or attach to obj?
-        this.parent(dt);
-        this.updateMovement();
-    }
 });
 
 var GameEnder = me.ObjectEntity.extend({
@@ -437,7 +431,6 @@ var PlayScreen = me.ScreenObject.extend({
         this.subscription = me.event.subscribe(me.event.KEYDOWN, this.keyDown.bind(this));
 
         this.HUD = new LD33.HUD.Container( );
-        me.game.world.addChild(this.HUD);
         LD33.data.beatGame = false;
 
     },
@@ -450,7 +443,6 @@ var PlayScreen = me.ScreenObject.extend({
     goToLevel: function( level ) {
         this.baddies = [];
         this.pickups = [];
-        me.levelDirector.loadLevel( level );
         me.state.current().changeLevel( level );
         this.HUD.startGame();
 
@@ -474,6 +466,7 @@ var PlayScreen = me.ScreenObject.extend({
 
     /** Update the level display & music. Called on all level changes. */
     changeLevel: function( level ) {
+        this.currentLevel = level;
         me.audio.mute( "ld30-spirit" );
         me.audio.unmute( "ld30-real" );
 
@@ -486,16 +479,13 @@ var PlayScreen = me.ScreenObject.extend({
     },
 
     // this will be called on state change -> this
-    onResetEvent: function() {
+    onResetEvent: function(newLevel) {
         this.baddies = [];
         this.pickups = [];
         this.overworld = true;
         LD33.data.beatGame = false;
-        LD33.data.collectedSouls = 0;
-        LD33.data.souls = 1;
-        var level =  location.hash.substr(1) || "level1" ;
+        var level =  newLevel || this.currentLevel || location.hash.substr(1) || "level1" ;
         me.levelDirector.loadLevel( level );
-
         me.audio.stopTrack();
         me.audio.play( "ld30-real", true );
         me.audio.play( "ld30-spirit", true );
