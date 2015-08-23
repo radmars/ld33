@@ -61,7 +61,6 @@
   <object name="baddie" x="130" y="257" width="32" height="32"/>
   <object name="civilian" x="448" y="704" width="32" height="32"/>
   <object name="civilian" x="738" y="255" width="32" height="32"/>
-  <object name="civilian" x="895" y="737" width="32" height="32"/>
   <object name="baddie" x="131" y="161" width="32" height="32"/>
   <object name="baddie" x="193" y="194" width="32" height="32"/>
   <object name="mage" x="481" y="479" width="32" height="32"/>
@@ -72,5 +71,6 @@
   <object name="grave" x="545" y="97" width="32" height="32"/>
   <object name="civilian" x="351" y="159" width="32" height="32"/>
   <object name="civilian" x="769" y="736" width="32" height="32"/>
+  <object name="baddie" x="895" y="771" width="32" height="32"/>
  </objectgroup>
 </map>
