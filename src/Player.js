@@ -1,103 +1,3 @@
-var Zombie = Unit.extend({
-    init: function(x, y, settings) {
-        settings = settings || {};
-        settings.image = 'knight_zombie';
-        settings.spritewidth = 32;
-        settings.spriteheight = 32;
-        settings.height = 32;
-        settings.width = 32;
-
-        // Check Unit for what these mean...
-        settings.attackRange = settings.spritewidth + 10;
-        settings.attackCooldownMax = 700;
-        settings.findTargetTimerMax = 100;
-        settings.giveUpDist = 225;
-        settings.maxHP = 2;
-        settings.maxTargetingDist = 150;
-        settings.targetAccel = 0.15;
-
-        this.parent(x, y, settings);
-        this.setVelocity( 1, 1 );
-        this.z = 300;
-        this.gravity = 0;
-        this.zombie = true;
-        this.player = settings.player;
-        this.collidable = true;
-        this.attackDamage = 1;
-
-        this.renderable.addAnimation( "idle", [ 0 ] );
-        this.renderable.addAnimation( "walk", [ 0 ] );
-        this.renderable.addAnimation( "attacking", [ 0 ] );
-
-        this.selected = false;
-
-        this.followDist = Math.round(Math.random() * 32 + 32);
-
-        this.moveToTargetPos = false;
-        this.moveTo = new me.Vector2d(0,0);
-
-        this.clumpDist = 40;
-
-        this.speed = 3;
-
-        // Hack...
-        me.state.current().playerArmy.push(this);
-    },
-
-    attack: function(target) {
-        radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
-        target.damage(this.attackDamage);
-        return true;
-    },
-
-    die: function() {
-        me.state.current().playerArmy.remove(this);
-    },
-
-    moveToPos: function (x,y){
-        this.moveToTargetPos = true;
-        this.moveTo.x = x;
-        this.moveTo.y = y;
-    },
-
-    getTargetList: function() {
-        return me.state.current().baddies;
-    },
-
-    update: function(dt) {
-        this.recheckTarget(dt);
-
-        if(this.curTarget) {
-            this.moveTowardTargetAndAttack(dt);
-        }
-        else {
-            var toTarget = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
-            if(this.moveToTargetPos){
-                toTarget.x = this.moveTo.x;
-                toTarget.y = this.moveTo.y;
-            }
-            toTarget.sub(this.pos);
-
-            if(toTarget.length() <= this.followDist ){
-                this.vel.x = this.vel.y = 0;
-            }else{
-                toTarget.normalize();
-                this.vel.x = toTarget.x * this.speed;
-                this.vel.y = toTarget.y * this.speed;
-            }
-        }
-
-       this.checkUnitCollision( me.state.current().playerArmy, false );
-       this.checkUnitCollision( me.state.current().baddies, true );
-
-       this.parent(dt);
-       this.fixDirection();
-       this.updateMovement();
-       return true;
-    }
-});
-
-
 var Corpse = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {};
@@ -106,6 +6,7 @@ var Corpse = me.ObjectEntity.extend({
         settings.spriteheight = 16;
         settings.height = 16;
         settings.width = 16;
+        this.unitType = radmars.assert(settings.unitType || 'knight', "Must specify a corpse unitType");
         this.parent(x, y, settings);
         this.z = 300;
         this.corpse = true;
@@ -114,7 +15,8 @@ var Corpse = me.ObjectEntity.extend({
 
     convertToZombie: function(player) {
         me.game.world.removeChild(this);
-        var z = new Zombie(this.pos.x, this.pos.y, {
+        var z = LD33.newBaddie(this.pos.x, this.pos.y, {
+            unitType: this.unitType,
             player: player,
         });
         me.game.world.addChild(z);
@@ -149,8 +51,8 @@ var Grave = me.ObjectEntity.extend({
 
             this.renderable.setCurrentAnimation("dead");
 
-           // me.game.world.removeChild(this);
-            var z = new Zombie(this.pos.x, this.pos.y, {
+            var z = LD33.newBaddie(this.pos.x, this.pos.y, {
+                unitType: (Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
                 player: player,
             });
             me.game.world.addChild(z);

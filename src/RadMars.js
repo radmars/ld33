@@ -10,6 +10,13 @@ var radmars = {
         renderable.setCurrentAnimation(a, cb);
     },
 
+    assert: function(value, err) {
+        if(value == null) {
+            throw err;
+        }
+        return value;
+    },
+
     findTarget: function(searchPosition, potentialTargets, visionRange) {
         var closestDist = null;
         var nextTarget = null;

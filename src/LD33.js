@@ -62,14 +62,11 @@ var LD33 = function() {
         me.state.change(this.options.skipIntro ? me.state.PLAY : me.state.INTRO);
 
         me.pool.register( "player", Player );
-        me.pool.register( "baddie", Baddie );
+        me.pool.register( "baddie", Knight);
         me.pool.register( "musketeer", Musketeer );
         me.pool.register( "mage", Mage );
         me.pool.register( "corpse", Corpse );
         me.pool.register( "grave", Grave );
-
-        me.pool.register( "fish", Fish );
-        me.pool.register( "wasp", Wasp );
 
         me.pool.register( "pickup", Pickup );
         me.pool.register( "levelchanger", LevelChanger );
@@ -79,6 +76,19 @@ var LD33 = function() {
     };
 };
 
+LD33.newBaddie = function(x, y, settings) {
+    var classes = {
+        'knight': 'Knight',
+        'mage': 'Mage',
+        'musketeer': 'Musketeer',
+    };
+    // #ProHacks
+    return new window[classes[settings.unitType]](x, y, {
+        zombie: settings.zombie,
+        player: settings.player,
+
+    });
+};
 
 LD33.data = {souls:1, collectedSouls:0, collectedSoulsMax:15, beatGame:false};
 
@@ -483,16 +493,6 @@ var PlayScreen = me.ScreenObject.extend({
 
         this.changeLevel( level );
         this.HUD.startGame();
-
-        /*
-        for(var i = 0; i < 30; i++) {
-            var x = Math.random() * 500;
-            var y = Math.random() * 500;
-            var c = new Corpse(x, y);
-            me.game.world.addChild(c);
-        }
-        */
-
     },
 
     onDestroyEvent: function() {

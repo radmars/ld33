@@ -23,7 +23,13 @@ var GameResources = [
     _Image( "intro_radmars2" ),
 
     // Corpses
+    _Image( "mage" ),
+    _Image( "mage_zombie" ),
+    _Image( "knight" ),
     _Image( "knight_zombie" ),
+    _Image( "musketeer" ),
+    _Image( "musketeer_zombie" ),
+
     _Image( "corpse" ),
 
     // ui
@@ -45,8 +51,6 @@ var GameResources = [
 
     //game
     _Image("tinyman"),
-    _Image("knight"),
-    _Image("knight_zombie"),
 
     _Image("baddieBullet"),
     _Image("magicMissile"),
