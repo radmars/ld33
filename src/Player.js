@@ -17,7 +17,8 @@ var Corpse = me.ObjectEntity.extend({
         me.game.world.removeChild(this);
         var z = LD33.newBaddie(this.pos.x, this.pos.y, {
             unitType: this.unitType,
-            player: player,
+            zombie:true,
+            player: player
         });
         me.game.world.addChild(z);
     },
@@ -52,7 +53,7 @@ var Grave = me.ObjectEntity.extend({
             this.renderable.setCurrentAnimation("dead");
 
             var z = LD33.newBaddie(this.pos.x, this.pos.y, {
-                unitType: (Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
+                unitType: 'knight', //(Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
                 player: player,
                 zombie: true,
             });
@@ -252,7 +253,7 @@ var Player = me.ObjectEntity.extend({
         }
         else if( this.hitTimer <= 0 && this.collisionTimer <= 0 && col.obj.baddie ) {
             // die here?
-
+            /*
             me.game.viewport.shake(5, 250);
 
             this.hitTimer = 250;
@@ -271,6 +272,7 @@ var Player = me.ObjectEntity.extend({
             }
 
             radmars.playAnimation(this.renderable, "hit");
+            */
         }
     },
 });

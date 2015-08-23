@@ -6,6 +6,7 @@ var Knight = Unit.extend({
     },
 
     attack: function(target) {
+        //console.log("attacking! ");
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
         target.damage(this.attackDamage);
         return true;

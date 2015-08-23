@@ -197,7 +197,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
                 //console.log("right click");
                 //me.input.mouse.pos.x - this.mouseDownPos.x, me.input.mouse.pos.y - this.mouseDownPos.y
 
-                console.log( "viewport " + me.game.viewport.pos.x +" , " + me.game.viewport.pos.y );
+                //console.log( "viewport " + me.game.viewport.pos.x +" , " + me.game.viewport.pos.y );
 
                 var selected = 0;
                 var x = me.input.mouse.pos.x + me.game.viewport.pos.x;

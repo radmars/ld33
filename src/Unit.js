@@ -17,15 +17,15 @@ var Unit = me.ObjectEntity.extend({
         settings.maxTargetingDist = 150;
         settings.giveUpDist = 225;
         settings.findTargetTimerMax = 100;
-        settings.attackCooldownMax = 30;
-        settings.attackRange = settings.spritewidth + 10;
+        settings.attackCooldownMax = 500;
+        settings.attackRange = 32 + 16;
         settings.maxHP = 5;
 
         // some defautls. pick better ones please.
         this.alwaysUpdate = false;
         this.attackCooldown     = 0;
         this.attackDamage       = 1;
-        this.attackCooldownMax  = settings.attackCooldownMax || 30;
+        this.attackCooldownMax  = settings.attackCooldownMax || 500;
         this.attackRange        = settings.attackRange || settings.spritewidth;
         this.clumpDist          = 32;
         this.collidable         = true;
@@ -36,15 +36,16 @@ var Unit = me.ObjectEntity.extend({
         this.findTargetTimerMax = settings.findTargetTimerMax || 100;
         this.giveUpDist         = settings.giveUpDistance || 225;
         this.gravity = 0;
-        this.hp                 = settings.hp || this.maxHP;
         this.maxHP              = radmars.assert(settings.maxHP, "Must specifiy maxHP");
+        this.hp                 = settings.hp || this.maxHP;
         this.maxTargetingDist   = settings.maxTargettingDistance || 150;
         this.moveTo             = new me.Vector2d(0,0);
         this.moveToTargetPos    = false;
-        this.speed              = 2;
+        this.speed              = 4;
         this.targetAccel        = settings.targetAccel || 0.15;
         this.z = 300;
 
+        this.followDist         = 20 + Math.round( Math.random() * 32 );
 
         this.renderable.addAnimation( "attacking", [ 0 ] );
         this.renderable.addAnimation( "idle", [ 0 ] );
@@ -64,6 +65,8 @@ var Unit = me.ObjectEntity.extend({
     },
 
     damage: function(dmg) {
+        console.log("damage! " + dmg + " / hp " + this.hp  +" / " + this.maxHP);
+
         this.hp -= dmg;
         if(this.hp <= 0 && !this.dead) {
             this.dead = true;
@@ -71,7 +74,7 @@ var Unit = me.ObjectEntity.extend({
                 me.state.current().playerArmy.remove(this);
             }
             else {
-                me.state.current().baddies.push(this);
+                me.state.current().baddies.remove(this);
             }
             var corpse = new Corpse(this.pos.x, this.pos.y);
             me.game.world.addChild(corpse);
@@ -102,6 +105,52 @@ var Unit = me.ObjectEntity.extend({
         }
     },
 
+    moveTowardTargetAndAttack: function(dt) {
+        if (this.attackCooldown >= 0) {
+            this.attackCooldown -= dt;
+        }
+
+        if (this.curTarget && this.attackCooldown <= 0) {
+            if(this.curTarget.hp <= 0 || this.curTarget.dead){
+                this.curTarget = null;
+                return;
+            }
+
+            var toTarget = new me.Vector2d( this.curTarget.pos.x, this.curTarget.pos.y );
+            toTarget.sub(this.pos);
+
+            var dist = toTarget.length();
+
+            if (dist > this.giveUpDist) {
+                this.curTarget = null;
+                return;
+            }
+
+            if (dist < this.attackRange) {
+                this.tryAttack(this.curTarget);
+            }
+
+            if( dist < this.attackRange-1 ){
+                this.vel.x = this.vel.y = 0;
+            } else {
+                toTarget.normalize();
+                this.vel.x = toTarget.x * this.speed;
+                this.vel.y = toTarget.y * this.speed;
+            }
+        }
+    },
+
+    tryAttack: function(target) {
+
+        if (this.attackCooldown <= 0) {
+            var success = this.attack(target);
+            // only reset cooldown if we actually attacked
+            if (success) {
+                this.attackCooldown = this.attackCooldownMax;
+            }
+        }
+    },
+
     update: function(dt) {
         this.recheckTarget(dt);
         if(this.curTarget) {
@@ -113,8 +162,12 @@ var Unit = me.ObjectEntity.extend({
 
         this.fixDirection();
 
-        if(this.baddie){
 
+        this.checkUnitCollision( me.state.current().playerArmy);
+        this.checkUnitCollision( me.state.current().baddies );
+
+        /* //fixed checkUnitCollision to not need the flag
+        if(this.baddie){
             this.checkUnitCollision( me.state.current().playerArmy, true );
             this.checkUnitCollision( me.state.current().baddies, false );
         }
@@ -122,7 +175,7 @@ var Unit = me.ObjectEntity.extend({
             this.checkUnitCollision( me.state.current().playerArmy, false );
             this.checkUnitCollision( me.state.current().baddies, true );
         }
-
+        */
 
         this.parent(dt);
         this.updateMovement();
@@ -187,7 +240,7 @@ var Unit = me.ObjectEntity.extend({
     },
 
 
-    checkUnitCollision: function( array, stopOnCollide ){
+    checkUnitCollision: function( array ){
         // me.state.current().playerArmy
         array.forEach(function(target) {
             if(target != this){
@@ -198,51 +251,20 @@ var Unit = me.ObjectEntity.extend({
                     targetToMe.normalize();
                     targetToMe.x *= this.clumpDist;
                     targetToMe.y *= this.clumpDist;
-                    this.pos.x = target.pos.x + targetToMe.x;
-                    this.pos.y = target.pos.y + targetToMe.y;
 
-                    if(stopOnCollide){
-                        this.vel.x = this.vel.y = 0;
-                    }
+                    //give a big boost of vel in the other direction
+                    this.vel.x = targetToMe.x;
+                    this.vel.y = targetToMe.y;
+
+                    //this.pos.x = target.pos.x + targetToMe.x;
+                    //this.pos.y = target.pos.y + targetToMe.y;
+
+                    //if(stopOnCollide){
+                       // this.vel.x = this.vel.y = 0;
+                   //}
                 }
             }
         }.bind(this));
-    },
-
-    moveTowardTargetAndAttack: function(dt) {
-        if (this.attackCooldown >= 0) {
-            this.attackCooldown -= dt;
-        }
-
-        if (this.curTarget) {
-            var distVec = new me.Vector2d(this.curTarget.pos.x, this.curTarget.pos.y);
-            distVec.sub(this.pos);
-            var distance = distVec.length();
-
-            // give up if too far away
-            if (distance > this.giveUpDist) {
-                this.curTarget = null;
-                return;
-            }
-
-            if (distance < this.attackRange) {
-                this.tryAttack(this.curTarget);
-            }
-
-            distVec.normalize();
-            this.vel.x += distVec.x * this.targetAccel;
-            this.vel.y += distVec.y * this.targetAccel;
-        }
-    },
-
-    tryAttack: function(target) {
-        if (this.attackCooldown <= 0) {
-            var success = this.attack(target);
-            // only reset cooldown if we actually attacked
-            if (success) {
-                this.attackCooldown = this.attackCooldownMax;
-            }
-        }
     }
 });
 
