@@ -90,11 +90,21 @@ var Unit = me.ObjectEntity.extend({
         }
     },
 
+    playerSummon:function(){
+        console.log("summoned! ");
+        this.moveToPlayerPos = true;
+        this.moveToTargetPos = false;
+        this.curTarget = null;
+        this.findTargetTimer = this.findTargetTimerMax;
+    },
+
     moveToPos: function (x,y){
         this.moveToPlayerPos = false;
         this.moveToTargetPos = true;
         this.moveTo.x = x;
         this.moveTo.y = y;
+        this.curTarget = null;
+        this.findTargetTimer = this.findTargetTimerMax;
     },
 
     moveToPlayer: function(dt) {
@@ -113,6 +123,7 @@ var Unit = me.ObjectEntity.extend({
             this.vel.x = this.vel.y = 0;
             this.moveToTargetPos = false;
             this.moveToPlayerPos = false;
+            this.findTargetTimer = 0;
         } else {
             toTarget.normalize();
             this.vel.x = toTarget.x * this.speed;

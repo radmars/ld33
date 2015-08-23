@@ -113,6 +113,9 @@ var Player = me.ObjectEntity.extend({
         this.moveTo.x = 0;
         this.moveTo.y = 0;
 
+        this.summonCooldown = this.summonCooldownMax = 1000;
+        this.raiseCooldown = this.raiseCooldownMax = 2000;
+
         me.game.viewport.follow( this.followPos, me.game.viewport.AXIS.BOTH );
         me.game.viewport.setDeadzone( me.game.viewport.width / 10, 1 );
 
@@ -134,7 +137,22 @@ var Player = me.ObjectEntity.extend({
         me.input.bindKey(me.input.KEY.S,    "down");
         me.input.bindKey(me.input.KEY.A,    "left");
         me.input.bindKey(me.input.KEY.D,    "right");
+
+
+        me.input.bindKey(me.input.KEY.Q,    "summon");
+        me.input.bindKey(me.input.KEY.E,    "raise");
+
         /**/
+    },
+
+    playerSummon:function(){
+
+        me.state.current().playerArmy.forEach(function(target) {
+            if(target.player != true){
+                console.log("summon!");
+                target.playerSummon();
+            }
+        }.bind(this));
     },
 
     moveToPos: function (x,y){
@@ -157,6 +175,14 @@ var Player = me.ObjectEntity.extend({
 
         if(this.shootDelay >0){
             this.shootDelay-=dt;
+        }
+
+        if(this.summonCooldown > 0){
+            this.summonCooldown-=dt;
+        }
+
+        if(this.raiseCooldown > 0){
+            this.raiseCooldown-=dt;
         }
 
         if(this.deathTimer > 0){
@@ -239,6 +265,17 @@ var Player = me.ObjectEntity.extend({
             this.direction = 1;
             radmars.maybeSwitchAnimation(this.renderable, "walk", true);
         }
+
+        if (me.input.isKeyPressed('summon')&& this.summonCooldown <= 0){
+            this.summonCooldown = this.summonCooldownMax;
+            this.playerSummon();
+            //console.log("summon!");
+        }
+
+        if (me.input.isKeyPressed('raise') && this.raiseCooldown <= 0){
+            this.raiseCooldown = this.raiseCooldownMax;
+        }
+
 
         if(this.vel.length > this.speed){
             this.vel.normalize();
