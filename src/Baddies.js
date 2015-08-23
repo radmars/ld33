@@ -9,7 +9,7 @@ var Baddie = Unit.extend({
         settings.giveUpDist = 225;
         settings.findTargetTimerMax = 100;
         settings.attackCooldownMax = 30;
-        settings.attackRange = settings.spritewidth;
+        settings.attackRange = settings.spritewidth + 10;
         settings.maxHP = 5;
 
         this.type = settings.type;

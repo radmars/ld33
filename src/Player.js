@@ -8,7 +8,7 @@ var Zombie = Unit.extend({
         settings.width = 32;
 
         // Check Unit for what these mean...
-        settings.attackRange = settings.spritewidth;
+        settings.attackRange = settings.spritewidth + 10;
         settings.attackCooldownMax = 700;
         settings.findTargetTimerMax = 100;
         settings.giveUpDist = 225;
