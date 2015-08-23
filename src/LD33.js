@@ -62,11 +62,12 @@ var LD33 = function() {
         me.state.change(this.options.skipIntro ? me.state.PLAY : me.state.INTRO);
 
         me.pool.register( "player", Player );
-        me.pool.register( "baddie", Knight);
+        me.pool.register( "baddie", Mage);
         me.pool.register( "musketeer", Musketeer );
         me.pool.register( "mage", Mage );
         me.pool.register( "corpse", Corpse );
         me.pool.register( "grave", Grave );
+        me.pool.register( "knight", Knight );
 
         me.pool.register( "pickup", Pickup );
         me.pool.register( "levelchanger", LevelChanger );

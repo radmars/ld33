@@ -59,6 +59,7 @@ var Musketeer = Unit.extend({
 
     shoot: function(velX, velY, settings) {
         var pos = new me.Vector2d(this.pos.x, this.pos.y);
+        settings.caster = this;
         var bullet = new MusketBullet(pos.x, pos.y, settings);
         bullet.setDir(velX, velY);
 

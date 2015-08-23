@@ -1,55 +1,3 @@
-
-var Bullet = me.ObjectEntity.extend({
-    init: function(x, y, settings) {
-        settings = settings || {};
-        settings.image = settings.image || "zap";
-        settings.spritewidth =  111;
-        settings.spriteheight = 42;
-        settings.width = 111;
-        settings.height = 42;
-        this.parent( x, y, settings );
-        this.bullet = true;
-        this.alwaysUpdate = true;
-        this.collidable = true;
-        this.z = 300;
-        this.gravity = 0;
-
-        this.renderable.animationspeed = 10;
-
-        this.lifetime = 1200;
-    },
-
-    onCollision: function() {
-
-    },
-
-    die: function(){
-        this.collidable = false;
-        me.game.world.removeChild(this);
-    },
-
-    update: function( dt ) {
-        this.parent( dt );
-        this.updateMovement();
-        this.lifetime -= dt;
-
-        if (!this.inViewport && (this.pos.y > me.video.getHeight())) {
-            // if yes reset the game
-            me.game.world.removeChild(this);
-        }
-        if( this.vel.x == 0 ) {
-            // we hit a wall?
-            me.game.world.removeChild(this);
-        }
-        if (this.lifetime <= 0) {
-            me.game.world.removeChild(this);
-        }
-
-        return true;
-    }
-
-});
-
 var MusketBullet = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {};
@@ -62,6 +10,10 @@ var MusketBullet = me.ObjectEntity.extend({
         this.killspot = settings.killspot;
 
         this.parent( x, y, settings );
+        this.damage = settings.damage || 1;
+        this.caster = radmars.assert(settings.caster,"must specify a caster");
+        this.baddie = this.caster.baddie;
+        this.zombie = this.caster.zombie;
         this.alwaysUpdate = true;
         this.baddie = true;
         this.collidable = true;
@@ -69,9 +21,12 @@ var MusketBullet = me.ObjectEntity.extend({
         this.gravity = 0;
     },
 
-    onCollision: function() {
-        console.log("bihfgihg");
-        this.die();
+    onCollision: function(pos, obj) {
+        if( (obj.zombie != this.zombie && obj.baddie != this.baddie )|| this.baddie && obj.player ) {
+            obj.damage(this.damage);
+            console.log("bihfgihg");
+            this.die();
+        }
     },
 
     setDir: function(x, y) {

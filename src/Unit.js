@@ -195,38 +195,12 @@ var Unit = me.ObjectEntity.extend({
         this.parent(dt);
         this.updateMovement();
 
-        //this.checkBulletCollision();
+        this.checkBulletCollision();
         return true;
     },
 
     checkBulletCollision: function(){
-        me.game.world.collide(this, true).forEach(function(col) {
-            if(col && col.obj.bullet) {
-                col.obj.die();
-                me.state.current().baddies.remove(this);
-                me.game.viewport.shake(2, 250);
-                //TODO: spawn death particle?
-                this.collidable = false;
-                me.game.world.removeChild(this);
-
-                var p = new Pickup(this.pos.x, this.pos.y-150, {});
-                me.game.world.addChild(p);
-
-                // #ProHacks
-                var b = new window[this.unitType](this.pos.x, this.pos.y, {
-                    skel: 1,
-                    x: this.pos.x,
-                    y: this.pos.y,
-                    width: 80, // TODO This controls patrol???
-                    height: 80
-                });
-                b.z = 300;
-                me.game.world.addChild(b);
-                me.game.world.sort();
-
-                me.audio.play( "enemydeath" + Math.round(1+Math.random()*3) );
-            }
-        }, this);
+        me.game.world.collide(this, true);
     },
 
     fixDirection: function() {
