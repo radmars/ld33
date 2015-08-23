@@ -483,7 +483,7 @@ var PlayScreen = me.ScreenObject.extend({
     onResetEvent: function(newLevel) {
         var self = this;
         LD33.data.beatGame = false;
-        var level =  newLevel || me.levelDirector.getCurrentLevelId() || location.hash.substr(1) || "level1" ;
+        var level =  newLevel || location.hash.substr(1) || "level1" ;
         this.goToLevel(level);
         me.audio.stopTrack();
         me.audio.play( "ld30-real", true );
