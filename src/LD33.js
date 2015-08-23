@@ -219,7 +219,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
 
                 if(selected == 0){
-                    me.state.current().player.moveToPos(x,y);
+                   // me.state.current().player.moveToPos(x,y);
                 }
             }
         }
@@ -277,7 +277,9 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
                     var y = target.pos.y - me.game.viewport.pos.y + 16;
 
                     if( x > sx && x < sx + w && y > sy && y < sy + h ){
-                        target.selected = true;
+                        if(target.player != true){
+                            target.selected = true;
+                        }
                     }else{
                         target.selected = false;
                     }

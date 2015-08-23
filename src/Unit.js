@@ -58,8 +58,8 @@ var Unit = me.ObjectEntity.extend({
         this.renderable.addAnimation( "idle", [ 0 ] );
         this.renderable.addAnimation( "walk", [ 0 ] );
         this.renderable.animationspeed = 70;
-        this.setFriction( 0.05, 0.05 );
-        this.setVelocity( 1, 1 );
+        this.setFriction( 2, 2 );
+        this.setVelocity( this.speed , this.speed  );
 
         // Hacks...
         if(this.baddie) {
@@ -277,13 +277,23 @@ var Unit = me.ObjectEntity.extend({
                 var targetToMe = new me.Vector2d( this.pos.x, this.pos.y );
                 targetToMe.sub(target.pos);
 
-                if(targetToMe.length() < this.clumpDist){
+                var distToTarget = targetToMe.length();
+
+                if(distToTarget < this.clumpDist*1.0){
+                    var dp = 1 - ( distToTarget / (this.clumpDist*1.0) );
+                    //square that shit.
+                    dp = dp * dp;
+
                     targetToMe.normalize();
                     //this just makes it so it really moves em on that one update.
-                    targetToMe.x *= this.speed*100;
-                    targetToMe.y *= this.speed*100;
+                    targetToMe.x *= this.speed * 1.0;
+                    targetToMe.y *= this.speed * 1.0;
 
-                    if(movingToTarget){
+                    if(this.baddie != target.baddie){
+                        this.vel.x += targetToMe.x * dp * 0.5;
+                        this.vel.y += targetToMe.y * dp * 0.5;
+
+                    }else if( movingToTarget ){
                         targetToMyTarget.x = currentMoveTarget.x;
                         targetToMyTarget.y = currentMoveTarget.y;
                         targetToMyTarget.sub(target.pos);
@@ -291,23 +301,36 @@ var Unit = me.ObjectEntity.extend({
                         if( targetToMyTarget.length() > distToMyTarget ){
                             //im in front.
                             //dont do anything?
-                            this.vel.x = targetToMe.x;
-                            this.vel.y = targetToMe.y;
+                            this.vel.x += targetToMe.x * dp;
+                            this.vel.y += targetToMe.y * dp;
+                            //this.vel.x = targetToMe.x;
+                            //this.vel.y = targetToMe.y;
                         }
                         else{
                             //im behind him. try to move around him.
-                            this.vel.x = targetToMe.y;
-                            this.vel.y = -targetToMe.x;
+                            this.vel.x += targetToMe.y * dp;
+                            this.vel.y += -targetToMe.x * dp;
+                            //this.vel.x = targetToMe.y;
+                            //this.vel.y = -targetToMe.x;
                         }
 
                     }else{
                         //im not doing anything, just move away from it.
-                        this.vel.x = targetToMe.x;
-                        this.vel.y = targetToMe.y;
+                        this.vel.x += targetToMe.x;
+                        this.vel.y += targetToMe.y;
+                        //this.vel.x = targetToMe.x;
+                        //this.vel.y = targetToMe.y;
                     }
                 }
             }
         }
+
+        if(this.vel.length() > this.speed){
+            this.vel.normalize();
+            this.vel.x *= this.speed;
+            this.vel.y *= this.speed;
+        }
+
     },
 
     setAttackRange: function(r) {
