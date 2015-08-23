@@ -141,12 +141,10 @@ var Player = me.ObjectEntity.extend({
 
         me.input.bindKey(me.input.KEY.Q,    "summon");
         me.input.bindKey(me.input.KEY.E,    "raise");
-
         /**/
     },
 
     playerSummon:function(){
-
         me.state.current().playerArmy.forEach(function(target) {
             if(target.player != true){
                 console.log("summon!");

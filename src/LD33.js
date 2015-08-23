@@ -98,7 +98,7 @@ LD33.HUD.Container = me.ObjectContainer.extend({
         // call the constructor
         this.parent();
 
-        this.isPersistent = true;
+        this.isPersistent = false;
         this.collidable = false;
 
         this.boxDisplay = new LD33.HUD.BoxDisplay();
@@ -109,6 +109,7 @@ LD33.HUD.Container = me.ObjectContainer.extend({
     },
 
     startGame:function(){
+        console.log("HUD start game");
         me.game.world.removeChild(this);
         this.removeChild(this.boxDisplay);
         this.boxDisplay.startGame();
@@ -118,6 +119,7 @@ LD33.HUD.Container = me.ObjectContainer.extend({
     },
 
     endGame: function(){
+        console.log("HUD end game");
         this.boxDisplay.endGame();
     }
 });
