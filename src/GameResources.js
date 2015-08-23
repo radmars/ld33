@@ -58,6 +58,7 @@ var GameResources = [
     _Image("grave_1"),
     _Image("grave_2"),
     _Image("grave_3"),
+    _Image("gateway"),
 
     // Levels
     _Image( "collision_tiles"),
