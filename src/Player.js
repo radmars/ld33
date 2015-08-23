@@ -90,7 +90,7 @@ var Player = me.ObjectEntity.extend({
 
         this.collisionTimer = 0;
         this.deathTimer = 0;
-        this.hp = this.maxHP = 1;
+        this.hp = this.maxHP = 20;
 
         this.speed = 4;
 
@@ -163,6 +163,9 @@ var Player = me.ObjectEntity.extend({
 
     damage: function(dmg) {
         this.hp -= dmg;
+        if(!this.dead && this.hp <= 0) {
+            me.state.change(me.state.PLAY);
+        }
     },
 
     shoot: function(){
