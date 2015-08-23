@@ -54,6 +54,7 @@ var Grave = me.ObjectEntity.extend({
             var z = LD33.newBaddie(this.pos.x, this.pos.y, {
                 unitType: (Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
                 player: player,
+                zombie: true,
             });
             me.game.world.addChild(z);
         }
