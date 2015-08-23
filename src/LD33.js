@@ -369,26 +369,33 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
 var LevelChanger = me.ObjectEntity.extend({
     init: function(x, y, settings) {
-        // TODO: Just bake image or attach to obj?
-        settings.image = "gateway";
-        settings.spritewidth = 144;
-        settings.spriteheight = 192;
         this.toLevel = settings.toLevel;
-        this.parent( x, y, settings );
+        this.parent( x, y, {
+            image: "gateway",
+            spritewidth: 200,
+            spriteheight: 200,
+            width: settings.width,
+            height: settings.height,
+        });
+
         this.gravity = 0;
         this.collidable = true;
-        this.flipX(true);
     },
+
+    opened: function() {
+        return me.state.current().baddies.length == 0;
+    },
+
+    onCollision: function(dir, obj) {
+        if(obj.player && this.opened()) {
+            me.state.current().goToLevel(this.toLevel);
+        }
+    },
+
     update: function(dt) {
         // TODO: Just bake image or attach to obj?
         this.parent(dt);
         this.updateMovement();
-
-        me.game.world.collide(this, true).forEach(function(col) {
-            if(col && col.obj == me.state.current().player  ) {
-                me.state.current().goToLevel(this.toLevel);
-            }
-        }, this);
     }
 });
 
