@@ -429,13 +429,16 @@ var PlayScreen = me.ScreenObject.extend({
     init: function() {
         this.parent( true );
         me.input.bindKey(me.input.KEY.SPACE, "shoot");
-        this.playerArmy = [];
-        this.baddies = [];
-        this.pickups = [];
         this.subscription = me.event.subscribe(me.event.KEYDOWN, this.keyDown.bind(this));
 
         this.HUD = new LD33.HUD.Container( );
         LD33.data.beatGame = false;
+    },
+
+    cleanTheShitUp: function( ){
+        this.playerArmy = [];
+        this.baddies = [];
+        this.pickups = [];
 
     },
 
@@ -446,8 +449,7 @@ var PlayScreen = me.ScreenObject.extend({
 
     goToLevel: function( level ) {
         var self = this;
-        this.baddies = [];
-        this.playerArmy = [];
+        this.cleanTheShitUp();
         me.game.reset();
         me.game.onLevelLoaded = function(l) {
             self.HUD.startGame();
@@ -474,8 +476,7 @@ var PlayScreen = me.ScreenObject.extend({
     },
 
     reloadLevel: function() {
-        this.baddies = [];
-        this.pickups = [];
+        this.cleanTheShitUp();
         me.levelDirector.loadLevel( me.levelDirector.getCurrentLevelId() );
     },
 
@@ -483,7 +484,8 @@ var PlayScreen = me.ScreenObject.extend({
     onResetEvent: function(newLevel) {
         var self = this;
         LD33.data.beatGame = false;
-        var level =  newLevel || me.levelDirector.getCurrentLevelId() || location.hash.substr(1) || "level1" ;
+        me.game.reset();
+        var level =  newLevel || location.hash.substr(1) || "level1" ;
         this.goToLevel(level);
         me.audio.stopTrack();
         me.audio.play( "ld30-real", true );
