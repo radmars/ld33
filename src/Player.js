@@ -121,6 +121,44 @@ var Corpse = me.ObjectEntity.extend({
     },
 });
 
+var Grave = me.ObjectEntity.extend({
+    init: function(x, y, settings) {
+        settings = settings || {};
+        settings.image = 'grave_' + Math.round(Math.random()*2 + 1);
+        settings.spritewidth = 32;
+        settings.spriteheight = 64;
+        settings.height = 32;
+        settings.width = 32;
+        this.parent(x, y, settings);
+        this.z = 5;
+        this.corpse = true;
+        this.gravity = 0;
+
+        this.renderable.addAnimation( "idle", [ 0 ] );
+        this.renderable.addAnimation( "dead", [ 1 ] );
+        this.renderable.setCurrentAnimation("idle");
+
+        this.converted = false;
+    },
+
+    convertToZombie: function(player) {
+
+        if(!this.converted){
+            this.converted = true;
+            this.corpse = false;
+
+            this.renderable.setCurrentAnimation("dead");
+
+           // me.game.world.removeChild(this);
+            var z = new Zombie(this.pos.x, this.pos.y, {
+                player: player,
+            });
+            me.game.world.addChild(z);
+        }
+
+    },
+});
+
 var Player = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings.image        = settings.image        || 'tinyman';
@@ -148,7 +186,7 @@ var Player = me.ObjectEntity.extend({
 
         this.collisionTimer = 0;
         this.deathTimer = 0;
-        this.hp = 5;
+        this.hp = this.maxHP = 1;
 
         this.maxVel = 4;
 

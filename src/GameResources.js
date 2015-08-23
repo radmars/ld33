@@ -51,11 +51,23 @@ var GameResources = [
     _Image("baddieBullet"),
     _Image("magicMissile"),
 
+    _Image("grave_1"),
+    _Image("grave_2"),
+    _Image("grave_3"),
+
     // Levels
     _Image( "collision_tiles"),
 
     _Image( "world_1_1"),
     _Level( "level1" ),
+    _Level( "level2" ),
+    _Level( "level3" ),
+    _Level( "level4" ),
+    _Level( "level5" ),
+    _Level( "level6" ),
+    _Level( "level7" ),
+    _Level( "level8" ),
+    _Level( "level9" ),
     _Level( "level_debug_1" ),
 
     _Audio( "radmarslogo" ),

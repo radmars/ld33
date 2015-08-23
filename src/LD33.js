@@ -66,6 +66,7 @@ var LD33 = function() {
         me.pool.register( "musketeer", Musketeer );
         me.pool.register( "mage", Mage );
         me.pool.register( "corpse", Corpse );
+        me.pool.register( "grave", Grave );
 
         me.pool.register( "fish", Fish );
         me.pool.register( "wasp", Wasp );
@@ -183,8 +184,11 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
     rightClick: function(e){
         if (e.button === 2) {
             if(this.render){
-                console.log("right click");
+                //console.log("right click");
                 //me.input.mouse.pos.x - this.mouseDownPos.x, me.input.mouse.pos.y - this.mouseDownPos.y
+
+                console.log( "viewport " + me.game.viewport.pos.x +" , " + me.game.viewport.pos.y );
+
                 var selected = 0;
                 var x = me.input.mouse.pos.x + me.game.viewport.pos.x;
                 var y = me.input.mouse.pos.y + me.game.viewport.pos.y;
@@ -221,7 +225,6 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
             }
         }
 
-
         if (me.input.isKeyPressed('proxy_mouse_left'))  {
             if( !this.mouseLeftDown ){
                 this.mouseLeftDown = true;
@@ -251,18 +254,22 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
                     h = Math.abs(h);
                 }
 
-                console.log("box! " + sx + " , " + sy + " / " + w + ", " + h);
+                //this is a hack to make a 'tiny box' for single click targeting.
+                if( w <= 4){ w = 16; sx-=8; };
+                if( h <= 4 ){ h = 16; sy-=8; };
+
+                //console.log("box! " + sx + " , " + sy + " / " + w + ", " + h);
 
                 me.state.current().playerArmy.forEach(function(target) {
-                    var x = target.pos.x - me.game.viewport.pos.x;
-                    var y = target.pos.y - me.game.viewport.pos.y;
+                    //box select
+                    var x = target.pos.x - me.game.viewport.pos.x + 16;
+                    var y = target.pos.y - me.game.viewport.pos.y + 16;
 
                     if( x > sx && x < sx + w && y > sy && y < sy + h ){
                         target.selected = true;
                     }else{
                         target.selected = false;
                     }
-
 
                 }.bind(this));
             }
@@ -287,21 +294,24 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
           //  context.drawImage( this.moveTarget, this.moveTargetPos.x - 16, this.moveTargetPos.y - 16 - Math.sin(this.moveTargetSin) * 8 );
         }
 
+
+
+
         me.state.current().baddies.forEach(function(target) {
             var x = target.pos.x - me.game.viewport.pos.x;
             var y = target.pos.y - me.game.viewport.pos.y- 5;
-            if(target.hp < target.hpMax){
+            if(target.hp < target.maxHP){
                 context.drawImage( this.hpBacking, x, y );
-                if(target.hp  > 0) context.drawImage( this.hpBaddie, x, y, 32 * (target.hp / target.hpMax), 4 );
+                if(target.hp  > 0) context.drawImage( this.hpBaddie, x, y, 32 * (target.hp / target.maxHP), 4 );
             }
         }.bind(this));
 
         me.state.current().playerArmy.forEach(function(target) {
             var x = target.pos.x - me.game.viewport.pos.x;
             var y = target.pos.y - me.game.viewport.pos.y- 5;
-            if(target.hp < target.hpMax){
+            if(target.hp < target.maxHP){
                 context.drawImage( this.hpBacking, x, y );
-                if(target.hp  > 0)  context.drawImage( this.hpAlly, x, y, 32 * (target.hp / target.hpMax), 4 );
+                if(target.hp  > 0)  context.drawImage( this.hpAlly, x, y, 32 * (target.hp / target.maxHP), 4 );
             }
 
             if(target.selected){
@@ -313,12 +323,31 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         if(this.mouseLeftDown){
             //this.mousePosLocal  = me.input.globalToLocal(me.input.mouse.pos.x, me.input.mouse.pos.y );
 
-            var player = me.state.current().player;
+
+
+            //start of box
+            var sx = this.mouseDownPos.x;
+            var sy = this.mouseDownPos.y;
+
+            // width and height
+            var w = me.input.mouse.pos.x - this.mouseDownPos.x;
+            var h = me.input.mouse.pos.y - this.mouseDownPos.y;
+
+            //make inverse work
+            if( w < 0){
+                sx += w;
+                w = Math.abs(w);
+            }
+            if( h < 0){
+                sy += h;
+                h = Math.abs(h);
+            }
 
             //console.log( "mouse! " + (me.input.mouse.pos.x + me.game.viewport.pos.x)  + " , " +  (me.input.mouse.pos.y + me.game.viewport.pos.y) + " / player: " + player.pos.x + " , " + player.pos.y );
             //console.log( "mouse! " +  me.input.mouse.pos.x  + " , " +  me.input.mouse.pos.y );
+            //var player = me.state.current().player;
 
-            context.drawImage( this.box, this.mouseDownPos.x, this.mouseDownPos.y, me.input.mouse.pos.x - this.mouseDownPos.x, me.input.mouse.pos.y - this.mouseDownPos.y );
+            context.drawImage( this.box, sx, sy, w, h );
         }
 
     }
@@ -455,12 +484,14 @@ var PlayScreen = me.ScreenObject.extend({
         this.changeLevel( level );
         this.HUD.startGame();
 
+        /*
         for(var i = 0; i < 30; i++) {
             var x = Math.random() * 500;
             var y = Math.random() * 500;
             var c = new Corpse(x, y);
             me.game.world.addChild(c);
         }
+        */
 
     },
 
