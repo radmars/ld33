@@ -3,6 +3,8 @@ var Knight = Unit.extend({
         settings = settings || {};
         settings.unitType = 'knight';
         this.parent(x, y, settings);
+
+        console.log("new knight");
     },
 
     attack: function(target) {
@@ -19,11 +21,13 @@ var Musketeer = Unit.extend({
         settings = settings || {};
         settings.unitType = settings.unitType || 'musketeer';
 
+        console.log("new musketeer");
+
         this.parent(x, y, settings);
 
         this.bulletVel = 12;
         // musketeer only shoots in cardinal dirs. width of targeting arc = target width
-        this.targetWidth = settings.spritewidth + 10;
+        this.targetWidth = 32 + 10; //settings.spritewidth + 10;
 
         this.setVelocity( 0.3, 0.3 );
 
@@ -37,6 +41,7 @@ var Musketeer = Unit.extend({
     },
 
     attack: function(target) {
+
         var targetVec = new me.Vector2d(target.pos.x, target.pos.y);
         targetVec.sub(this.pos);
         var success = false;
@@ -67,6 +72,8 @@ var Mage = Musketeer.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = 'mage';
+
+        console.log("new mage");
 
         this.parent(x, y, settings);
 

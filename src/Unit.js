@@ -41,11 +41,13 @@ var Unit = me.ObjectEntity.extend({
         this.maxTargetingDist   = settings.maxTargettingDistance || 150;
         this.moveTo             = new me.Vector2d(0,0);
         this.moveToTargetPos    = false;
+        this.moveToPlayerPos    = false;
         this.speed              = 4;
         this.targetAccel        = settings.targetAccel || 0.15;
         this.z = 300;
 
-        this.followDist         = 20 + Math.round( Math.random() * 32 );
+
+        this.followDist         = 32 + Math.round( Math.random() * 32 );
 
         this.renderable.addAnimation( "attacking", [ 0 ] );
         this.renderable.addAnimation( "idle", [ 0 ] );
@@ -59,6 +61,7 @@ var Unit = me.ObjectEntity.extend({
             me.state.current().baddies.push(this);
         }
         else {
+            this.moveToPlayerPos = true;
             me.state.current().playerArmy.push(this);
         }
 
@@ -83,12 +86,17 @@ var Unit = me.ObjectEntity.extend({
     },
 
     moveToPos: function (x,y){
+        this.moveToPlayerPos = false;
         this.moveToTargetPos = true;
         this.moveTo.x = x;
         this.moveTo.y = y;
     },
 
     moveToPlayer: function(dt) {
+        if(!this.moveToPlayerPos && !this.moveToTargetPos ){
+            return;
+        }
+
         var toTarget = new me.Vector2d( this.player.followPos.x, this.player.followPos.y );
         if(this.moveToTargetPos){
             toTarget.x = this.moveTo.x;
@@ -96,8 +104,10 @@ var Unit = me.ObjectEntity.extend({
         }
         toTarget.sub(this.pos);
 
-        if(toTarget.length() <= this.followDist ){
+        if(toTarget.length() <= this.followDist){
             this.vel.x = this.vel.y = 0;
+            this.moveToTargetPos = false;
+            this.moveToPlayerPos = false;
         } else {
             toTarget.normalize();
             this.vel.x = toTarget.x * this.speed;
@@ -242,29 +252,85 @@ var Unit = me.ObjectEntity.extend({
 
     checkUnitCollision: function( array ){
         // me.state.current().playerArmy
-        array.forEach(function(target) {
+
+        var stuck = false;
+
+        var movingToTarget = false;
+        var currentMoveTarget = new me.Vector2d( 0,0 );
+        var meToMyTarget = new me.Vector2d( 0,0 );
+       // var targetAngle =0;
+        var targetToMyTarget  = new me.Vector2d( 0,0 );
+        var distToMyTarget = 0;
+
+        if( this.curTarget != null){
+            // i have an attack target
+            currentMoveTarget.x = this.curTarget.x;
+            currentMoveTarget.y = this.curTarget.y;
+            movingToTarget = true;
+
+        }else if ( this.moveToTargetPos  ){
+            // im trying to move to a location
+            currentMoveTarget.x = this.moveTo.x;
+            currentMoveTarget.y = this.moveTo.y;
+            movingToTarget = true;
+
+        }else if(this.moveToPlayerPos){
+            currentMoveTarget.x = this.player.pos.x;
+            currentMoveTarget.y = this.player.pos.y;
+            movingToTarget = true;
+            //not doing anything or moving to player as zombie?
+        }
+
+        if(movingToTarget){
+            meToMyTarget.x = currentMoveTarget.x;
+            meToMyTarget.y = currentMoveTarget.y;
+            meToMyTarget.sub(this.pos);
+            distToMyTarget = meToMyTarget.length();
+            meToMyTarget.normalize();
+
+            //targetAngle = Math.atan2(toMoveTarget.y, toMoveTarget.x);
+        }
+
+        for( var i=0; i<array.length; i++){
+            var target = array[i];
+
             if(target != this){
                 var targetToMe = new me.Vector2d( this.pos.x, this.pos.y );
                 targetToMe.sub(target.pos);
 
                 if(targetToMe.length() < this.clumpDist){
                     targetToMe.normalize();
-                    targetToMe.x *= this.clumpDist;
-                    targetToMe.y *= this.clumpDist;
+                    //this just makes it so it really moves em on that one update.
+                    targetToMe.x *= this.speed*100;
+                    targetToMe.y *= this.speed*100;
 
-                    //give a big boost of vel in the other direction
-                    this.vel.x = targetToMe.x;
-                    this.vel.y = targetToMe.y;
+                    if(movingToTarget){
+                        targetToMyTarget.x = currentMoveTarget.x;
+                        targetToMyTarget.y = currentMoveTarget.y;
+                        targetToMyTarget.sub(target.pos);
 
-                    //this.pos.x = target.pos.x + targetToMe.x;
-                    //this.pos.y = target.pos.y + targetToMe.y;
+                        if( targetToMyTarget.length() > distToMyTarget ){
+                            //im in front.
+                            //dont do anything?
+                            this.vel.x = targetToMe.x;
+                            this.vel.y = targetToMe.y;
+                        }
+                        else{
+                            //im behind him. try to move around him.
+                            this.vel.x = targetToMe.y;
+                            this.vel.y = -targetToMe.x;
+                        }
 
-                    //if(stopOnCollide){
-                       // this.vel.x = this.vel.y = 0;
-                   //}
+                    }else{
+                        //im not doing anything, just move away from it.
+                        this.vel.x = targetToMe.x;
+                        this.vel.y = targetToMe.y;
+                    }
                 }
             }
-        }.bind(this));
+        }
+
+        //
     }
 });
 
