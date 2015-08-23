@@ -111,19 +111,23 @@ var Unit = me.ObjectEntity.extend({
             this.moveToPlayer(dt);
         }
 
-       this.checkUnitCollision( me.state.current().playerArmy, false );
-       this.checkUnitCollision( me.state.current().baddies, true );
+        if(this.baddie){
 
-       this.fixDirection();
+            this.checkUnitCollision( me.state.current().playerArmy, true );
+            this.checkUnitCollision( me.state.current().baddies, false );
+        }
+        else {
+            this.checkUnitCollision( me.state.current().playerArmy, false );
+            this.checkUnitCollision( me.state.current().baddies, true );
+        }
 
-       this.parent(dt);
-       this.updateMovement();
+        this.fixDirection();
 
-       this.checkUnitCollision( me.state.current().playerArmy, true );
-       this.checkUnitCollision( me.state.current().baddies, false );
+        this.parent(dt);
+        this.updateMovement();
 
-       //this.checkBulletCollision();
-       return true;
+        //this.checkBulletCollision();
+        return true;
     },
 
     checkBulletCollision: function(){

@@ -62,7 +62,6 @@ var Musketeer = Unit.extend({
     }
 });
 
-
 var Mage = Musketeer.extend({
     init: function(x, y, settings) {
         settings = settings || {};
