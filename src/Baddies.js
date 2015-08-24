@@ -91,6 +91,25 @@ var Civilian = Unit.extend({
         }
     },
 
+    initAnimations: function(){
+        if(this.zombie){
+            this.renderable.addAnimation( "summon", [ 11,12,11,13,11,14,15,16,17,18,19,20,21,22 ] );
+            this.renderable.addAnimation( "res", [ 11,12,11,13,11,14,15,16,17,18,19,20,21,22 ] );
+            this.renderable.addAnimation( "attacking", [ 7,8,9,10 ] );
+            this.renderable.addAnimation( "idle", [ 23,23,23,24,25,26,26,26,27 ] );
+            this.renderable.addAnimation( "walk", [ 0, 1, 2, 3 ] );
+            this.renderable.addAnimation( "hit", [ 4 ] );
+            this.renderable.animationspeed = 100;
+            this.resTimer = 1500;
+        }else{
+            this.renderable.addAnimation( "attacking", [ 0 ] );
+            this.renderable.addAnimation( "idle", [ 0,1,2,3,4,5,6,7] );
+            this.renderable.addAnimation( "walk", [ 8,8,9,9,10,10,11,11] );
+            this.renderable.addAnimation( "hit", [ 12 ] );
+            this.renderable.animationspeed = 100;
+        }
+    },
+
     attack: function(target) {
         //console.log("attacking! ");
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
