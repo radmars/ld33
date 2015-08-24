@@ -585,7 +585,7 @@ var GameEnder = me.ObjectEntity.extend({
         }
 
         var level =  newLevel || location.hash.substr(1) || lev ;
-        me.audio.stopTrack();
+
         this.goToLevel(level);
     },
 
