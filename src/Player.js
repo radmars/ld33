@@ -20,7 +20,8 @@ var Corpse = me.ObjectEntity.extend({
     convertToZombie: function(player) {
 
         me.game.world.removeChild(this);
-        me.state.current().corpses.remove(this);
+        //removed after loop.
+        //me.state.current().corpses.remove(this);
 
         var z = LD33.newBaddie(this.pos.x, this.pos.y, {
             unitType: this.unitType,
@@ -29,7 +30,7 @@ var Corpse = me.ObjectEntity.extend({
             player: player
         });
         me.game.world.addChild(z);
-    },
+    }
 });
 
 var Grave = me.ObjectEntity.extend({
@@ -68,7 +69,8 @@ var Grave = me.ObjectEntity.extend({
                 zombie: true,
             });
             me.game.world.addChild(z);
-            me.state.current().corpses.remove(this);
+            //removed after loop.
+            //me.state.current().corpses.remove(this);
         }
 
     },
@@ -166,6 +168,28 @@ var Player = me.ObjectEntity.extend({
 
     ressurect:function(){
 
+        var remove = [];
+
+        me.state.current().corpses.forEach(function(target) {
+            var dist = new me.Vector2d(target.pos.x, target.pos.y);
+            dist.sub(this.pos);
+            if(dist.length() <= 100){
+                target.convertToZombie(this);
+                remove.push(target);
+            }
+        }.bind(this));
+
+        if(remove.length == 0){
+            //nothing was ressurected.
+            // be a little nicer with the cooldown
+            this.raiseCooldown = this.raiseCooldownMax * 0.5;
+        }else{
+            //ressurection was a success!
+            //remove all expended corpses
+            remove.forEach(function(target) {
+                me.state.current().corpses.remove(target);
+            }.bind(this));
+        }
     },
 
     moveToPos: function (x,y){

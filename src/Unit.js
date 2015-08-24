@@ -108,7 +108,7 @@ var Unit = me.ObjectEntity.extend({
                 me.game.world.removeChild(this);
                 return;
             }
-            if(this.zombie){
+            if(this.zombie || this.unitType == "civilian"){
                 unitType = "skeleton";
             }
             var corpse = new Corpse(this.pos.x, this.pos.y, {unitType:unitType});
