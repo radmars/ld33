@@ -39,6 +39,7 @@ var Civilian = Unit.extend({
         settings = settings || {};
         settings.unitType = 'civilian';
         settings.maxHP = 4;
+        this.civType = "civilian_1";
 
         this.parent(x, y, settings);
         this.setAttackRange(42);
