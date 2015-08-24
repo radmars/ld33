@@ -11,6 +11,8 @@ var Corpse = me.ObjectEntity.extend({
         this.z = 300;
         this.corpse = true;
         this.gravity = 0;
+
+        console.log("corpse! " + this.unitType);
     },
 
     convertToZombie: function(player) {
@@ -18,6 +20,7 @@ var Corpse = me.ObjectEntity.extend({
         var z = LD33.newBaddie(this.pos.x, this.pos.y, {
             unitType: this.unitType,
             zombie:true,
+            baddie:false,
             player: player
         });
         me.game.world.addChild(z);
@@ -53,7 +56,7 @@ var Grave = me.ObjectEntity.extend({
             this.renderable.setCurrentAnimation("dead");
 
             var z = LD33.newBaddie(this.pos.x, this.pos.y, {
-                unitType: 'knight', //(Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
+                unitType: 'skeleton', //(Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
                 player: player,
                 zombie: true,
             });

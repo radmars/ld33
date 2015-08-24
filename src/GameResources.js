@@ -30,6 +30,12 @@ var GameResources = [
     _Image( "musketeer" ),
     _Image( "musketeer_zombie" ),
 
+    _Image( "civilian" ),
+    _Image( "civilian_zombie" ),
+
+    _Image( "skeleton" ),
+    _Image( "skeleton_zombie" ),
+
     _Image( "corpse" ),
 
     // ui
@@ -73,6 +79,7 @@ var GameResources = [
     _Level( "level7" ),
     _Level( "level8" ),
     _Level( "level9" ),
+    _Level( "level10" ),
     _Level( "level_debug_1" ),
 
     _Audio( "radmarslogo" ),

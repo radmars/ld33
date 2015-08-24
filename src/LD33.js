@@ -28,6 +28,8 @@ var LD33 = function() {
         me.pool.register( "baddie", Mage);
         me.pool.register( "musketeer", Musketeer );
         me.pool.register( "mage", Mage );
+        me.pool.register( "skeleton", Skeleton );
+        me.pool.register( "civilian", Civilian );
         me.pool.register( "corpse", Corpse );
         me.pool.register( "grave", Grave );
         me.pool.register( "knight", Knight );
@@ -70,8 +72,6 @@ var LD33 = function() {
         me.state.set( me.state.GAMEOVER, new GameOverScreen() );
 
         me.state.change(this.options.skipIntro ? me.state.PLAY : me.state.INTRO);
-
-
     };
 };
 
@@ -80,6 +80,8 @@ LD33.newBaddie = function(x, y, settings) {
         'knight': 'Knight',
         'mage': 'Mage',
         'musketeer': 'Musketeer',
+        'civilian': 'Civilian',
+        'skeleton': 'Skeleton',
     };
     // #ProHacks
     return new window[classes[settings.unitType]](x, y, {

@@ -2,9 +2,11 @@ var Unit = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {}
         this.unitType = radmars.assert(settings.unitType, 'Must specify a unitType');
-        this.zombie = settings.zombie;
+        this.zombie = settings.zombie || false;
         this.baddie = !this.zombie;
         this.player = settings.player;
+
+        console.log("new unit! " + this.unitType + (this.zombie ? '_zombie' : '') );
 
         this.parent( x, y, {
             image: this.unitType + (this.zombie ? '_zombie' : ''),
@@ -29,7 +31,7 @@ var Unit = me.ObjectEntity.extend({
         this.attackCooldown     = 0;
         this.attackDamage       = 1;
 
-        this.attackCooldownMax  = settings.attackCooldownMax || 500;
+        this.attackCooldownMax  = settings.attackCooldownMax || 750;
         this.attackRange        = settings.attackRange || settings.spritewidth;
 
         this.clumpDist          = 32;
@@ -50,7 +52,11 @@ var Unit = me.ObjectEntity.extend({
         this.speed              = 4;
         this.targetAccel        = settings.targetAccel || 0.15;
         this.z = 300;
+        this.agro               = true;
 
+        if(this.zombie){
+            this.maxHP = this.hp = this.maxHP-1;
+        }
 
         this.followDist         = 32 + Math.round( Math.random() * 32 );
 
@@ -83,7 +89,16 @@ var Unit = me.ObjectEntity.extend({
             else {
                 me.state.current().baddies.remove(this);
             }
-            var corpse = new Corpse(this.pos.x, this.pos.y);
+            var unitType = this.unitType;
+
+            if(this.unitType == "skeleton"){
+                me.game.world.removeChild(this);
+                return;
+            }
+            if(this.zombie){
+                unitType = "skeleton";
+            }
+            var corpse = new Corpse(this.pos.x, this.pos.y, {unitType:unitType});
             me.game.world.addChild(corpse);
             me.game.world.removeChild(this);
         }
@@ -131,6 +146,8 @@ var Unit = me.ObjectEntity.extend({
     },
 
     moveTowardTargetAndAttack: function(dt) {
+
+
         if (this.attackCooldown >= 0) {
             this.attackCooldown -= dt;
         }
@@ -159,14 +176,23 @@ var Unit = me.ObjectEntity.extend({
                 this.vel.x = this.vel.y = 0;
             } else {
                 toTarget.normalize();
-                this.vel.x = toTarget.x * this.speed;
-                this.vel.y = toTarget.y * this.speed;
+
+                if(!this.agro){
+                    this.vel.x = toTarget.x * this.speed * -1;
+                    this.vel.y = toTarget.y * this.speed * -1;
+                }else{
+                    this.vel.x = toTarget.x * this.speed;
+                    this.vel.y = toTarget.y * this.speed;
+                }
+
             }
         }
     },
 
     tryAttack: function(target) {
-
+        if(!this.agro){
+            return;
+        }
         if (this.attackCooldown <= 0) {
             var success = this.attack(target);
             // only reset cooldown if we actually attacked
@@ -218,6 +244,7 @@ var Unit = me.ObjectEntity.extend({
     },
 
     recheckTarget: function(dt) {
+
         this.findTargetTimer--;
         if (this.findTargetTimer <= 0) {
             this.curTarget = radmars.findTarget(this.pos, this.getTargetList(), this.maxTargetingDist);

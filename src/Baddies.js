@@ -2,6 +2,7 @@ var Knight = Unit.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = 'knight';
+        settings.maxHP = 5;
         this.parent(x, y, settings);
         this.setAttackRange(42);
     },
@@ -12,7 +13,50 @@ var Knight = Unit.extend({
         target.damage(this.attackDamage);
         return true;
     },
+});
 
+
+var Skeleton = Unit.extend({
+    init: function(x, y, settings) {
+        settings = settings || {};
+        settings.unitType = 'skeleton';
+        settings.maxHP = 4;
+        this.parent(x, y, settings);
+        this.setAttackRange(42);
+    },
+
+    attack: function(target) {
+        //console.log("attacking! ");
+        radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
+        target.damage(this.attackDamage);
+        return true;
+    },
+});
+
+
+var Civilian = Unit.extend({
+    init: function(x, y, settings) {
+        settings = settings || {};
+        settings.unitType = 'civilian';
+        settings.maxHP = 4;
+
+        this.parent(x, y, settings);
+        this.setAttackRange(42);
+
+        if(this.zombie){
+            this.speed = 4;
+        }else{
+            this.speed = 3;
+            this.agro = false;
+        }
+    },
+
+    attack: function(target) {
+        //console.log("attacking! ");
+        radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
+        target.damage(this.attackDamage);
+        return true;
+    },
 });
 
 var Musketeer = Unit.extend({
@@ -28,7 +72,8 @@ var Musketeer = Unit.extend({
         // musketeer only shoots in cardinal dirs. width of targeting arc = target width
         this.targetWidth = 32 + 10; //settings.spritewidth + 10;
 
-        this.setVelocity( 0.3, 0.3 );
+        this.attackDamage = 2;
+        //this.setVelocity( 0.3, 0.3 );
 
         this.maxTargetingDist = 350;
         this.giveUpDist = 400;
@@ -60,6 +105,10 @@ var Musketeer = Unit.extend({
     shoot: function(velX, velY, settings) {
         var pos = new me.Vector2d(this.pos.x, this.pos.y);
         settings.caster = this;
+        settings.damage = this.attackDamage;
+
+        //console.log("shooting! zombie: " + this.zombie + " / baddie: " + this.baddie);
+
         var bullet = new MusketBullet(pos.x, pos.y, settings);
         bullet.setDir(velX, velY);
 
@@ -72,14 +121,16 @@ var Mage = Musketeer.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = 'mage';
+        settings.maxHP = 3;
 
         console.log("new mage");
 
         this.parent(x, y, settings);
 
         this.bulletVel = 7;
+        this.attackDamage = 2;
 
-        this.setVelocity( 0.25, 0.25 );
+        //this.setVelocity( 0.25, 0.25 );
 
         this.maxTargetingDist = 350;
         this.giveUpDist = 400;
@@ -98,6 +149,7 @@ var Mage = Musketeer.extend({
 
         var settings = {};
         settings.image = 'magicMissile';
+        settings.damage = this.attackDamage;
         var killspot = new me.Vector2d(target.pos.x, target.pos.y);
         settings.killspot = killspot;
         this.shoot(targetVec.x * this.bulletVel, targetVec.y * this.bulletVel, settings);

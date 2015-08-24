@@ -12,19 +12,23 @@ var MusketBullet = me.ObjectEntity.extend({
         this.parent( x, y, settings );
         this.damage = settings.damage || 1;
         this.caster = radmars.assert(settings.caster,"must specify a caster");
-        this.baddie = this.caster.baddie;
+
         this.zombie = this.caster.zombie;
+        this.baddie = this.caster.baddie;
+
         this.alwaysUpdate = true;
-        this.baddie = true;
         this.collidable = true;
         this.z = 300;
         this.gravity = 0;
+
+        console.log("new bullet: zombie: " + this.zombie +  "/ baddine: "  + this.baddie );
     },
 
     onCollision: function(pos, obj) {
         if( (obj.zombie != this.zombie && obj.baddie != this.baddie )|| this.baddie && obj.player ) {
+            console.log("bullet hit! zombie " + this.zombie + " / " + obj.zombie + " / baddinE: "  + this.baddie + " / " + obj.baddie );
             obj.damage(this.damage);
-            console.log("bihfgihg");
+            //console.log("bihfgihg");
             this.die();
         }
     },
