@@ -94,6 +94,12 @@ var GameResources = [
     _Level( "level_debug_1" ),
 
     _Audio( "radmarslogo" ),
+    _Audio( "ld33-title" ),
+    _Audio( "ld33-1" ),
+    _Audio( "ld33-2" ),
+    _Audio( "ld33-3" ),
+    _Audio( "ld33-lose" ),
+    _Audio( "ld33-win" ),
 
     _Audio("magic"),
     _Audio("magic-hit"),

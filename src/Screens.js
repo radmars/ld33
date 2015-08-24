@@ -36,8 +36,8 @@ var GameOverScreen = me.ScreenObject.extend({
         me.game.world.addChild( this.hitenter );
 
         me.game.world.addChild( this.gameover );
-        // me.audio.stopTrack();
-        // me.audio.playTrack( "ld30-title" );
+        me.audio.stopTrack();
+        me.audio.playTrack( "ld33-win" );
 
         this.subscription = me.event.subscribe( me.event.KEYDOWN, function (action, keyCode, edge) {
             if( keyCode === me.input.KEY.ENTER ) {
@@ -66,8 +66,9 @@ var TitleScreen = me.ScreenObject.extend({
         me.game.world.addChild( this.bg );
         me.game.world.addChild( this.hitenter);
 
-        //me.audio.stopTrack();
-        //me.audio.playTrack( "ld30-title" );
+        me.audio.stopTrack();
+        me.audio.playTrack( "ld33-title", 0.7 );
+        me.audio.play("micromancer");
 
         this.subscription = me.event.subscribe( me.event.KEYDOWN, function (action, keyCode, edge) {
             if( keyCode === me.input.KEY.ENTER ) {
