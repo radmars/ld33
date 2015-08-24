@@ -142,6 +142,9 @@ var GameResources = [
     _Audio("skeletonraise"),
     _Audio("rez"),
     _Audio("rezfail"),
+    _Audio("gateopen"),
+    _Audio("recall"),
+    _Audio("portalrev"),
 
 ];
 
