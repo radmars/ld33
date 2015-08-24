@@ -427,18 +427,41 @@ var LevelChanger = me.ObjectEntity.extend({
         this.toLevel = settings.toLevel;
         this.parent( x, y, {
             image: "gateway",
-            spritewidth: 200,
-            spriteheight: 200,
+            spritewidth: 128,
+            spriteheight: 128,
             width: settings.width,
             height: settings.height,
         });
 
+
         this.gravity = 0;
         this.collidable = true;
+
+        this.isOpen = false;
+        this.renderable.addAnimation( "closed", [ 0 ] );
+        this.renderable.addAnimation( "open", [ 1,2,3 ] );
+        this.renderable.setCurrentAnimation("closed");
+
+
     },
 
     opened: function() {
         return me.state.current().baddies.length == 0;
+    },
+
+    update: function(dt) {
+        this.parent(dt);
+        this.updateMovement();
+
+        this.z =  100 + this.pos.y * 0.1;
+        
+        if(!this.isOpen){
+            if(this.opened()){
+                this.isOpen = true;
+                this.renderable.setCurrentAnimation("open");
+                //TODO: open gateway sfx
+            }
+        }
     },
 
     onCollision: function(dir, obj) {
