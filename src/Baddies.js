@@ -7,6 +7,24 @@ var Knight = Unit.extend({
         this.setAttackRange(42);
     },
 
+    initAnimations: function(){
+        if(this.zombie){
+            this.renderable.addAnimation( "res", [ 11,12,11,13,11,14,15,16,17,18,19,20,21,22 ] );
+            this.renderable.addAnimation( "attacking", [ 7,8,9,10 ] );
+            this.renderable.addAnimation( "idle", [ 23,23,23,24,25,26,26,26,27 ] );
+            this.renderable.addAnimation( "walk", [ 0, 1, 2, 3 ] );
+            this.renderable.addAnimation( "hit", [ 4 ] );
+            this.renderable.animationspeed = 100;
+            this.resTimer = 1500;
+        }else{
+            this.renderable.addAnimation( "attacking", [ 7,8,9,10 ] );
+            this.renderable.addAnimation( "idle", [ 10,10,11,11,12,12,13,13,14,14,15,15] );
+            this.renderable.addAnimation( "walk", [ 0,0, 1, 1,2,2, 3 ,3] );
+            this.renderable.addAnimation( "hit", [ 4 ] );
+            this.renderable.animationspeed = 100;
+        }
+    },
+
     attack: function(target) {
         //console.log("attacking! ");
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
@@ -153,6 +171,24 @@ var Mage = Musketeer.extend({
         this.setAttackRange(300);
 
         this.shootSound = "magic";
+    },
+
+    initAnimations: function(){
+        if(this.zombie){
+            this.renderable.addAnimation( "res", [ 0,1,2,3,4,5,6,7,8,9,10,11,12,13 ] );
+            this.renderable.addAnimation( "attacking", [ 20,21,22,23,24,25 ] );
+            this.renderable.addAnimation( "idle", [ 13,14,15,15,16,17,18,18,19 ] );
+            this.renderable.addAnimation( "walk", [ 27,27,28,28,29,29,30,30] );
+            this.renderable.addAnimation( "hit", [ 26 ] );
+            this.renderable.animationspeed = 100;
+            this.resTimer = 1500;
+        }else{
+            this.renderable.addAnimation( "attacking", [ 5,6,7,8,9,10,8,9,10 ] );
+            this.renderable.addAnimation( "idle", [ 13, 14, 15, 16, 17,17,17,17,17,17, 18,18,17,17,17,17, 16, 15, 14] );
+            this.renderable.addAnimation( "walk", [ 0,0, 1,1, 2,2, 3,3] );
+            this.renderable.addAnimation( "hit", [ 11 ] );
+            this.renderable.animationspeed = 100;
+        }
     },
 
     attack: function(target) {

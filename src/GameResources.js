@@ -46,8 +46,22 @@ var GameResources = [
 
     _Image( "skeleton" ),
     _Image( "skeleton_zombie" ),
+    _Image( "player" ),
 
     _Image( "corpse" ),
+
+    _Image( "bloodstain" ),
+    _Image( "civilian_1_corpse" ),
+    _Image( "civilian_2_corpse" ),
+    _Image( "civilian_3_corpse" ),
+    _Image( "knight_corpse" ),
+    _Image( "knight_zombie_corpse" ),
+    _Image( "mage_corpse" ),
+    _Image( "mage_zombie_corpse" ),
+    _Image( "musketeer_corpse" ),
+    _Image( "musketeer_zombie_corpse" ),
+    _Image( "skeleton_corpse" ),
+    _Image( "skeleton_corpse_zombie" ),
 
     // ui
     _Image("16x16_font"),

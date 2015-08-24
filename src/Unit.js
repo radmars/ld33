@@ -54,20 +54,27 @@ var Unit = me.ObjectEntity.extend({
         this.z = 300;
         this.agro               = true;
 
+        this.resTimer           = 0;
+        this.attackAnimTimer    = 0;
+        this.attackAnimTimerMax = 1000;
+
+        this.initAnimations();
+
         if(this.zombie){
+
             this.maxHP = this.hp = this.maxHP-2;
             if(this.maxHP < 2){
                 this.hp = this.maxHP = 2;
             }
             console.log("new zombie! " + this.hp);
+            radmars.maybeSwitchAnimation(this.renderable, "res", true);
+        }else{
+            this.renderable.setCurrentAnimation("idle");
         }
 
         this.followDist         = 32 + Math.round( Math.random() * 32 );
 
-        this.renderable.addAnimation( "attacking", [ 0 ] );
-        this.renderable.addAnimation( "idle", [ 0 ] );
-        this.renderable.addAnimation( "walk", [ 0 ] );
-        this.renderable.animationspeed = 70;
+
         this.setFriction( 2, 2 );
         this.setVelocity( this.speed , this.speed  );
 
@@ -88,12 +95,22 @@ var Unit = me.ObjectEntity.extend({
         }
     },
 
+    initAnimations: function(){
+        this.renderable.addAnimation( "attacking", [ 0 ] );
+        this.renderable.addAnimation( "idle", [ 0 ] );
+        this.renderable.addAnimation( "walk", [ 0 ] );
+        this.renderable.addAnimation( "hit", [ 0 ] );
+        this.renderable.addAnimation( "res", [ 0 ] );
+        this.renderable.animationspeed = 100;
+    },
+
     damage: function(dmg) {
         //console.log("damage! " + dmg + " / hp " + this.hp  +" / " + this.maxHP);
 
         this.hp -= dmg;
 
         me.audio.play("hit" + GetRandomIndexString(3));
+        radmars.maybeSwitchAnimation(this.renderable, "hit", true);
 
         if(this.hp <= 0 && !this.dead) {
             this.dead = true;
@@ -107,15 +124,25 @@ var Unit = me.ObjectEntity.extend({
                 me.state.current().baddies.remove(this);
             }
             var unitType = this.unitType;
+            var image = this.unitType;
 
             if(this.unitType == "skeleton"){
                 me.game.world.removeChild(this);
                 return;
             }
-            if(this.zombie || this.unitType == "civilian"){
+
+            if(this.unitType == "civilian"){
+                image = this.civType;
                 unitType = "skeleton";
             }
-            var corpse = new Corpse(this.pos.x, this.pos.y, {unitType:unitType});
+            if( this.zombie ){
+                unitType = "skeleton";
+                image += "_zombie";
+            }
+            image += "_corpse";
+            console.log("new corpse image! " + image);
+
+            var corpse = new Corpse(this.pos.x, this.pos.y, { unitType:unitType, image:image });
             me.game.world.addChild(corpse);
             me.game.world.removeChild(this);
         }
@@ -191,10 +218,12 @@ var Unit = me.ObjectEntity.extend({
             this.moveToTargetPos = false;
             this.moveToPlayerPos = false;
             this.findTargetTimer = 0;
+            radmars.maybeSwitchAnimation(this.renderable, "idle", false);
         } else {
             toTarget.normalize();
             this.vel.x = toTarget.x * this.speed;
             this.vel.y = toTarget.y * this.speed;
+            radmars.maybeSwitchAnimation(this.renderable, "walk", false);
         }
     },
 
@@ -203,6 +232,10 @@ var Unit = me.ObjectEntity.extend({
 
         if (this.attackCooldown >= 0) {
             this.attackCooldown -= dt;
+        }
+
+        if(this.attackAnimTimer > 0){
+            this.attackAnimTimer-=dt;
         }
 
         if (this.curTarget && this.attackCooldown <= 0) {
@@ -227,9 +260,11 @@ var Unit = me.ObjectEntity.extend({
 
             if( dist < this.attackRange-1 ){
                 this.vel.x = this.vel.y = 0;
+                if(this.attackAnimTimer <= 0) radmars.maybeSwitchAnimation(this.renderable, "idle", true);
             } else {
                 toTarget.normalize();
 
+                if(this.attackAnimTimer <= 0) radmars.maybeSwitchAnimation(this.renderable, "walk", true);
                 if(!this.agro){
                     this.vel.x = toTarget.x * this.speed * -1;
                     this.vel.y = toTarget.y * this.speed * -1;
@@ -237,7 +272,6 @@ var Unit = me.ObjectEntity.extend({
                     this.vel.x = toTarget.x * this.speed;
                     this.vel.y = toTarget.y * this.speed;
                 }
-
             }
         }
     },
@@ -250,12 +284,22 @@ var Unit = me.ObjectEntity.extend({
             var success = this.attack(target);
             // only reset cooldown if we actually attacked
             if (success) {
+                this.attackAnimTimer = this.attackAnimTimerMax;
+                radmars.maybeSwitchAnimation(this.renderable, "attacking", true);
                 this.attackCooldown = this.attackCooldownMax;
             }
         }
     },
 
     update: function(dt) {
+
+        if(this.resTimer > 0){
+            this.resTimer-=dt;
+            this.parent(dt);
+            this.updateMovement();
+            return true;
+        }
+
         this.recheckTarget(dt);
         if(this.curTarget) {
             this.moveTowardTargetAndAttack(dt);

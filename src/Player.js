@@ -1,12 +1,14 @@
 var Corpse = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {};
-        settings.image = 'corpse';
-        settings.spritewidth = 16;
-        settings.spriteheight = 16;
-        settings.height = 16;
-        settings.width = 16;
+
         this.unitType = radmars.assert(settings.unitType || 'knight', "Must specify a corpse unitType");
+
+        //settings.image = image;
+        settings.spritewidth = 32;
+        settings.spriteheight = 32;
+        settings.height = 32;
+        settings.width = 32;
         this.parent(x, y, settings);
         this.z = 300;
         this.corpse = true;
@@ -64,7 +66,8 @@ var Grave = me.ObjectEntity.extend({
             this.renderable.setCurrentAnimation("dead");
 
             var z = LD33.newBaddie(this.pos.x, this.pos.y, {
-                unitType: 'skeleton', //(Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
+                unitType: 'knight', //skeleton
+                //(Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
                 player: player,
                 zombie: true,
             });
@@ -78,9 +81,9 @@ var Grave = me.ObjectEntity.extend({
 
 var Player = me.ObjectEntity.extend({
     init: function(x, y, settings) {
-        settings.image        = settings.image        || 'tinyman';
-        settings.spritewidth =  16*2;
-        settings.spriteheight = 16*2;
+        settings.image        = settings.image        || 'player';
+        settings.spritewidth =  32*2;
+        settings.spriteheight = 32*2;
         settings.height = 16*2;
         settings.width = 16*2;
         this.colChecker = this.checkCollisions.bind(this);
@@ -133,10 +136,12 @@ var Player = me.ObjectEntity.extend({
         me.game.viewport.setDeadzone( me.game.viewport.width / 10, 1 );
 
         this.renderable.animationspeed = 150;
-        this.renderable.addAnimation( "idle", [ 0 ] );
-        this.renderable.addAnimation( "walk", [ 0 ] );
-        this.renderable.addAnimation( "hit", [ 0 ] );
-        this.renderable.addAnimation( "die", [ 0 ] );
+        this.renderable.addAnimation( "idle", [ 0,1,2,3 ] );
+        this.renderable.addAnimation( "walk", [ 4,5,6,7 ] );
+        this.renderable.addAnimation( "cast", [ 8,9,10,11 ] );
+
+        //its 4am and this is a hack that works.
+        this.renderable.addAnimation( "die", [ 12,13,14,15,16,17,18,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19 ] );
 
         this.renderable.setCurrentAnimation("idle");
 
@@ -158,6 +163,7 @@ var Player = me.ObjectEntity.extend({
     },
 
     playerSummon:function(){
+        radmars.maybeSwitchAnimation(this.renderable, "cast", true);
         me.state.current().playerArmy.forEach(function(target) {
             if(target.player != true){
                 console.log("summon!");
@@ -168,6 +174,7 @@ var Player = me.ObjectEntity.extend({
 
     ressurect:function(){
 
+        radmars.maybeSwitchAnimation(this.renderable, "cast", true);
         var remove = [];
 
         me.state.current().corpses.forEach(function(target) {
@@ -202,14 +209,14 @@ var Player = me.ObjectEntity.extend({
 
     damage: function(dmg) {
         this.hp -= dmg;
-        me.audio.play("hit" + GetRandomIndexString(3));
 
         if(!this.dead && this.hp <= 0) {
+            this.dead = true;
+            this.deathTimer = 2000;
+            this.renderable.setCurrentAnimation("idle");
+            me.audio.play("hit" + GetRandomIndexString(3));
             me.audio.play("playerdeath" + GetRandomIndexString(4));
 
-            (function(e) {
-                me.state.change(me.state.PLAY);
-            }).defer();
         }
     },
 
@@ -239,7 +246,10 @@ var Player = me.ObjectEntity.extend({
             radmars.maybeSwitchAnimation(this.renderable, "die", false);
             this.updateMovement();
             if(this.deathTimer<=0){
-                me.state.change( me.state.GAMEOVER);
+                (function(e) {
+                    me.state.change(me.state.PLAY);
+                }).defer();
+               // me.state.change( me.state.GAMEOVER);
             }
             return true;
         }
