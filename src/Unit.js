@@ -137,7 +137,15 @@ var Unit = me.ObjectEntity.extend({
             deathSound = "magedeath" + GetRandomIndexString(5);
         }
         else if (this.unitType === "civilian") {
-            // ???
+            if (this.civType === "civilian_1") {
+                deathSound = "musketeerdeath" + GetRandomIndexString(4);
+            }
+            else if (this.civType === "civilian_2") {
+                deathSound = "magedeath" + GetRandomIndexString(5);
+            }
+            else if (this.civType === "civilian_3") {
+                deathSound = "knightdeath" + GetRandomIndexString(4);
+            }
         }
 
         if (deathSound !== "") {

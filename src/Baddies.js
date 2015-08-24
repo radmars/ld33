@@ -12,7 +12,7 @@ var Knight = Unit.extend({
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
         target.damage(this.attackDamage);
         return true;
-    },
+    }
 });
 
 
@@ -38,7 +38,9 @@ var Civilian = Unit.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = 'civilian';
-        settings.maxHP = 3;
+
+        settings.maxHP = 4;
+        this.civType = "civilian_1";
 
         this.parent(x, y, settings);
         this.setAttackRange(42);
