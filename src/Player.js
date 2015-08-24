@@ -165,7 +165,9 @@ var Player = me.ObjectEntity.extend({
 
 
         me.input.bindKey(me.input.KEY.Q,    "summon");
+        me.input.bindKey(me.input.KEY.L,    "summon");
         me.input.bindKey(me.input.KEY.E,    "raise");
+        me.input.bindKey(me.input.KEY.M,    "raise");
         /**/
     },
 
