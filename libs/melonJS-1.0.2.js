@@ -17121,9 +17121,9 @@ window.me = window.me || {};
           node.gain.value = self._volume;
 
           if (typeof node.bufferSource.start === 'undefined') {
-            node.bufferSource.noteGrainOn(0, pos, duration);
+              loop ? node.bufferSource.noteGrainOn(0, pos, 86400) : node.bufferSource.noteGrainOn(0, pos, duration);
           } else {
-            node.bufferSource.start(0, pos, duration);
+              loop ? node.bufferSource.start(0, pos, 86400) : node.bufferSource.start(0, pos, duration);
           }
         } else {
           if (node.readyState === 4 || !node.readyState && navigator.isCocoonJS) {

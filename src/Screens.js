@@ -83,6 +83,7 @@ var TitleScreen = me.ScreenObject.extend({
         me.game.world.removeChild( this.bg );
         me.game.world.removeChild( this.hitenter );
         me.event.unsubscribe( this.subscription );
+        me.audio.stopTrack();
     }
 });
 
