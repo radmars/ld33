@@ -23,6 +23,9 @@ var LD33 = function() {
             me.plugin.register(debugPanel, "debug");
             me.plugin.debug.show();
         }
+        if (this.options.mute) {
+            me.audio.muteAll();
+        }
 
         me.pool.register( "player", Player );
         me.pool.register( "baddie", Mage);
@@ -462,6 +465,10 @@ var PlayScreen = me.ScreenObject.extend({
             });
         };
         me.levelDirector.loadLevel( level );
+
+        if (level === "level1") {
+            me.audio.play("rise");
+        }
     },
 
     keyDown: function( action ) {

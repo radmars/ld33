@@ -164,7 +164,11 @@ var Player = me.ObjectEntity.extend({
 
     damage: function(dmg) {
         this.hp -= dmg;
+        me.audio.play("hit" + GetRandomIndexString(3));
+
         if(!this.dead && this.hp <= 0) {
+            me.audio.play("playerdeath" + GetRandomIndexString(4));
+
             (function(e) {
                 me.state.change(me.state.PLAY);
             }).defer();
