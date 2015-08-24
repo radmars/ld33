@@ -32,6 +32,11 @@ var Corpse = me.ObjectEntity.extend({
             player: player
         });
         me.game.world.addChild(z);
+
+        if(this.unitType == "skeleton"){
+            var bloodParticle = new BloodSplatParticle(this.pos.x, this.pos.y);
+            me.game.world.addChild(bloodParticle);
+        }
     }
 });
 
@@ -108,7 +113,7 @@ var Player = me.ObjectEntity.extend({
 
         this.collisionTimer = 0;
         this.deathTimer = 0;
-        this.hp = this.maxHP = 1;
+        this.hp = this.maxHP = 100;
 
         this.speed = 3.5;
 
@@ -166,12 +171,17 @@ var Player = me.ObjectEntity.extend({
 
     playerSummon:function(){
         radmars.maybeSwitchAnimation(this.renderable, "cast", true);
+        var summoned = false;
         me.state.current().playerArmy.forEach(function(target) {
             if(target.player != true){
                 console.log("summon!");
                 target.playerSummon();
+                summoned = true;
             }
         }.bind(this));
+
+
+        if(summoned) me.game.viewport.shake(3, 250);
     },
 
     ressurect:function(){
@@ -196,6 +206,8 @@ var Player = me.ObjectEntity.extend({
         }else{
             //ressurection was a success!
             //remove all expended corpses
+            me.game.viewport.shake(4, 250);
+
             remove.forEach(function(target) {
                 me.state.current().corpses.remove(target);
             }.bind(this));
@@ -213,6 +225,9 @@ var Player = me.ObjectEntity.extend({
         this.hp -= dmg;
 
         if(!this.dead && this.hp <= 0) {
+
+            me.game.viewport.shake(10, 2000);
+
             this.dead = true;
             this.deathTimer = 2000;
             this.renderable.setCurrentAnimation("idle");

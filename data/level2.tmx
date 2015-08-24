@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="23" tilewidth="32" tileheight="32" nextobjectid="20">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="23" tilewidth="32" tileheight="32" nextobjectid="21">
  <properties>
   <property name="background_color" value="#898989"/>
  </properties>
@@ -63,7 +63,7 @@
   <object id="16" name="civilian" x="538" y="97" width="32" height="32"/>
   <object id="17" name="civilian" x="227" y="384" width="32" height="32"/>
   <object id="18" name="civilian" x="142" y="386" width="32" height="32"/>
-  <object id="19" name="levelchanger" x="464" y="560" width="64" height="64">
+  <object id="20" name="levelchanger" x="434" y="527" width="128" height="128">
    <properties>
     <property name="toLevel" value="level3"/>
    </properties>

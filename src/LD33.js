@@ -94,7 +94,7 @@ LD33.newBaddie = function(x, y, settings) {
     });
 };
 
-LD33.data = {souls:1, collectedSouls:0, collectedSoulsMax:15, beatGame:false};
+LD33.data = {currentLevel:"", beatGame:false};
 
 LD33.HUD = LD33.HUD || {};
 
@@ -446,6 +446,8 @@ var LevelChanger = me.ObjectEntity.extend({
     },
 
     opened: function() {
+        //hacks
+        return true;
         return me.state.current().baddies.length == 0;
     },
 
@@ -454,12 +456,13 @@ var LevelChanger = me.ObjectEntity.extend({
         this.updateMovement();
 
         this.z =  100 + this.pos.y * 0.1;
-        
+
         if(!this.isOpen){
             if(this.opened()){
                 this.isOpen = true;
                 this.renderable.setCurrentAnimation("open");
                 //TODO: open gateway sfx
+                me.game.viewport.shake(8, 500);
             }
         }
     },
@@ -468,7 +471,11 @@ var LevelChanger = me.ObjectEntity.extend({
         if(obj.player && this.opened()) {
             var l = this.toLevel;
             (function(){
-                me.state.current().goToLevel(l);
+                if(l == "end"){
+                    me.state.change( me.state.GAMEOVER);
+                }else{
+                    me.state.current().goToLevel(l);
+                }
             }).defer();
         }
     },
@@ -502,7 +509,7 @@ var GameEnder = me.ObjectEntity.extend({
 });
 
 /** The game play state... */
-var PlayScreen = me.ScreenObject.extend({
+    var PlayScreen = me.ScreenObject.extend({
     init: function() {
         this.parent( true );
         this.HUD = new LD33.HUD.Container( );
@@ -544,6 +551,8 @@ var PlayScreen = me.ScreenObject.extend({
             me.audio.stopTrack();
             me.audio.playTrack("ld33-3", 0.5);
         }
+
+        LD33.data.currentLevel=level;
     },
 
     getLevel: function() {
@@ -557,16 +566,24 @@ var PlayScreen = me.ScreenObject.extend({
     },
 
     reloadLevel: function() {
+        console.log("reloadLevel ");
         this.cleanTheShitUp();
         me.levelDirector.loadLevel( me.levelDirector.getCurrentLevelId() );
     },
 
     // this will be called on state change -> this
     onResetEvent: function(newLevel) {
+        console.log("onResetEvent " + newLevel );
         var self = this;
         LD33.data.beatGame = false;
         me.game.reset();
-        var level =  newLevel || location.hash.substr(1) || "level1" ;
+
+        var lev = LD33.data.currentLevel;
+        if(lev == ""){
+            lev = "level1";
+        }
+
+        var level =  newLevel || location.hash.substr(1) || lev ;
         me.audio.stopTrack();
         this.goToLevel(level);
     },

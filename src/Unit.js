@@ -132,6 +132,8 @@ var Unit = me.ObjectEntity.extend({
             var unitType = this.unitType;
             var image = this.unitType;
 
+            //me.game.viewport.shake(3, 250);
+
             if(this.unitType == "skeleton"){
                 me.game.world.removeChild(this);
                 return;

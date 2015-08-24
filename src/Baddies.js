@@ -44,6 +44,25 @@ var Skeleton = Unit.extend({
         this.setAttackRange(42);
     },
 
+    initAnimations: function(){
+        if(this.zombie){
+            this.renderable.addAnimation( "summon", [ 19,20,21,22,23,24,25,26,27 ] );
+            this.renderable.addAnimation( "res", [ 12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27 ] );
+            this.renderable.addAnimation( "attacking", [ 10,11,11,10,9 ] );
+            this.renderable.addAnimation( "idle", [ 0,0,1,1,2,2 ] );
+            this.renderable.addAnimation( "walk", [ 3,3,4,4,5,5,6,6] );
+            this.renderable.addAnimation( "hit", [ 28 ] );
+            this.renderable.animationspeed = 100;
+            this.resTimer = 1500;
+        }else{
+            this.renderable.addAnimation( "attacking", [ 5,6,7,8,9,10,8,9,10 ] );
+            this.renderable.addAnimation( "idle", [ 13, 14, 15, 16, 17,17,17,17,17,17, 18,18,17,17,17,17, 16, 15, 14] );
+            this.renderable.addAnimation( "walk", [ 0,0, 1,1, 2,2, 3,3] );
+            this.renderable.addAnimation( "hit", [ 11 ] );
+            this.renderable.animationspeed = 100;
+        }
+    },
+
     attack: function(target) {
         //console.log("attacking! ");
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
