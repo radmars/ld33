@@ -102,6 +102,8 @@ var GameResources = [
     _Audio("rise"),
     _Audio("skeletondeath"),
     _Audio("skeletonraise"),
+    _Audio("rez"),
+    _Audio("rezfail"),
 
 ];
 

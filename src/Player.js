@@ -183,12 +183,14 @@ var Player = me.ObjectEntity.extend({
             //nothing was ressurected.
             // be a little nicer with the cooldown
             this.raiseCooldown = this.raiseCooldownMax * 0.5;
+            me.audio.play("rezfail");
         }else{
             //ressurection was a success!
             //remove all expended corpses
             remove.forEach(function(target) {
                 me.state.current().corpses.remove(target);
             }.bind(this));
+            me.audio.play("rez");
         }
     },
 
