@@ -83,6 +83,8 @@ var Musketeer = Unit.extend({
 
         this.attackCooldownMax = 2500;
         this.setAttackRange(300);
+
+        this.shootSound = "musket";
     },
 
     attack: function(target) {
@@ -115,6 +117,13 @@ var Musketeer = Unit.extend({
 
         me.game.world.addChild(bullet);
         me.game.world.sort();
+
+        if (this.shootSound) {
+            me.audio.play(this.shootSound);
+        }
+        else {
+            radmars.assert("Units that shoot should have a shoot sound ya dingus!");
+        }
     }
 });
 
@@ -140,6 +149,8 @@ var Mage = Musketeer.extend({
 
         this.attackCooldownMax = 3000;
         this.setAttackRange(300);
+
+        this.shootSound = "magic";
     },
 
     attack: function(target) {

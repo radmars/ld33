@@ -75,14 +75,27 @@ var Unit = me.ObjectEntity.extend({
             this.moveToPlayerPos = true;
             me.state.current().playerArmy.push(this);
         }
+
+        if (this.unitType === "skeleton") {
+            me.audio.play("skeletonraise");
+        }
+        else if (this.zombie) {
+            me.audio.play("zombieraise" + GetRandomIndexString(5));
+        }
     },
 
     damage: function(dmg) {
         //console.log("damage! " + dmg + " / hp " + this.hp  +" / " + this.maxHP);
 
         this.hp -= dmg;
+
+        me.audio.play("hit" + GetRandomIndexString(3));
+
         if(this.hp <= 0 && !this.dead) {
             this.dead = true;
+
+            this.playDeathSound();
+
             if(this.zombie) {
                 me.state.current().playerArmy.remove(this);
             }
@@ -101,6 +114,34 @@ var Unit = me.ObjectEntity.extend({
             var corpse = new Corpse(this.pos.x, this.pos.y, {unitType:unitType});
             me.game.world.addChild(corpse);
             me.game.world.removeChild(this);
+        }
+    },
+
+    playDeathSound: function() {
+        // play appropriate sound
+        var deathSound = "";
+
+        if (this.unitType === "skeleton") {
+            deathSound = "skeletondeath";
+        }
+        else if (this.zombie) {
+            deathSound = "zombiedeath" + GetRandomIndexString(6);
+        }
+        else if (this.unitType === "knight") {
+            deathSound = "knightdeath" + GetRandomIndexString(4);
+        }
+        else if (this.unitType === "musketeer") {
+            deathSound = "musketeerdeath" + GetRandomIndexString(4);
+        }
+        else if (this.unitType === "mage") {
+            deathSound = "magedeath" + GetRandomIndexString(5);
+        }
+        else if (this.unitType === "civilian") {
+            // ???
+        }
+
+        if (deathSound !== "") {
+            me.audio.play(deathSound);
         }
     },
 

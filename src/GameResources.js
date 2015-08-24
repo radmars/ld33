@@ -6,6 +6,17 @@ function _Audio( name ) {
     return { name: name, type: "audio", src: "data/audio/" , channels: 2 };
 }
 
+function _AddAudioArray( name, num, parent ) {
+    for(var i = 1; i <= num; i++) {
+        parent.push(_Audio(name + "-" + i));
+    }
+}
+
+function GetRandomIndexString(max) {
+    var index = Math.floor(Math.random() * max) + 1;
+    return "-" + index;
+}
+
 function _Level( name ) {
     return { name: name, type: "tmx", src: "data/" + name + ".tmx" };
 }
@@ -83,4 +94,21 @@ var GameResources = [
     _Level( "level_debug_1" ),
 
     _Audio( "radmarslogo" ),
+
+    _Audio("magic"),
+    _Audio("magic-hit"),
+    _Audio("micromancer"),
+    _Audio("musket"),
+    _Audio("rise"),
+    _Audio("skeletondeath"),
+    _Audio("skeletonraise"),
+
 ];
+
+_AddAudioArray("hit", 3, GameResources);
+_AddAudioArray("knightdeath", 4, GameResources);
+_AddAudioArray("musketeerdeath", 4, GameResources);
+_AddAudioArray("magedeath", 5, GameResources);
+_AddAudioArray("zombiedeath", 6, GameResources);
+_AddAudioArray("zombieraise", 5, GameResources);
+_AddAudioArray("playerdeath", 4, GameResources);

@@ -30,6 +30,10 @@ var MusketBullet = me.ObjectEntity.extend({
             obj.damage(this.damage);
             //console.log("bihfgihg");
             this.die();
+
+            if (this.killspot) {
+                me.audio.play("magic-hit");
+            }
         }
     },
 
