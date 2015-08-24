@@ -433,9 +433,6 @@ var GameEnder = me.ObjectEntity.extend({
 var PlayScreen = me.ScreenObject.extend({
     init: function() {
         this.parent( true );
-        me.input.bindKey(me.input.KEY.SPACE, "shoot");
-        this.subscription = me.event.subscribe(me.event.KEYDOWN, this.keyDown.bind(this));
-
         this.HUD = new LD33.HUD.Container( );
         LD33.data.beatGame = false;
     },
@@ -443,8 +440,7 @@ var PlayScreen = me.ScreenObject.extend({
     cleanTheShitUp: function( ){
         this.playerArmy = [];
         this.baddies = [];
-        this.pickups = [];
-
+        this.corpses = [];
     },
 
     endGame: function(){
@@ -462,12 +458,6 @@ var PlayScreen = me.ScreenObject.extend({
             });
         };
         me.levelDirector.loadLevel( level );
-    },
-
-    keyDown: function( action ) {
-        if(action == "shoot") {
-            this.player.shoot();
-        }
     },
 
     getLevel: function() {

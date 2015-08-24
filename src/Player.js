@@ -12,11 +12,16 @@ var Corpse = me.ObjectEntity.extend({
         this.corpse = true;
         this.gravity = 0;
 
+        me.state.current().corpses.push(this);
+
         console.log("corpse! " + this.unitType);
     },
 
     convertToZombie: function(player) {
+
         me.game.world.removeChild(this);
+        me.state.current().corpses.remove(this);
+
         var z = LD33.newBaddie(this.pos.x, this.pos.y, {
             unitType: this.unitType,
             zombie:true,
@@ -45,6 +50,8 @@ var Grave = me.ObjectEntity.extend({
         this.renderable.setCurrentAnimation("idle");
 
         this.converted = false;
+
+        me.state.current().corpses.push(this);
     },
 
     convertToZombie: function(player) {
@@ -61,6 +68,7 @@ var Grave = me.ObjectEntity.extend({
                 zombie: true,
             });
             me.game.world.addChild(z);
+            me.state.current().corpses.remove(this);
         }
 
     },
@@ -154,6 +162,10 @@ var Player = me.ObjectEntity.extend({
                 target.playerSummon();
             }
         }.bind(this));
+    },
+
+    ressurect:function(){
+
     },
 
     moveToPos: function (x,y){
@@ -280,6 +292,7 @@ var Player = me.ObjectEntity.extend({
 
         if (me.input.isKeyPressed('raise') && this.raiseCooldown <= 0){
             this.raiseCooldown = this.raiseCooldownMax;
+            this.ressurect();
         }
 
         if(this.vel.length > this.speed){
