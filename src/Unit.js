@@ -101,6 +101,7 @@ var Unit = me.ObjectEntity.extend({
         this.renderable.addAnimation( "walk", [ 0 ] );
         this.renderable.addAnimation( "hit", [ 0 ] );
         this.renderable.addAnimation( "res", [ 0 ] );
+        this.renderable.addAnimation( "summon", [ 0 ] );
         this.renderable.animationspeed = 100;
     },
 
@@ -198,6 +199,11 @@ var Unit = me.ObjectEntity.extend({
         this.moveToTargetPos = false;
         this.curTarget = null;
         this.findTargetTimer = this.findTargetTimerMax;
+
+        radmars.maybeSwitchAnimation(this.renderable, "summon", true);
+        this.resTimer = 250;
+        this.pos.x =  me.state.current().player.pos.x + Math.random() * 64-32;
+        this.pos.y =  me.state.current().player.pos.y + Math.random() * 64-32;
     },
 
     moveToPos: function (x,y){

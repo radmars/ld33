@@ -149,6 +149,19 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         this.unitSelected = me.loader.getImage("unit_selected");
         this.hudBackdrop = me.loader.getImage("hud");
 
+        this.humansKilled1 = me.loader.getImage("humans_killed_1");
+        this.humansKilled2 = me.loader.getImage("humans_killed_2");
+        this.enterGate1 = me.loader.getImage("enter_gateway_1");
+        this.enterGate2 = me.loader.getImage("enter_gateway_2");
+        this.killHumans1 = me.loader.getImage("kill_all_humans_1");
+        this.killHumans2 = me.loader.getImage("kill_all_humans_2");
+
+        this.blinkTimer = 0;
+        this.showHumansKilledTimer = 0;
+        this.showStartTextTimer = 0;
+
+
+
         this.render = false;
 
         // make sure we use screen coordinates
@@ -172,13 +185,17 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
     startGame: function(){
         this.render = true;
 
+        this.blinkTimer = 0;
+        this.showHumansKilledTimer = 100;
+        this.showStartTextTimer = 100;
+        this.moveMarker = new MoveTargetParticle(this.pos.x, this.pos.y);
+        me.game.world.addChild(this.moveMarker);
+
         if( !this.rightClickAdded  ){
             console.log("[LD33.HUD.BoxDisplay](startGame) adding HUD rightclick proxy");
             this.rightClickAdded = true;
             document.getElementById("canvas").addEventListener('contextmenu', this.rightClick.bind(this), false);
 
-            this.moveMarker = new MoveTargetParticle(this.pos.x, this.pos.y);
-            me.game.world.addChild(this.moveMarker);
         }
 
         /*
@@ -366,6 +383,40 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
         this.font.draw (context,  me.state.current().baddies.length, 85, 560-25);
         this.font.draw (context,  me.state.current().playerArmy.length, 225, 560-25);
+
+        this.blinkTimer++;
+        if(this.blinkTimer >10){
+            this.blinkTimer = 0;
+        }
+
+
+        if(this.showStartTextTimer > 0){
+            this.showStartTextTimer--;
+            if(this.blinkTimer > 5){
+                context.drawImage( this.killHumans1, 480 - 172, 560-250 );
+            }else{
+                context.drawImage( this.killHumans2, 480 - 172, 560-250 );
+            }
+        }
+
+        if( me.state.current().baddies.length <= 0 ){
+            //show humans killed message, then find exit message.
+
+            this.showHumansKilledTimer--;
+            if(this.showHumansKilledTimer > 0){
+                if(this.blinkTimer > 5){
+                    context.drawImage( this.humansKilled1, 480 - 220, 560-150 );
+                }else{
+                    context.drawImage( this.humansKilled2, 480 - 220, 560-150 );
+                }
+            }else{
+                if(this.blinkTimer > 5){
+                    context.drawImage( this.enterGate1, 480 - 75, 560-100 );
+                }else{
+                    context.drawImage( this.enterGate2, 480 - 75, 560-100 );
+                }
+            }
+        }
 
     }
 });

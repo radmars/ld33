@@ -9,6 +9,7 @@ var Knight = Unit.extend({
 
     initAnimations: function(){
         if(this.zombie){
+            this.renderable.addAnimation( "summon", [ 11,12,11,13,11,14,15,16,17,18,19,20,21,22 ] );
             this.renderable.addAnimation( "res", [ 11,12,11,13,11,14,15,16,17,18,19,20,21,22 ] );
             this.renderable.addAnimation( "attacking", [ 7,8,9,10 ] );
             this.renderable.addAnimation( "idle", [ 23,23,23,24,25,26,26,26,27 ] );
@@ -110,6 +111,7 @@ var Musketeer = Unit.extend({
     initAnimations: function(){
         if(this.zombie){
             this.renderable.addAnimation( "res", [ 22,23,24,25,26,27,28,29,30,31 ] );
+            this.renderable.addAnimation( "summon", [ 22,23,24,25,26,27,28,29,30,31 ] );
             this.renderable.addAnimation( "attacking", [ 16,17,18,19,20,20 ] );
             this.renderable.addAnimation( "idle", [ 0,1,2,3,4,2,2,5,6,7,8,8,7,6,5,10,11,0,0,0,0,0,0,0,0] );
             this.renderable.addAnimation( "walk", [ 11,11,12,12,13,13,14,14] );
@@ -192,6 +194,7 @@ var Mage = Musketeer.extend({
 
     initAnimations: function(){
         if(this.zombie){
+            this.renderable.addAnimation( "summon", [ 0,1,2,3,4,5,6,7,8,9,10,11,12,13 ] );
             this.renderable.addAnimation( "res", [ 0,1,2,3,4,5,6,7,8,9,10,11,12,13 ] );
             this.renderable.addAnimation( "attacking", [ 20,21,22,23,24,25 ] );
             this.renderable.addAnimation( "idle", [ 13,14,15,15,16,17,18,18,19 ] );

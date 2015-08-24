@@ -47,6 +47,13 @@ var GameResources = [
     _Image("move_target"),
     _Image("hud"),
 
+    _Image("enter_gateway_1"),
+    _Image("enter_gateway_2"),
+    _Image("humans_killed_1"),
+    _Image("humans_killed_2"),
+    _Image("kill_all_humans_1"),
+    _Image("kill_all_humans_2"),
+
     //splash
     _Image("splash"),
     _Image("introcta"),
