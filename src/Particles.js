@@ -91,6 +91,23 @@ var ExplodeBigParticle = BloodSplatParticle.extend({
 });
 
 
+var RuneParticle = BloodSplatParticle.extend({
+    init: function (x, y, settings) {
+        settings = settings || {};
+        settings.image = settings.image || 'rune_res';
+        settings.spritewidth =  settings.spritewidth || 128;
+        settings.spriteheight = settings.spriteheight || 128;
+        settings.width = settings.width || 128;
+        settings.height = settings.height || 128;
+        this.life = settings.life || 200;
+        this.animationspeed = settings.animationspeed || 100;
+        // call the parent constructor
+        this.parent(x, y , settings);
+        this.anchorPoint.set(0.5, 0.5);
+        this.z = 100;
+    }
+});
+
 
 var MoveTargetParticle = me.ObjectEntity.extend({
     /**

@@ -447,7 +447,7 @@ var LevelChanger = me.ObjectEntity.extend({
 
     opened: function() {
         //hacks
-        return true;
+        //return true;
         return me.state.current().baddies.length == 0;
     },
 

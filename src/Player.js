@@ -113,7 +113,7 @@ var Player = me.ObjectEntity.extend({
 
         this.collisionTimer = 0;
         this.deathTimer = 0;
-        this.hp = this.maxHP = 100;
+        this.hp = this.maxHP = 1;
 
         this.speed = 3.5;
 
@@ -180,6 +180,8 @@ var Player = me.ObjectEntity.extend({
             }
         }.bind(this));
 
+        var rune = new RuneParticle(this.pos.x-48, this.pos.y-32, {image:"rune_summon"});
+        me.game.world.addChild(rune);
 
         if(summoned) me.game.viewport.shake(3, 250);
     },
@@ -197,6 +199,9 @@ var Player = me.ObjectEntity.extend({
                 remove.push(target);
             }
         }.bind(this));
+
+        var rune = new RuneParticle(this.pos.x-48, this.pos.y-32, {image:"rune_res"});
+        me.game.world.addChild(rune);
 
         if(remove.length == 0){
             //nothing was ressurected.

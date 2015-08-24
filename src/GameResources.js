@@ -54,6 +54,9 @@ var GameResources = [
     _Image("kill_all_humans_1"),
     _Image("kill_all_humans_2"),
 
+    _Image("rune_res"),
+    _Image("rune_summon"),
+
     //splash
     _Image("splash"),
     _Image("introcta"),
