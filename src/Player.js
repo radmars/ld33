@@ -334,39 +334,14 @@ var Player = me.ObjectEntity.extend({
        // */
 
         // Col checker is bound to checkCollisions.
-       // me.game.world.collide(this, true).forEach(this.colChecker);
+        me.game.world.collide(this, true).forEach(this.colChecker);
 
         this.updateMovement();
         return true;
     },
 
     checkCollisions: function( col ) {
-
-        if(col.obj.corpse) {
-           // col.obj.convertToZombie(this);
-        }
-        else if( this.hitTimer <= 0 && this.collisionTimer <= 0 && col.obj.baddie ) {
-            // die here?
-            /*
-            me.game.viewport.shake(5, 250);
-
-            this.hitTimer = 250;
-            this.collisionTimer = 1000;
-            this.renderable.flicker(1000);
-
-            if (this.pos.x - col.obj.pos.x > 0){
-                this.vel.x = this.hitVelX = 5;
-            } else {
-                this.vel.x = this.hitVelX = -5;
-            }
-            if (this.pos.y - col.obj.pos.y > 0){
-                this.vel.y = this.hitVelY = 5;
-            } else{
-                this.vel.y = this.hitVelY = -5;
-            }
-
-            radmars.playAnimation(this.renderable, "hit");
-            */
-        }
+        // BLAH
+        // other shit handles collision w/ player but we need to call collide above to collide with level changer
     }
 });
