@@ -139,7 +139,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         this.alwaysUpdate = true;
 
         // create a font
-        this.font = new me.BitmapFont("32x32_font", 32);
+        this.font = new me.BitmapFont("16x16_font", 16);
         //this.font.set("right");
 
         this.box = me.loader.getImage("selectBox");
@@ -147,19 +147,15 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         this.hpAlly = me.loader.getImage("hp_bar_ally");
         this.hpBaddie = me.loader.getImage("hp_bar_baddie");
         this.unitSelected = me.loader.getImage("unit_selected");
-        this.moveTarget = me.loader.getImage("move_target");
+        this.hudBackdrop = me.loader.getImage("hud");
 
         this.render = false;
 
         // make sure we use screen coordinates
         this.floating = true;
 
-        this.moveTargetTimer = 0;
-        this.moveTargetSin = 0;
-
         this.mouseLeftDown = false;
         this.mouseDownPos = new me.Vector2d(0, 0);
-        this.moveTargetPos = new me.Vector2d(0, 0);
 
         // enable the keyboard
         me.input.bindKey(me.input.KEY.O, "proxy_mouse_left");
@@ -180,6 +176,9 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
             console.log("[LD33.HUD.BoxDisplay](startGame) adding HUD rightclick proxy");
             this.rightClickAdded = true;
             document.getElementById("canvas").addEventListener('contextmenu', this.rightClick.bind(this), false);
+
+            this.moveMarker = new MoveTargetParticle(this.pos.x, this.pos.y);
+            me.game.world.addChild(this.moveMarker);
         }
 
         /*
@@ -210,13 +209,10 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
                 //console.log( "viewport " + me.game.viewport.pos.x +" , " + me.game.viewport.pos.y );
 
                 var selected = 0;
-                var x = me.input.mouse.pos.x + me.game.viewport.pos.x;
-                var y = me.input.mouse.pos.y + me.game.viewport.pos.y;
+                var x = me.input.mouse.pos.x + me.game.viewport.pos.x-16;
+                var y = me.input.mouse.pos.y + me.game.viewport.pos.y-16;
 
-                this.moveTargetPos.x = me.input.mouse.pos.x;
-                this.moveTargetPos.y = me.input.mouse.pos.y;
-                this.moveTargetSin = 0;
-                this.moveTargetTimer = 2.0;
+
 
                 me.state.current().playerArmy.forEach(function(target) {
                     if(target.selected){
@@ -226,8 +222,11 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
                 }.bind(this));
 
+                if(this.moveMarker != null){
+                    this.moveMarker.show(x,y);
+                }
 
-                if(selected == 0){
+                if(selected > 0){
                    // me.state.current().player.moveToPos(x,y);
                 }
             }
@@ -236,14 +235,6 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
     update : function () {
         if(!this.render) return;
-
-        if(this.moveTargetTimer > 0){
-            this.moveTargetTimer -= 0.03;
-            this.moveTargetSin += 0.1;
-            if(this.moveTargetSin >= Math.PI*2){
-                this.moveTargetSin -= Math.PI*2;
-            }
-        }
 
         if (me.input.isKeyPressed('proxy_mouse_left'))  {
             if( !this.mouseLeftDown ){
@@ -303,6 +294,8 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
     draw : function (context) {
         if(!this.render)return;
 
+        me.game.world.sort();
+
         //void ctx.drawImage(image, dx, dy, dWidth, dHeight);
         // this.pos.x +
         // this.pos.y +
@@ -310,13 +303,7 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         // this.mouseDownPos.x = me.input.mouse.pos.x;
         // this.mouseDownPos.y = me.input.mouse.pos.y;
 
-       // this.font.draw (context, this.souls, this.pos.x + 50, this.pos.y + 30);
-
-        if(this.moveTargetTimer > 0){
-          //  context.drawImage( this.moveTarget, this.moveTargetPos.x - 16, this.moveTargetPos.y - 16 - Math.sin(this.moveTargetSin) * 8 );
-        }
-
-
+       //
 
 
         me.state.current().baddies.forEach(function(target) {
@@ -329,17 +316,17 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
         }.bind(this));
 
         me.state.current().playerArmy.forEach(function(target) {
-            var x = target.pos.x - me.game.viewport.pos.x;
-            var y = target.pos.y - me.game.viewport.pos.y- 5;
-            if(target.hp < target.maxHP){
-                context.drawImage( this.hpBacking, x, y );
-                if(target.hp  > 0)  context.drawImage( this.hpAlly, x, y, 32 * (target.hp / target.maxHP), 4 );
-            }
 
-            if(target.selected){
-                context.drawImage( this.unitSelected, x, y+5 );
-            }
+                var x = target.pos.x - me.game.viewport.pos.x;
+                var y = target.pos.y - me.game.viewport.pos.y- 5;
+                if(target.hp < target.maxHP && target.hp > 0){
+                    context.drawImage( this.hpBacking, x, y );
+                    if(target.hp  > 0)  context.drawImage( this.hpAlly, x, y, 32 * (target.hp / target.maxHP), 4 );
+                }
 
+                if(target.selected){
+                    context.drawImage( this.unitSelected, x, y+5 );
+                }
         }.bind(this));
 
         if(this.mouseLeftDown){
@@ -371,6 +358,14 @@ LD33.HUD.BoxDisplay = me.Renderable.extend( {
 
             context.drawImage( this.box, sx, sy, w, h );
         }
+
+        //draw the hud.
+        //
+        context.drawImage( this.hudBackdrop, 0, 560-52 );
+
+
+        this.font.draw (context,  me.state.current().baddies.length, 85, 560-25);
+        this.font.draw (context,  me.state.current().playerArmy.length, 225, 560-25);
 
     }
 });

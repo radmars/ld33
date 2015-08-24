@@ -1,11 +1,13 @@
 var MusketBullet = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         settings = settings || {};
-        settings.image = settings.image || "baddieBullet";
-        settings.spritewidth = settings.spritewidth || 64;
-        settings.spriteheight = settings.spriteheight || 60;
-        settings.height = 30;
-        settings.width = 30;
+        settings.image = settings.image || "bullet";
+        settings.spritewidth = settings.spritewidth || 32;
+        settings.spriteheight = settings.spriteheight || 32;
+        settings.height = 32;
+        settings.width = 32;
+
+        this.bigExplode = settings.bigExplode || false;
 
         this.killspot = settings.killspot;
 
@@ -21,13 +23,16 @@ var MusketBullet = me.ObjectEntity.extend({
         this.z = 300;
         this.gravity = 0;
 
+        this.anchorPoint.set(0.5, 0.5);
+
         console.log("new bullet: zombie: " + this.zombie +  "/ baddine: "  + this.baddie );
     },
 
     onCollision: function(pos, obj) {
-        if( (obj.zombie != this.zombie && obj.baddie != this.baddie )|| this.baddie && obj.player ) {
-            console.log("bullet hit! zombie " + this.zombie + " / " + obj.zombie + " / baddinE: "  + this.baddie + " / " + obj.baddie );
-            obj.damage(this.damage);
+        //|| (!this.zombie && obj.player)
+        if( (obj.zombie != this.zombie && obj.baddie != this.baddie ) ) {
+            //console.log("bullet hit! zombie " + this.zombie + " / " + obj.zombie + " / baddinE: "  + this.baddie + " / " + obj.baddie );
+            obj.damage(this.damage, this.caster);
             //console.log("bihfgihg");
             this.die();
 
@@ -46,6 +51,14 @@ var MusketBullet = me.ObjectEntity.extend({
     die: function(){
         this.collidable = false;
         me.game.world.removeChild(this);
+
+        if(this.bigExplode){
+            var particle = new ExplodeBigParticle(this.pos.x-32, this.pos.y-32);
+            me.game.world.addChild(particle);
+        }else{
+            var particle = new ExplodeSmallParticle(this.pos.x-8, this.pos.y-8);
+            me.game.world.addChild(particle);
+        }
     },
 
     update: function( dt ) {

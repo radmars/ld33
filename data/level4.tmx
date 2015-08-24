@@ -50,7 +50,7 @@
   </data>
  </layer>
  <objectgroup name="entities">
-  <object id="1" name="player" x="94" y="707" width="32" height="32"/>
+  <object id="1" name="player" x="95" y="769" width="32" height="32"/>
   <object id="2" name="knight" x="226" y="579" width="32" height="32"/>
   <object id="3" name="knight" x="288" y="578" width="32" height="32"/>
   <object id="4" name="knight" x="642" y="574" width="32" height="32"/>
@@ -83,6 +83,6 @@
   </object>
   <object id="29" name="civilian" x="955" y="907" width="32" height="32"/>
   <object id="30" name="civilian" x="875" y="952" width="32" height="32"/>
-  <object id="31" name="civilian" x="67" y="929" width="32" height="32"/>
+  <object id="31" name="civilian" x="927" y="948" width="32" height="32"/>
  </objectgroup>
 </map>

@@ -33,35 +33,8 @@ var GameResources = [
     _Image( "intro_radmars1" ),
     _Image( "intro_radmars2" ),
 
-    // Corpses
-    _Image( "mage" ),
-    _Image( "mage_zombie" ),
-    _Image( "knight" ),
-    _Image( "knight_zombie" ),
-    _Image( "musketeer" ),
-    _Image( "musketeer_zombie" ),
 
-    _Image( "civilian" ),
-    _Image( "civilian_zombie" ),
 
-    _Image( "skeleton" ),
-    _Image( "skeleton_zombie" ),
-    _Image( "player" ),
-
-    _Image( "corpse" ),
-
-    _Image( "bloodstain" ),
-    _Image( "civilian_1_corpse" ),
-    _Image( "civilian_2_corpse" ),
-    _Image( "civilian_3_corpse" ),
-    _Image( "knight_corpse" ),
-    _Image( "knight_zombie_corpse" ),
-    _Image( "mage_corpse" ),
-    _Image( "mage_zombie_corpse" ),
-    _Image( "musketeer_corpse" ),
-    _Image( "musketeer_zombie_corpse" ),
-    _Image( "skeleton_corpse" ),
-    _Image( "skeleton_corpse_zombie" ),
 
     // ui
     _Image("16x16_font"),
@@ -72,6 +45,7 @@ var GameResources = [
     _Image("hp_bar_baddie"),
     _Image("unit_selected"),
     _Image("move_target"),
+    _Image("hud"),
 
     //splash
     _Image("splash"),
@@ -80,21 +54,54 @@ var GameResources = [
     _Image("game_over"),
     _Image("game_win"),
 
-    //game
-    _Image("tinyman"),
-
+    //particles
     _Image("baddieBullet"),
     _Image("magicMissile"),
+    _Image( "bloodstain" ),
+    _Image( "bloodsplat" ),
+    _Image( "explode_small" ),
+    _Image( "explode_big" ),
+    _Image( "fireball" ),
+    _Image( "fireball_zombie" ),
+    _Image( "bullet" ),
+    _Image( "bullet_zombie" ),
 
+    //graves
     _Image("grave_1"),
     _Image("grave_2"),
     _Image("grave_3"),
     _Image("gateway"),
 
+    // Corpses
+    _Image( "civilian_1_corpse" ),
+    _Image( "civilian_2_corpse" ),
+    _Image( "civilian_3_corpse" ),
+    _Image( "knight_corpse" ),
+    _Image( "knight_zombie_corpse" ),
+    _Image( "mage_corpse" ),
+    _Image( "mage_zombie_corpse" ),
+    _Image( "musketeer_corpse" ),
+    _Image( "musketeer_zombie_corpse" ),
+    _Image( "skeleton_corpse" ),
+    _Image( "skeleton_zombie_corpse" ),
+
+    //characters
+    _Image( "mage" ),
+    _Image( "mage_zombie" ),
+    _Image( "knight" ),
+    _Image( "knight_zombie" ),
+    _Image( "musketeer" ),
+    _Image( "musketeer_zombie" ),
+    _Image( "civilian" ),
+    _Image( "civilian_zombie" ),
+    _Image( "skeleton" ),
+    _Image( "skeleton_zombie" ),
+    _Image( "player" ),
+
     // Levels
     _Image( "collision_tiles"),
-
     _Image( "world_1_1"),
+
     _Level( "level1" ),
     _Level( "level2" ),
     _Level( "level3" ),
@@ -107,6 +114,7 @@ var GameResources = [
     _Level( "level10" ),
     _Level( "level_debug_1" ),
 
+    // audio
     _Audio( "radmarslogo" ),
     _Audio( "ld33-title" ),
     _Audio( "ld33-1" ),

@@ -51,7 +51,7 @@ var Unit = me.ObjectEntity.extend({
         this.moveToPlayerPos    = false;
         this.speed              = 4;
         this.targetAccel        = settings.targetAccel || 0.15;
-        this.z = 300;
+        this.z                  =  100 + this.pos.y * 0.1;
         this.agro               = true;
 
         this.resTimer           = 0;
@@ -104,10 +104,15 @@ var Unit = me.ObjectEntity.extend({
         this.renderable.animationspeed = 100;
     },
 
-    damage: function(dmg) {
+    damage: function(dmg, source) {
         //console.log("damage! " + dmg + " / hp " + this.hp  +" / " + this.maxHP);
 
         this.hp -= dmg;
+
+        if(this.hp > 0 && source != null && source.hp > 0 ){
+            this.findTargetTimer = this.findTargetTimerMax;
+            this.curTarget = source;
+        }
 
         me.audio.play("hit" + GetRandomIndexString(3));
         radmars.maybeSwitchAnimation(this.renderable, "hit", true);
@@ -141,6 +146,9 @@ var Unit = me.ObjectEntity.extend({
             }
             image += "_corpse";
             console.log("new corpse image! " + image);
+
+            var bloodParticle = new BloodSplatParticle(this.pos.x, this.pos.y);
+            me.game.world.addChild(bloodParticle);
 
             var corpse = new Corpse(this.pos.x, this.pos.y, { unitType:unitType, image:image });
             me.game.world.addChild(corpse);
@@ -213,7 +221,9 @@ var Unit = me.ObjectEntity.extend({
         }
         toTarget.sub(this.pos);
 
-        if(toTarget.length() <= this.followDist){
+        var dist = this.moveToPlayerPos ? this.followDist : 16;
+
+        if(toTarget.length() <= dist){
             this.vel.x = this.vel.y = 0;
             this.moveToTargetPos = false;
             this.moveToPlayerPos = false;
@@ -292,6 +302,8 @@ var Unit = me.ObjectEntity.extend({
     },
 
     update: function(dt) {
+
+        this.z =  100 + this.pos.y * 0.1;
 
         if(this.resTimer > 0){
             this.resTimer-=dt;

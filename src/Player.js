@@ -10,7 +10,7 @@ var Corpse = me.ObjectEntity.extend({
         settings.height = 32;
         settings.width = 32;
         this.parent(x, y, settings);
-        this.z = 300;
+        this.z =  100 + this.pos.y * 0.1;
         this.corpse = true;
         this.gravity = 0;
 
@@ -44,7 +44,7 @@ var Grave = me.ObjectEntity.extend({
         settings.height = 32;
         settings.width = 32;
         this.parent(x, y, settings);
-        this.z = 5;
+        this.z =  100 + this.pos.y * 0.1;
         this.corpse = true;
         this.gravity = 0;
 
@@ -66,7 +66,7 @@ var Grave = me.ObjectEntity.extend({
             this.renderable.setCurrentAnimation("dead");
 
             var z = LD33.newBaddie(this.pos.x, this.pos.y, {
-                unitType: 'knight', //skeleton
+                unitType: 'skeleton', //skeleton
                 //(Math.random() < .66 ? (Math.random < .33 ? 'knight' : 'mage') : 'musketeer'),
                 player: player,
                 zombie: true,
@@ -92,9 +92,11 @@ var Player = me.ObjectEntity.extend({
         this.player = true;
         this.hitTimer = 0;
         this.hitVelX = 0;
-        this.image =  me.loader.getImage('tinyman');
 
-        this.z = 300;
+        this.baddie = false;
+        this.zombie = true;
+
+        this.z =  100 + this.pos.y * 0.1;
         this.disableInputTimer = 0;
 
         var shape = this.getShape();
@@ -227,6 +229,8 @@ var Player = me.ObjectEntity.extend({
     update: function(dt) {
         var self = this;
         this.parent(dt);
+
+        this.z =  100 + this.pos.y * 0.1;
 
         if(this.shootDelay >0){
             this.shootDelay-=dt;

@@ -28,7 +28,7 @@ var Knight = Unit.extend({
     attack: function(target) {
         //console.log("attacking! ");
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
-        target.damage(this.attackDamage);
+        target.damage(this.attackDamage, this);
         return true;
     }
 });
@@ -38,7 +38,7 @@ var Skeleton = Unit.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = 'skeleton';
-        settings.maxHP = 3;
+        settings.maxHP = 5;
         this.parent(x, y, settings);
         this.setAttackRange(42);
     },
@@ -46,7 +46,7 @@ var Skeleton = Unit.extend({
     attack: function(target) {
         //console.log("attacking! ");
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
-        target.damage(this.attackDamage);
+        target.damage(this.attackDamage, this);
         return true;
     },
 });
@@ -74,7 +74,7 @@ var Civilian = Unit.extend({
     attack: function(target) {
         //console.log("attacking! ");
         radmars.maybeSwitchAnimation(this.renderable, 'attacking', true);
-        target.damage(this.attackDamage);
+        target.damage(this.attackDamage, this);
         return true;
     },
 });
@@ -107,6 +107,24 @@ var Musketeer = Unit.extend({
         this.shootSound = "musket";
     },
 
+    initAnimations: function(){
+        if(this.zombie){
+            this.renderable.addAnimation( "res", [ 22,23,24,25,26,27,28,29,30,31 ] );
+            this.renderable.addAnimation( "attacking", [ 16,17,18,19,20,20 ] );
+            this.renderable.addAnimation( "idle", [ 0,1,2,3,4,2,2,5,6,7,8,8,7,6,5,10,11,0,0,0,0,0,0,0,0] );
+            this.renderable.addAnimation( "walk", [ 11,11,12,12,13,13,14,14] );
+            this.renderable.addAnimation( "hit", [ 34 ] );
+            this.renderable.animationspeed = 100;
+            this.resTimer = 1500;
+        }else{
+            this.renderable.addAnimation( "attacking", [ 16,17,18,19,20,20 ] );
+            this.renderable.addAnimation( "idle", [ 0,1,2,3,4,2,2,5,6,7,8,8,7,6,5,10,11,0,0,0,0,0,0,0,0] );
+            this.renderable.addAnimation( "walk", [ 11,11,12,12,13,13,14,14] );
+            this.renderable.addAnimation( "hit", [ 22 ] );
+            this.renderable.animationspeed = 100;
+        }
+    },
+
     attack: function(target) {
 
         var targetVec = new me.Vector2d(target.pos.x, target.pos.y);
@@ -129,7 +147,6 @@ var Musketeer = Unit.extend({
         var pos = new me.Vector2d(this.pos.x, this.pos.y);
         settings.caster = this;
         settings.damage = this.attackDamage;
-
         //console.log("shooting! zombie: " + this.zombie + " / baddie: " + this.baddie);
 
         var bullet = new MusketBullet(pos.x, pos.y, settings);
@@ -198,8 +215,10 @@ var Mage = Musketeer.extend({
         targetVec.normalize();
 
         var settings = {};
-        settings.image = 'magicMissile';
+        settings.image = 'baddieBullet';
         settings.damage = this.attackDamage;
+        settings.bigExplode = true;
+
         var killspot = new me.Vector2d(target.pos.x, target.pos.y);
         settings.killspot = killspot;
         this.shoot(targetVec.x * this.bulletVel, targetVec.y * this.bulletVel, settings);
