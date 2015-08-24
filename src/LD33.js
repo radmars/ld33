@@ -441,8 +441,6 @@ var LevelChanger = me.ObjectEntity.extend({
         this.renderable.addAnimation( "closed", [ 0 ] );
         this.renderable.addAnimation( "open", [ 1,2,3 ] );
         this.renderable.setCurrentAnimation("closed");
-
-
     },
 
     opened: function() {
