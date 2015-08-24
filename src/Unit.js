@@ -55,7 +55,7 @@ var Unit = me.ObjectEntity.extend({
         this.agro               = true;
 
         if(this.zombie){
-            this.maxHP = this.hp = this.maxHP-1;
+            this.maxHP = this.hp = Math.floor( this.maxHP*0.5);
         }
 
         this.followDist         = 32 + Math.round( Math.random() * 32 );
@@ -265,7 +265,43 @@ var Unit = me.ObjectEntity.extend({
         throw "You need to overload this function!";
     },
 
+    checkUnitCollision: function( array ){
+        // me.state.current().playerArmy
 
+        for( var i=0; i<array.length; i++){
+            var target = array[i];
+
+            if(target != this){
+                var targetToMe = new me.Vector2d( this.pos.x, this.pos.y );
+                targetToMe.sub(target.pos);
+
+                var distToTarget = targetToMe.length();
+
+                if(distToTarget < this.clumpDist*2.0){
+                    var dp = 1 - ( distToTarget / (this.clumpDist*2.0) );
+                    //square that shit.
+                    dp = dp * dp;
+
+                    targetToMe.normalize();
+                    //this just makes it so it really moves em on that one update.
+                    targetToMe.x *= this.speed * 1.0;
+                    targetToMe.y *= this.speed * 1.0;
+
+                    this.vel.x += targetToMe.x * dp;
+                    this.vel.y += targetToMe.y * dp;
+                }
+            }
+        }
+
+        if(this.vel.length() > this.speed){
+            this.vel.normalize();
+            this.vel.x *= this.speed;
+            this.vel.y *= this.speed;
+        }
+
+    },
+
+    /*
     checkUnitCollision: function( array ){
         // me.state.current().playerArmy
 
@@ -369,7 +405,7 @@ var Unit = me.ObjectEntity.extend({
         }
 
     },
-
+    */
     setAttackRange: function(r) {
         this.attackRange = r;
     },

@@ -93,7 +93,7 @@ var Player = me.ObjectEntity.extend({
 
         this.collisionTimer = 0;
         this.deathTimer = 0;
-        this.hp = this.maxHP = 20;
+        this.hp = this.maxHP = 1;
 
         this.speed = 3.5;
 
@@ -282,7 +282,6 @@ var Player = me.ObjectEntity.extend({
             this.raiseCooldown = this.raiseCooldownMax;
         }
 
-
         if(this.vel.length > this.speed){
             this.vel.normalize();
             this.vel.x *= this.speed;
@@ -292,15 +291,16 @@ var Player = me.ObjectEntity.extend({
        // */
 
         // Col checker is bound to checkCollisions.
-        me.game.world.collide(this, true).forEach(this.colChecker);
+       // me.game.world.collide(this, true).forEach(this.colChecker);
 
         this.updateMovement();
         return true;
     },
 
     checkCollisions: function( col ) {
+
         if(col.obj.corpse) {
-            col.obj.convertToZombie(this);
+           // col.obj.convertToZombie(this);
         }
         else if( this.hitTimer <= 0 && this.collisionTimer <= 0 && col.obj.baddie ) {
             // die here?

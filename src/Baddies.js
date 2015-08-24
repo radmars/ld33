@@ -2,7 +2,7 @@ var Knight = Unit.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = 'knight';
-        settings.maxHP = 5;
+        settings.maxHP = 6;
         this.parent(x, y, settings);
         this.setAttackRange(42);
     },
@@ -20,7 +20,7 @@ var Skeleton = Unit.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = 'skeleton';
-        settings.maxHP = 4;
+        settings.maxHP = 3;
         this.parent(x, y, settings);
         this.setAttackRange(42);
     },
@@ -38,7 +38,7 @@ var Civilian = Unit.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = 'civilian';
-        settings.maxHP = 4;
+        settings.maxHP = 3;
 
         this.parent(x, y, settings);
         this.setAttackRange(42);
@@ -63,6 +63,7 @@ var Musketeer = Unit.extend({
     init: function(x, y, settings) {
         settings = settings || {};
         settings.unitType = settings.unitType || 'musketeer';
+        settings.maxHP = 4;
 
         console.log("new musketeer");
 
