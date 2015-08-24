@@ -75,7 +75,7 @@ var Musketeer = Unit.extend({
         // musketeer only shoots in cardinal dirs. width of targeting arc = target width
         this.targetWidth = 32 + 10; //settings.spritewidth + 10;
 
-        this.attackDamage = 2;
+        this.attackDamage = 1;
         //this.setVelocity( 0.3, 0.3 );
 
         this.maxTargetingDist = 350;
@@ -140,7 +140,7 @@ var Mage = Musketeer.extend({
         this.parent(x, y, settings);
 
         this.bulletVel = 7;
-        this.attackDamage = 2;
+        this.attackDamage = 1;
 
         //this.setVelocity( 0.25, 0.25 );
 

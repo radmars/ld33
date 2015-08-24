@@ -23,7 +23,7 @@ var Unit = me.ObjectEntity.extend({
         settings.attackCooldownMax = 500;
         settings.attackRange = 32 + 16;
 
-        settings.maxHP = 5;
+        //settings.maxHP = 5;
 
         this.alwaysUpdate       = false;
         // some defautls. pick better ones please.
@@ -44,7 +44,7 @@ var Unit = me.ObjectEntity.extend({
         this.giveUpDist         = settings.giveUpDistance || 225;
         this.gravity = 0;
         this.maxHP              = radmars.assert(settings.maxHP, "Must specifiy maxHP");
-        this.hp                 = settings.hp || this.maxHP;
+        this.hp                 = this.maxHP;
         this.maxTargetingDist   = settings.maxTargettingDistance || 150;
         this.moveTo             = new me.Vector2d(0,0);
         this.moveToTargetPos    = false;
@@ -55,7 +55,11 @@ var Unit = me.ObjectEntity.extend({
         this.agro               = true;
 
         if(this.zombie){
-            this.maxHP = this.hp = Math.floor( this.maxHP*0.5);
+            this.maxHP = this.hp = this.maxHP-2;
+            if(this.maxHP < 2){
+                this.hp = this.maxHP = 2;
+            }
+            console.log("new zombie! " + this.hp);
         }
 
         this.followDist         = 32 + Math.round( Math.random() * 32 );
