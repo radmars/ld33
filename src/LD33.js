@@ -464,6 +464,16 @@ var PlayScreen = me.ScreenObject.extend({
 
         if (level === "level1") {
             me.audio.play("rise");
+            me.audio.stopTrack();
+            me.audio.playTrack("ld33-1", 0.5);
+        }
+        else if (level === "level6") {
+            me.audio.stopTrack();
+            me.audio.playTrack("ld33-2", 0.5);
+        }
+        else if (level === "level10") {
+            me.audio.stopTrack();
+            me.audio.playTrack("ld33-3", 0.5);
         }
     },
 
@@ -488,18 +498,12 @@ var PlayScreen = me.ScreenObject.extend({
         LD33.data.beatGame = false;
         me.game.reset();
         var level =  newLevel || location.hash.substr(1) || "level1" ;
-        this.goToLevel(level);
         me.audio.stopTrack();
-        me.audio.play( "ld30-real", true );
-        me.audio.play( "ld30-spirit", true );
-        me.audio.play( "portalrev" );
-
+        this.goToLevel(level);
     },
 
     onDestroyEvent: function() {
         this.HUD.endGame();
-        me.audio.stop("ld30-real");
-        me.audio.stop("ld30-spirit");
     },
 });
 
