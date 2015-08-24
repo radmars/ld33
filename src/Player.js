@@ -184,6 +184,7 @@ var Player = me.ObjectEntity.extend({
         me.game.world.addChild(rune);
 
         if(summoned) me.game.viewport.shake(3, 250);
+        me.audio.play("recall");
     },
 
     ressurect:function(){

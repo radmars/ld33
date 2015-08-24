@@ -459,8 +459,8 @@ var LevelChanger = me.ObjectEntity.extend({
             if(this.opened()){
                 this.isOpen = true;
                 this.renderable.setCurrentAnimation("open");
-                //TODO: open gateway sfx
                 me.game.viewport.shake(8, 500);
+                me.audio.play("gateopen");
             }
         }
     },
@@ -475,6 +475,7 @@ var LevelChanger = me.ObjectEntity.extend({
                     me.state.current().goToLevel(l);
                 }
             }).defer();
+            me.audio.play("portalrev");
         }
     },
 });
