@@ -437,6 +437,8 @@ var LevelChanger = me.ObjectEntity.extend({
         this.gravity = 0;
         this.collidable = true;
 
+        this.alwaysUpdate = true;
+
         this.isOpen = false;
         this.renderable.addAnimation( "closed", [ 0 ] );
         this.renderable.addAnimation( "open", [ 1,2,3 ] );
