@@ -225,7 +225,7 @@ var Mage = Musketeer.extend({
         this.findTargetTimer = 40;
 
         this.attackCooldownMax = 3000;
-        this.setAttackRange(300);
+        this.setAttackRange(230);
 
         this.shootSound = "magic";
     },
