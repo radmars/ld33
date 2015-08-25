@@ -48,6 +48,20 @@ var MusketBullet = me.ObjectEntity.extend({
         // flip x/y based on direction maybe????
     },
 
+    updateMovement: function() {
+        // horrific hack. if this is a mage bullet, don't collide w/ environment
+        // (which happens in object entity updatemovement)
+        if (this.killspot) {
+            this.collidable = false;
+        }
+
+        this.parent();
+
+        if (this.killspot) {
+            this.collidable = true;
+        }
+    },
+
     die: function(){
         this.collidable = false;
         me.game.world.removeChild(this);
