@@ -60,7 +60,6 @@
   <object name="civilian" x="738" y="319" width="32" height="32"/>
   <object name="civilian" x="415" y="867" width="32" height="32"/>
   <object name="knight" x="449" y="128" width="32" height="32"/>
-  <object name="knight" x="193" y="287" width="32" height="32"/>
   <object name="mage" x="158" y="834" width="32" height="32"/>
   <object name="musketeer" x="800" y="864" width="32" height="32"/>
   <object name="musketeer" x="860" y="736" width="32" height="32"/>
@@ -73,7 +72,6 @@
   <object name="grave" x="256" y="127" width="32" height="32"/>
   <object name="knight" x="416" y="223" width="32" height="32"/>
   <object name="knight" x="321" y="291" width="32" height="32"/>
-  <object name="knight" x="385" y="160" width="32" height="32"/>
   <object name="musketeer" x="862" y="864" width="32" height="32"/>
   <object name="musketeer" x="860" y="804" width="32" height="32"/>
   <object name="levelchanger" x="782" y="532" width="128" height="128">
