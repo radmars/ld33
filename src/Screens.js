@@ -61,7 +61,7 @@ var TitleScreen = me.ScreenObject.extend({
     onResetEvent: function() {
         this.bg = new me.ImageLayer( "title", screenWidth, screenHeight, "splash", 1 );
 
-        this.hitenter = new HitEnter( 350, 400 );
+        this.hitenter = new HitEnter( 320, 400 );
 
         me.game.world.addChild( this.bg );
         me.game.world.addChild( this.hitenter);
