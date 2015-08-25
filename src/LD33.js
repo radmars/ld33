@@ -468,7 +468,7 @@ var LevelChanger = me.ObjectEntity.extend({
     },
 
     onCollision: function(dir, obj) {
-        if(obj.player && this.opened()) {
+        if(obj.player && obj == me.state.current().player && this.opened()) {
             var l = this.toLevel;
             (function(){
                 if(l == "end"){
