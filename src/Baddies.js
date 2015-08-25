@@ -19,7 +19,7 @@ var Knight = Unit.extend({
             this.resTimer = 1500;
         }else{
             this.renderable.addAnimation( "attacking", [ 7,8,9,10 ] );
-            this.renderable.addAnimation( "idle", [ 10,10,11,11,12,12,13,13,14,14,15,15] );
+            this.renderable.addAnimation( "idle", [ 11,11,12,12,13,13,14,14] );
             this.renderable.addAnimation( "walk", [ 0,0, 1, 1,2,2, 3 ,3] );
             this.renderable.addAnimation( "hit", [ 4 ] );
             this.renderable.animationspeed = 100;
@@ -151,14 +151,14 @@ var Musketeer = Unit.extend({
             this.renderable.addAnimation( "res", [ 22,23,24,25,26,27,28,29,30,31 ] );
             this.renderable.addAnimation( "summon", [ 22,23,24,25,26,27,28,29,30,31 ] );
             this.renderable.addAnimation( "attacking", [ 16,17,18,19,20,20 ] );
-            this.renderable.addAnimation( "idle", [ 0,1,2,3,4,2,2,5,6,7,8,8,7,6,5,10,11,0,0,0,0,0,0,0,0] );
+            this.renderable.addAnimation( "idle", [ 0,1,2,3,4,2,2,5,6,7,8,8,7,6,5,4,3,2,1,0,0,0,0,0,0] );
             this.renderable.addAnimation( "walk", [ 11,11,12,12,13,13,14,14] );
             this.renderable.addAnimation( "hit", [ 34 ] );
             this.renderable.animationspeed = 100;
             this.resTimer = 1500;
         }else{
             this.renderable.addAnimation( "attacking", [ 16,17,18,19,20,20 ] );
-            this.renderable.addAnimation( "idle", [ 0,1,2,3,4,2,2,5,6,7,8,8,7,6,5,10,11,0,0,0,0,0,0,0,0] );
+            this.renderable.addAnimation( "idle", [ 0,1,2,3,4,2,2,5,6,7,8,8,7,6,5,4,3,2,1,0,0,0,0,0,0] );
             this.renderable.addAnimation( "walk", [ 11,11,12,12,13,13,14,14] );
             this.renderable.addAnimation( "hit", [ 22 ] );
             this.renderable.animationspeed = 100;
